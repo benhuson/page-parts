@@ -20,6 +20,9 @@ class Page_Parts_Admin {
 	
 	/**
 	 * Manage Page Part Columns
+	 *
+	 * @param $columns array Key/value pairs of columns.
+	 * @return array List of columns.
 	 */
 	function manage_edit_page_part_columns( $columns ) {
 		$new_columns = array();
@@ -34,6 +37,8 @@ class Page_Parts_Admin {
 	
 	/**
 	 * Manage Page Part Columns Output
+	 *
+	 * @param $name string Current column name.
 	 */
 	function manage_posts_custom_column( $name ) {
 		global $post;
@@ -96,6 +101,9 @@ class Page_Parts_Admin {
 	
 	/**
 	 * Updated Messages
+	 *
+	 * @param $messages array List of messages.
+	 * @return array List of messages.
 	 */
 	function updated_messages( $messages ) {
 		global $post, $post_ID;
@@ -121,6 +129,11 @@ class Page_Parts_Admin {
 	
 	/**
 	 * Contextual Help
+	 *
+	 * @param $contextual_help string Contextual help HTML.
+	 * @param $screen_id string Screen ID.
+	 * @param $screen object Screen object.
+	 * @return string HTML output.
 	 */
 	function contextual_help( $contextual_help, $screen_id, $screen ) { 
 		//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
@@ -175,6 +188,9 @@ jQuery(function($) {
 	
 	/**
 	 * Save Page Parts Order
+	 *
+	 * @param $post_id int Post ID.
+	 * @return string Data.
 	 */
 	function save_page_parts_order( $post_id ) {
 		global $wpdb;
@@ -203,6 +219,9 @@ jQuery(function($) {
 	
 	/**
 	 * Save Page Part Parent
+	 *
+	 * @param $post_id int Post ID.
+	 * @return string Data.
 	 */
 	function save_page_part_parent( $post_id ) {
 		global $wpdb;

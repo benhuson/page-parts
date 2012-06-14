@@ -69,6 +69,12 @@ class Page_Parts {
 	 * Post Part Link
 	 * By default, the link for a page part will link to an anchor with the post part slug.
 	 * For example http://www.example.com/my-page#my-page-part
+	 *
+	 * @param $post_link string Post Part URL.
+	 * @param $post object Post object.
+	 * @param $leavename bool Optional, defaults to false. Whether to keep post name.
+	 * @param $sample bool Optional, defaults to false. Is it a sample permalink.
+	 * @return string Post Part URL.
 	 */
 	function post_part_link( $post_link, $post, $leavename, $sample ) {
 		if ( $post->post_type == 'page-part' && $post->post_parent > 0 ) {
