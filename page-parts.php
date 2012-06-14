@@ -62,6 +62,7 @@ class Page_Parts {
 			'menu_position'       => 20,
 			'supports'            => array( 'title', 'editor', 'thumbnail' )
 		);
+		$args = apply_filters( 'register_page_part_args', $args );
 		register_post_type( 'page-part', $args );
 	}
 	
