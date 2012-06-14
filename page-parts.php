@@ -1,17 +1,21 @@
 <?php 
 
 /*
-Plugin Name: Page Parts
+Plugin Name: Post Parts
 Version: 0.2
 Description: Manage subsections of a page.
 Author: Ben @ Camber
 */
 
-class Page_Parts {
+class Post_Parts {
 	
 	var $admin;
 	
-	function Page_Parts() {
+	function Post_Parts() {
+		add_action( 'init', array( $this, 'register_post_types' ), 6 );
+		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
+		add_action( 'contextual_help', array( $this, 'contextual_help' ), 10, 3 );
+		add_filter( 'post_type_link', array( $this, 'post_part_link' ), 10, 4 );
 
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
@@ -23,9 +27,98 @@ class Page_Parts {
 		
 		if ( is_admin() ) {
 			require_once( dirname( __FILE__ ) . '/admin/admin.php' );
-			$this->admin = new Page_Parts_Admin();
+			$this->admin = new Post_Parts_Admin();
 		}
 	
+	}
+	
+	/**
+	 * Register Post Part Post Type
+	 */
+	function register_post_types() {
+		$labels = array(
+			'name'               => _x( 'Page Parts', 'post type general name' ),
+			'singular_name'      => _x( 'Page Part', 'post type singular name' ),
+			'add_new'            => _x( 'Add New', 'magazine' ),
+			'add_new_item'       => __( 'Add New Page Part' ),
+			'edit_item'          => __( 'Edit Page Part' ),
+			'new_item'           => __( 'New Page Part' ),
+			'view_item'          => __( 'View Page Part' ),
+			'search_items'       => __( 'Search Page Parts' ),
+			'not_found'          => __( 'No page parts found' ),
+			'not_found_in_trash' => __( 'No page parts found in Trash' ),
+			'parent_item_colon'  => '',
+			'menu_name'          => 'Page Parts'
+		);
+		$args = array(
+			'labels'              => $labels,
+			'description'         => __( 'Content that makes up part of a page.' ),
+			'public'              => true,
+			'publicly_queryable'  => false,
+			'exclude_from_search' => true,
+			'show_ui'             => true, 
+			'show_in_menu'        => 'edit.php?post_type=page', 
+			'query_var'           => true,
+			'rewrite'             => true,
+			'capability_type'     => 'page',
+			'has_archive'         => false, 
+			'hierarchical'        => false,
+			'menu_position'       => 20,
+			'supports'            => array( 'title', 'editor', 'thumbnail' )
+		);
+		register_post_type( 'page-part', $args );
+	}
+	
+	/**
+	 * Updated Messages
+	 */
+	function updated_messages( $messages ) {
+		global $post, $post_ID;
+		
+		$messages['page-part'] = array(
+			0  => '', // Unused. Messages start at index 1.
+			1  => sprintf( __( 'Page Part updated. <a href="%s">View page part</a>' ), esc_url( get_permalink( $post_ID ) ) ),
+			2  => __( 'Custom field updated.' ),
+			3  => __( 'Custom field deleted.' ),
+			4  => __( 'Page Part updated.' ),
+			// translators: %s: date and time of the revision
+			5  => isset( $_GET['revision'] ) ? sprintf( __('Page Part restored to revision from %s' ), wp_post_revision_title( ( int ) $_GET['revision'], false ) ) : false,
+			6  => sprintf( __( 'Page Part published. <a href="%s">View page part</a>' ), esc_url( get_permalink( $post_ID ) ) ),
+			7  => __( 'Page Part saved.' ),
+			8  => sprintf( __( 'Page Part submitted. <a target="_blank" href="%s">Preview page part</a>' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+			9  => sprintf( __( 'Page Part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>' ),
+				// translators: Publish box date format, see http://php.net/date
+				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
+			10 => sprintf( __( 'Page Part draft updated. <a target="_blank" href="%s">Preview page part</a>' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+		);
+		return $messages;
+	}
+	
+	/**
+	 * Contextual Help
+	 */
+	function contextual_help( $contextual_help, $screen_id, $screen ) { 
+		//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
+		if ( 'page-part' == $screen->id ) {
+			$contextual_help =
+				'<p>' . __( 'Things to remember when adding or editing a page part:' ) . '</p>' .
+				'<p>Not a lot.</p>';
+		} elseif ( 'edit-page-part' == $screen->id ) {
+			$contextual_help = '<p>' . __( 'No page part documentation.' ) . '</p>';
+		}
+		return $contextual_help;
+	}
+	
+	/**
+	 * Post Part Link
+	 * By default, the link for a page part will link to an anchor with the post part slug.
+	 * For example http://www.example.com/my-page#my-page-part
+	 */
+	function post_part_link( $post_link, $post, $leavename, $sample ) {
+		if ( $post->post_type == 'page-part' && $post->post_parent > 0 ) {
+			$post_link = get_permalink( $post->post_parent ) . '#' . $post->post_name;
+		}
+		return apply_filters( 'post_part_post_type_link', $post_link, $post, $leavename, $sample );
 	}
 	
 	function manage_edit_page_part_columns( $columns ) {
@@ -378,94 +471,7 @@ class Page_Parts {
 	
 }
 
-global $page_parts;
-$page_parts = new Page_Parts();
-
-function page_part_custom_post_type() {
-	
-	// Magazine Post Type
-	$labels = array(
-		'name'               => _x( 'Page Parts', 'post type general name' ),
-		'singular_name'      => _x( 'Page Part', 'post type singular name' ),
-		'add_new'            => _x( 'Add New', 'magazine' ),
-		'add_new_item'       => __( 'Add New Page Part' ),
-		'edit_item'          => __( 'Edit Page Part' ),
-		'new_item'           => __( 'New Page Part' ),
-		'view_item'          => __( 'View Page Part' ),
-		'search_items'       => __( 'Search Page Parts' ),
-		'not_found'          => __( 'No page parts found' ),
-		'not_found_in_trash' => __( 'No page parts found in Trash' ),
-		'parent_item_colon'  => '',
-		'menu_name'          => 'Page Parts'
-	);
-	$args = array(
-		'labels'              => $labels,
-		'description'         => __( 'Content that makes up part of a page.' ),
-		'public'              => true,
-		'publicly_queryable'  => false,
-		'exclude_from_search' => true,
-		'show_ui'             => true, 
-		'show_in_menu'        => 'edit.php?post_type=page', 
-		'query_var'           => true,
-		'rewrite'             => true,
-		'capability_type'     => 'page',
-		'has_archive'         => false, 
-		'hierarchical'        => false,
-		'menu_position'       => 20,
-		'supports'            => array( 'title', 'editor', 'thumbnail' )
-	);
-	register_post_type( 'page-part', $args );
-	
-}
-add_action( 'init', 'page_part_custom_post_type' );
-
-function page_part_updated_messages( $messages ) {
-	
-	global $post, $post_ID;
-	
-	$messages['page-part'] = array(
-		0  => '', // Unused. Messages start at index 1.
-		1  => sprintf( __( 'Page Part updated. <a href="%s">View page part</a>' ), esc_url( get_permalink( $post_ID ) ) ),
-		2  => __( 'Custom field updated.' ),
-		3  => __( 'Custom field deleted.' ),
-		4  => __( 'Page Part updated.' ),
-		// translators: %s: date and time of the revision
-		5  => isset( $_GET['revision'] ) ? sprintf( __('Page Part restored to revision from %s' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-		6  => sprintf( __( 'Page Part published. <a href="%s">View page part</a>' ), esc_url( get_permalink( $post_ID ) ) ),
-		7  => __( 'Page Part saved.' ),
-		8  => sprintf( __( 'Page Part submitted. <a target="_blank" href="%s">Preview page part</a>' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
-		9  => sprintf( __( 'Page Part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>' ),
-			// translators: Publish box date format, see http://php.net/date
-			date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
-		10 => sprintf( __( 'Page Part draft updated. <a target="_blank" href="%s">Preview page part</a>' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
-	);
-	
-	return $messages;
-	
-}
-add_filter( 'post_updated_messages', 'page_part_updated_messages' );
-
-function page_part_contextual_help( $contextual_help, $screen_id, $screen ) { 
-	//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
-	if ( 'page-part' == $screen->id ) {
-		$contextual_help =
-			'<p>' . __( 'Things to remember when adding or editing a page part:' ) . '</p>' .
-			'<p>Not a lot.</p>';
-	} elseif ( 'edit-page-part' == $screen->id ) {
-		$contextual_help = '<p>' . __('No page part documentation.') . '</p>';
-	}
-	return $contextual_help;
-}
-add_action( 'contextual_help', 'page_part_contextual_help', 10, 3 );
-
-function page_part_post_type_link( $post_link, $post, $leavename, $sample ) {
-	if ( $post->post_type == 'page-part' && $post->post_parent > 0 ) {
-		$post_link = get_permalink( $post->post_parent ) . '#' . $post->post_name;
-	}
-	return apply_filters( 'page_part_post_type_link', $post_link );
-}
-add_filter( 'post_type_link', 'page_part_post_type_link', 10, 4 );
-
-
+global $post_parts;
+$post_parts = new Post_Parts();
 
 ?>
