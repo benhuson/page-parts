@@ -7,8 +7,6 @@ Description: Manage subsections of a page.
 Author: Ben @ Camber
 */
 
-$page_parts = new Page_Parts();
-
 class Page_Parts {
 	
 	var $admin;
@@ -379,6 +377,9 @@ class Page_Parts {
 	}
 	
 }
+
+global $page_parts;
+$page_parts = new Page_Parts();
 
 function page_part_custom_post_type() {
 	
