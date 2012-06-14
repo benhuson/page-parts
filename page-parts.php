@@ -11,15 +11,16 @@ class Page_Parts {
 	
 	var $admin;
 	
+	/**
+	 * Constructor
+	 */
 	function Page_Parts() {
 		add_action( 'init', array( $this, 'register_post_types' ), 6 );
 		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 		add_action( 'contextual_help', array( $this, 'contextual_help' ), 10, 3 );
 		add_filter( 'post_type_link', array( $this, 'post_part_link' ), 10, 4 );
-
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
-		
 		add_filter( 'manage_edit-page-part_columns', array( $this, 'manage_edit_page_part_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ) );
 		
@@ -27,7 +28,6 @@ class Page_Parts {
 			require_once( dirname( __FILE__ ) . '/admin/admin.php' );
 			$this->admin = new Page_Parts_Admin();
 		}
-	
 	}
 	
 	/**
@@ -119,41 +119,46 @@ class Page_Parts {
 		return apply_filters( 'post_part_post_type_link', $post_link, $post, $leavename, $sample );
 	}
 	
+	/**
+	 * Manage Page Part Columns
+	 */
 	function manage_edit_page_part_columns( $columns ) {
-		
 		$columns['parent'] = 'Parent Page';
 		return $columns;
-		
 	}
 	
+	/**
+	 * Manage Page Part Columns Output
+	 */
 	function manage_posts_custom_column( $name ) {
-	
 		global $post;
+		
 		switch ( $name ) {
 			case 'parent':
 				$parent = $post->post_parent;
 				edit_post_link( get_the_title( $post->post_parent ), null, null, $post->post_parent );
 		}
-		
 	}
 	
+	/**
+	 * Save Page Part
+	 */
 	function save_post( $post_id ) {
-		
 		global $wpdb;
 		
-		// verify if this is an auto save routine. 
+		// Verify if this is an auto save routine. 
 		// If it is our form has not been submitted, so we dont want to do anything
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
 			return;
 		
-		// verify this came from the our screen and with proper authorization,
+		// Verify this came from the our screen and with proper authorization,
 		// because save_post can be triggered at other times
 		if ( ! isset( $_POST['page_parts_noncename'] ) || ! wp_verify_nonce( $_POST['page_parts_noncename'], plugin_basename( __FILE__ ) ) )
 			return;
 		
 		// Check permissions
 		if ( 'page-part' == $_POST['post_type'] ) {
-			if ( !current_user_can( 'edit_page', $post_id ) ) {
+			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return;
 			}
 		}
@@ -163,11 +168,12 @@ class Page_Parts {
 		$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
 		
 		return $parent_id;
-		
 	}
 	
+	/**
+	 * Add Meta Boxes
+	 */
 	function add_meta_boxes() {
-		
 		add_meta_box(
 			'page_parts_parent',
 			__( 'Parent Page', 'page-parts' ), 
@@ -176,11 +182,12 @@ class Page_Parts {
 			'side',
 			'core'
 		);
-		
 	}
 	
+	/**
+	 * Add Parent Meta Box
+	 */
 	function parent_meta_box() {
-		
 		global $post;
 		
 		// Use nonce for verification
@@ -202,226 +209,7 @@ class Page_Parts {
 		echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
 		if ( $post->post_parent > 0 ) {
 			edit_post_link( 'Edit ' . get_the_title( $post->post_parent ), '<p>', '</p>', $post->post_parent );
-		}	
-	
-	}
-	
-	/**
-	 * Customise version of get_pages
-	 * to allow draft pages.
-	 * Fixed in WordPress 3.3?
-	 */
-	function &get_pages($args = '') {
-		global $wpdb;
-	
-		$defaults = array(
-			'child_of' => 0, 'sort_order' => 'ASC',
-			'sort_column' => 'post_title', 'hierarchical' => 1,
-			'exclude' => array(), 'include' => array(),
-			'meta_key' => '', 'meta_value' => '',
-			'authors' => '', 'parent' => -1, 'exclude_tree' => '',
-			'number' => '', 'offset' => 0,
-			'post_type' => 'page', 'post_status' => 'publish',
-		);
-	
-		$r = wp_parse_args( $args, $defaults );
-		extract( $r, EXTR_SKIP );
-		$number = (int) $number;
-		$offset = (int) $offset;
-	
-		// Make sure the post type is hierarchical
-		$hierarchical_post_types = get_post_types( array( 'hierarchical' => true ) );
-		if ( !in_array( $post_type, $hierarchical_post_types ) )
-			return false;
-	
-		// Make sure we have a valid post status
-		if ( !is_array( $post_status ) )
-			$post_status = explode( ',', $post_status );
-		if ( array_diff( $post_status, get_post_stati() ) )
-			return false;
-			
-		$cache = array();
-		$key = md5( serialize( compact(array_keys($defaults)) ) );
-		if ( $cache = wp_cache_get( 'get_pages', 'posts' ) ) {
-			if ( is_array($cache) && isset( $cache[ $key ] ) ) {
-				$pages = apply_filters('get_pages', $cache[ $key ], $r );
-				return $pages;
-			}
 		}
-	
-		if ( !is_array($cache) )
-			$cache = array();
-	
-		$inclusions = '';
-		if ( !empty($include) ) {
-			$child_of = 0; //ignore child_of, parent, exclude, meta_key, and meta_value params if using include
-			$parent = -1;
-			$exclude = '';
-			$meta_key = '';
-			$meta_value = '';
-			$hierarchical = false;
-			$incpages = wp_parse_id_list( $include );
-			if ( ! empty( $incpages ) ) {
-				foreach ( $incpages as $incpage ) {
-					if (empty($inclusions))
-						$inclusions = $wpdb->prepare(' AND ( ID = %d ', $incpage);
-					else
-						$inclusions .= $wpdb->prepare(' OR ID = %d ', $incpage);
-				}
-			}
-		}
-		if (!empty($inclusions))
-			$inclusions .= ')';
-	
-		$exclusions = '';
-		if ( !empty($exclude) ) {
-			$expages = wp_parse_id_list( $exclude );
-			if ( ! empty( $expages ) ) {
-				foreach ( $expages as $expage ) {
-					if (empty($exclusions))
-						$exclusions = $wpdb->prepare(' AND ( ID <> %d ', $expage);
-					else
-						$exclusions .= $wpdb->prepare(' AND ID <> %d ', $expage);
-				}
-			}
-		}
-		if (!empty($exclusions))
-			$exclusions .= ')';
-	
-		$author_query = '';
-		if (!empty($authors)) {
-			$post_authors = preg_split('/[\s,]+/',$authors);
-	
-			if ( ! empty( $post_authors ) ) {
-				foreach ( $post_authors as $post_author ) {
-					//Do we have an author id or an author login?
-					if ( 0 == intval($post_author) ) {
-						$post_author = get_user_by('login', $post_author);
-						if ( empty($post_author) )
-							continue;
-						if ( empty($post_author->ID) )
-							continue;
-						$post_author = $post_author->ID;
-					}
-	
-					if ( '' == $author_query )
-						$author_query = $wpdb->prepare(' post_author = %d ', $post_author);
-					else
-						$author_query .= $wpdb->prepare(' OR post_author = %d ', $post_author);
-				}
-				if ( '' != $author_query )
-					$author_query = " AND ($author_query)";
-			}
-		}
-	
-		$join = '';
-		$where = "$exclusions $inclusions ";
-		if ( ! empty( $meta_key ) || ! empty( $meta_value ) ) {
-			$join = " LEFT JOIN $wpdb->postmeta ON ( $wpdb->posts.ID = $wpdb->postmeta.post_id )";
-	
-			// meta_key and meta_value might be slashed
-			$meta_key = stripslashes($meta_key);
-			$meta_value = stripslashes($meta_value);
-			if ( ! empty( $meta_key ) )
-				$where .= $wpdb->prepare(" AND $wpdb->postmeta.meta_key = %s", $meta_key);
-			if ( ! empty( $meta_value ) )
-				$where .= $wpdb->prepare(" AND $wpdb->postmeta.meta_value = %s", $meta_value);
-	
-		}
-	
-		if ( $parent >= 0 )
-			$where .= $wpdb->prepare(' AND post_parent = %d ', $parent);
-	
-		if ( 1 == count( $post_status ) ) {
-			$where_post_type = $wpdb->prepare( "post_type = %s AND post_status = %s", $post_type, array_shift( $post_status ) );
-		} else {
-			$post_status = implode( "', '", $post_status );
-			$where_post_type = $wpdb->prepare( "post_type = %s AND post_status IN ('$post_status')", $post_type );
-		}
-	
-		$orderby_array = array();
-		$allowed_keys = array('author', 'post_author', 'date', 'post_date', 'title', 'post_title', 'modified',
-							  'post_modified', 'modified_gmt', 'post_modified_gmt', 'menu_order', 'parent', 'post_parent',
-							  'ID', 'rand', 'comment_count');
-		foreach ( explode( ',', $sort_column ) as $orderby ) {
-			$orderby = trim( $orderby );
-			if ( !in_array( $orderby, $allowed_keys ) )
-				continue;
-	
-			switch ( $orderby ) {
-				case 'menu_order':
-					break;
-				case 'ID':
-					$orderby = "$wpdb->posts.ID";
-					break;
-				case 'rand':
-					$orderby = 'RAND()';
-					break;
-				case 'comment_count':
-					$orderby = "$wpdb->posts.comment_count";
-					break;
-				default:
-					if ( 0 === strpos( $orderby, 'post_' ) )
-						$orderby = "$wpdb->posts." . $orderby;
-					else
-						$orderby = "$wpdb->posts.post_" . $orderby;
-			}
-	
-			$orderby_array[] = $orderby;
-	
-		}
-		$sort_column = ! empty( $orderby_array ) ? implode( ',', $orderby_array ) : "$wpdb->posts.post_title";
-	
-		$sort_order = strtoupper( $sort_order );
-		if ( '' !== $sort_order && !in_array( $sort_order, array( 'ASC', 'DESC' ) ) )
-			$sort_order = 'ASC';
-	
-		$query = "SELECT * FROM $wpdb->posts $join WHERE ($where_post_type) $where ";
-		$query .= $author_query;
-		$query .= " ORDER BY " . $sort_column . " " . $sort_order ;
-	
-		if ( !empty($number) )
-			$query .= ' LIMIT ' . $offset . ',' . $number;
-	
-		$pages = $wpdb->get_results($query);
-	
-		if ( empty($pages) ) {
-			$pages = apply_filters('get_pages', array(), $r);
-			return $pages;
-		}
-	
-		// Sanitize before caching so it'll only get done once
-		$num_pages = count($pages);
-		for ($i = 0; $i < $num_pages; $i++) {
-			$pages[$i] = sanitize_post($pages[$i], 'raw');
-		}
-	
-		// Update cache.
-		update_page_cache($pages);
-	
-		if ( $child_of || $hierarchical )
-			$pages = & get_page_children($child_of, $pages);
-	
-		if ( !empty($exclude_tree) ) {
-			$exclude = (int) $exclude_tree;
-			$children = get_page_children($exclude, $pages);
-			$excludes = array();
-			foreach ( $children as $child )
-				$excludes[] = $child->ID;
-			$excludes[] = $exclude;
-			$num_pages = count($pages);
-			for ( $i = 0; $i < $num_pages; $i++ ) {
-				if ( in_array($pages[$i]->ID, $excludes) )
-					unset($pages[$i]);
-			}
-		}
-	
-		$cache[ $key ] = $pages;
-		wp_cache_set( 'get_pages', $cache, 'posts' );
-	
-		$pages = apply_filters('get_pages', $pages, $r);
-	
-		return $pages;
 	}
 	
 }

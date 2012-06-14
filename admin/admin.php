@@ -1,56 +1,32 @@
 <?php
 
-
-
 class Page_Parts_Admin {
-	
-	
-	
-	// --------------------------------------------------
-	//                     Properties
-	// --------------------------------------------------
-	
-	
 	
 	// Plugin
 	static $plugin_folder = 'devicive';
 	
-	// State
-	static $current_device = null;
-	
-	// Settings
-	static $plugin_enabled                = false;
-	static $desktop_redirect_url          = '';
-	static $mobile_redirect_url           = '';
-	
-	
-	
-	// ---------------------------------------------------
-	//                     Constructor
-	// ---------------------------------------------------
-	
-	
-	
+	/**
+	 * Constructor
+	 */
 	function Page_Parts_Admin() {
-	
-		// Hooks & Filters
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
 		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 5, 2 );
-		
 	}
 	
+	/**
+	 * Admin Head
+	 */
 	function admin_head() {
-	
 		echo '
-			<style>
-			#page_parts .wp-list-table .media-icon img {
-				max-width:80px;
-				max-height:60px;
-			}
-			</style>
+<style>
+#page_parts .wp-list-table .media-icon img {
+	max-width:80px;
+	max-height:60px;
+}
+</style>
 			';
 		echo "
 <script type=\"text/javascript\">
@@ -70,48 +46,28 @@ jQuery(function($) {
 });
 </script>
 		";
-		
 	}
 	
+	/**
+	 * Admin Enqueue Scripts
+	 */
 	function admin_enqueue_scripts() {
-		
-		wp_enqueue_script( array("jquery", "jquery-ui-core", "interface", "jquery-ui-sortable", "wp-lists") );
-	
+		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
 	}
 	
-	
-	
-	
-	// -------------------------------------------------------
-	//                     WordPress Hooks
-	// -------------------------------------------------------
-	
-	
-	
+	/**
+	 * Admin Menu
+	 */
 	function admin_menu() {
-	
 		if ( function_exists( 'add_meta_box' ) ) {
 			add_meta_box( 'page_parts', 'Page Parts', array( 'Page_Parts_Admin', 'page_parts_meta_box' ), 'page', 'advanced' );
 		}
-		
-	}
-
-
-
-	function get_redirect_url() {
-		
-		global $wpdb, $wp_query, $post;
-		
-		$hash = '';
-		
-		return false;
-		
 	}
 	
-	
-	
+	/**
+	 * Save Post
+	 */
 	function save_post( $post_id ) {
-		
 		global $wpdb;
 		
 		// Verify if this is an auto save routine. If it is our form has not been submitted,
@@ -120,13 +76,13 @@ jQuery(function($) {
 			return $post_id;
 		}
 		
-		if ( empty( $_POST ) || !isset( $_POST['_ajax_nonce-order-page-parts'] ) || !wp_verify_nonce( $_POST['_ajax_nonce-order-page-parts'], 'order_page_parts' ) ) {
+		if ( empty( $_POST ) || ! isset( $_POST['_ajax_nonce-order-page-parts'] ) || ! wp_verify_nonce( $_POST['_ajax_nonce-order-page-parts'], 'order_page_parts' ) ) {
 			return $post_id;
 		}
 		
 		// OK, we're authenticated: we need to find and save the data
 		if ( isset( $_POST['page_parts_order'] ) && is_array( $_POST['page_parts_order'] ) ) {
-			foreach ( $_POST['page_parts_order'] as $key => $val) {
+			foreach ( $_POST['page_parts_order'] as $key => $val ) {
 				if ( absint( $key ) > 0 ) {
 					$wpdb->update( $wpdb->posts, array( 'menu_order' => absint( $val ) ), array( 'ID' => absint( $key ) ), array( '%d' ), array( '%d' ) );
 				}
@@ -134,18 +90,12 @@ jQuery(function($) {
 		}
 		
 		return $_POST;
-		
 	}
 	
-	
-	
-	// --------------------------------------------------
-	//                     Meta Boxes
-	// --------------------------------------------------
-
-	
+	/**
+	 * Page Parts Meta Box
+	 */
 	function page_parts_meta_box() {
-		
 		global $post, $wp_query;
 		
 		$temp_post = clone $post;
@@ -198,43 +148,14 @@ jQuery(function($) {
 		
 		wp_reset_postdata();
 		rewind_posts();
-		
 		$post = clone $temp_post;
-	
 	}
-	
-	
-	
-	// -------------------------------------------------------------
-	//                     Plugin Helper Methods
-	// -------------------------------------------------------------
-	
-	
-	
-	function plugin_url( $file ) {
-		
-		global $devicive;
-		return WP_PLUGIN_URL . '/' . Page_Parts_Admin::plugin_folder . $file;
-		
-	}
-
-
-
-	function plugin_file( $file ) {
-		
-		global $devicive;
-		return  WP_PLUGIN_DIR . '/' . Page_Parts_Admin::$plugin_folder . $file;
-		
-	}
-	
-	
 	
 	/**
 	 * Don't do plugin update notifications
 	 * props. Mark Jaquith
 	 */
 	function http_request_args( $r, $url ) {
-	
 		if ( 0 !== strpos( $url, 'http://api.wordpress.org/plugins/update-check' ) )
 			return $r; // Not a plugin update request. Bail immediately.
 		$plugins = unserialize( $r['body']['plugins'] );
@@ -242,7 +163,6 @@ jQuery(function($) {
 		unset( $plugins->active[ array_search( plugin_basename( __FILE__ ), $plugins->active ) ] );
 		$r['body']['plugins'] = serialize( $plugins );
 		return $r;
-		
 	}
 	
 }
