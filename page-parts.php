@@ -148,7 +148,7 @@ class Page_Parts {
 		
 		// verify this came from the our screen and with proper authorization,
 		// because save_post can be triggered at other times
-		if ( !wp_verify_nonce( $_POST['page_parts_noncename'], plugin_basename( __FILE__ ) ) )
+		if ( ! isset( $_POST['page_parts_noncename'] ) || ! wp_verify_nonce( $_POST['page_parts_noncename'], plugin_basename( __FILE__ ) ) )
 			return;
 		
 		// Check permissions

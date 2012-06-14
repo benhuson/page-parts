@@ -481,7 +481,7 @@ jQuery(function($) {
 		}
 		
 		// OK, we're authenticated: we need to find and save the data
-		if ( is_array( $_POST['page_parts_order'] ) ) {
+		if ( isset( $_POST['page_parts_order'] ) && is_array( $_POST['page_parts_order'] ) ) {
 			foreach ( $_POST['page_parts_order'] as $key => $val) {
 				if ( absint( $key ) > 0 ) {
 					$wpdb->update( $wpdb->posts, array( 'menu_order' => absint( $val ) ), array( 'ID' => absint( $key ) ), array( '%d' ), array( '%d' ) );
