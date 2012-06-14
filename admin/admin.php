@@ -2,7 +2,7 @@
 
 
 
-class Post_Parts_Admin {
+class Page_Parts_Admin {
 	
 	
 	
@@ -31,7 +31,7 @@ class Post_Parts_Admin {
 	
 	
 	
-	function Post_Parts_Admin() {
+	function Page_Parts_Admin() {
 	
 		// Hooks & Filters
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -447,7 +447,7 @@ jQuery(function($) {
 	function admin_menu() {
 	
 		if ( function_exists( 'add_meta_box' ) ) {
-			add_meta_box( 'page_parts', 'Page Parts', array( 'Post_Parts_Admin', 'page_parts_meta_box' ), 'page', 'advanced' );
+			add_meta_box( 'page_parts', 'Page Parts', array( 'Page_Parts_Admin', 'page_parts_meta_box' ), 'page', 'advanced' );
 		}
 		
 	}

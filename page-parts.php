@@ -1,17 +1,17 @@
 <?php 
 
 /*
-Plugin Name: Post Parts
+Plugin Name: Page Parts
 Version: 0.2
 Description: Manage subsections of a page.
 Author: Ben @ Camber
 */
 
-class Post_Parts {
+class Page_Parts {
 	
 	var $admin;
 	
-	function Post_Parts() {
+	function Page_Parts() {
 		add_action( 'init', array( $this, 'register_post_types' ), 6 );
 		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 		add_action( 'contextual_help', array( $this, 'contextual_help' ), 10, 3 );
@@ -27,7 +27,7 @@ class Post_Parts {
 		
 		if ( is_admin() ) {
 			require_once( dirname( __FILE__ ) . '/admin/admin.php' );
-			$this->admin = new Post_Parts_Admin();
+			$this->admin = new Page_Parts_Admin();
 		}
 	
 	}
@@ -471,7 +471,7 @@ class Post_Parts {
 	
 }
 
-global $post_parts;
-$post_parts = new Post_Parts();
+global $Page_Parts;
+$Page_Parts = new Page_Parts();
 
 ?>
