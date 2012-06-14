@@ -3,8 +3,8 @@
 /*
 Plugin Name: Page Parts
 Version: 0.2
-Description: Manage subsections of a page.
-Author: Ben @ Camber
+Description: Manage subsections of a page. Requires WordPress 3.4.
+Author: Ben Huson
 */
 
 class Page_Parts {
@@ -22,8 +22,6 @@ class Page_Parts {
 		
 		add_filter( 'manage_edit-page-part_columns', array( $this, 'manage_edit_page_part_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ) );
-		
-		add_post_type_support( 'page-part', 'post-formats' );
 		
 		if ( is_admin() ) {
 			require_once( dirname( __FILE__ ) . '/admin/admin.php' );
@@ -201,54 +199,11 @@ class Page_Parts {
 			'post_type'   => 'page',
 	        'post_status' => 'publish,draft'
 		);
-		echo '<p>' . $this->wp_dropdown_pages( $args ) . '</p>';
+		echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
 		if ( $post->post_parent > 0 ) {
 			edit_post_link( 'Edit ' . get_the_title( $post->post_parent ), '<p>', '</p>', $post->post_parent );
 		}	
 	
-	}
-	
-	/**
-	 * Customise version of wp_dropdown_pages
-	 * to allow draft pages.
-	 * Fixed in WordPress 3.3?
-	 */
-	function wp_dropdown_pages($args = '') {
-	        $defaults = array(
-	                'depth' => 0, 'child_of' => 0,
-	                'selected' => 0, 'echo' => 1,
-	                'name' => 'page_id', 'id' => '',
-	                'show_option_none' => '', 'show_option_no_change' => '',
-	                'option_none_value' => '',
-	                'post_status' => 'publish'
-	        );
-	
-	        $r = wp_parse_args( $args, $defaults );
-	        extract( $r, EXTR_SKIP );
-	
-	        $pages = $this->get_pages($r);
-	        $output = '';
-	        $name = esc_attr($name);
-	        // Back-compat with old system where both id and name were based on $name argument
-	        if ( empty($id) )
-	                $id = $name;
-	
-	        if ( ! empty($pages) ) {
-	                $output = "<select name=\"$name\" id=\"$id\">\n";
-	                if ( $show_option_no_change )
-	                        $output .= "\t<option value=\"-1\">$show_option_no_change</option>";
-	                if ( $show_option_none )
-	                        $output .= "\t<option value=\"" . esc_attr($option_none_value) . "\">$show_option_none</option>\n";
-	                $output .= walk_page_dropdown_tree($pages, $depth, $r);
-	                $output .= "</select>\n";
-	        }
-	
-	        $output = apply_filters('wp_dropdown_pages', $output);
-	
-	        if ( $echo )
-	                echo $output;
-
-	        return $output;
 	}
 	
 	/**
