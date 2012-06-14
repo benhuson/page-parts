@@ -530,9 +530,9 @@ jQuery(function($) {
 	
 		while ( $temp_query->have_posts() ) : $temp_query->the_post();
 			echo '<tr id="post-2" class="sortable alternate author-self status-publish format-default iedit" valign="top">
-				<td class="column-preview" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">';
-			if ( has_post_background() ) {
-				the_post_background('thumbnail');
+				<td class="column-icon media-icon" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">';
+			if ( has_post_thumbnail() ) {
+				the_post_thumbnail( array( 80, 60 ) );
 			}
 			echo '
 				</td>
