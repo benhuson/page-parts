@@ -8,8 +8,7 @@ class Page_Parts_Admin {
 	function Page_Parts_Admin() {
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-		add_action( 'save_post', array( $this, 'save_page_parts_order' ) );
-		add_action( 'save_post', array( $this, 'save_page_part_parent' ) );
+		add_action( 'save_post', array( $this, 'save_page_parts' ) );
 		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 5, 2 );
 		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 		add_action( 'contextual_help', array( $this, 'contextual_help' ), 10, 3 );
@@ -157,6 +156,9 @@ class Page_Parts_Admin {
 	max-width:80px;
 	max-height:60px;
 }
+#page_parts .wp-list-table .column-status {
+	width:90px;
+}
 </style>
 			';
 		echo "
@@ -187,12 +189,11 @@ jQuery(function($) {
 	}
 	
 	/**
-	 * Save Page Parts Order
+	 * Save Page Parts
 	 *
 	 * @param $post_id int Post ID.
-	 * @return string Data.
 	 */
-	function save_page_parts_order( $post_id ) {
+	function save_page_parts( $post_id ) {
 		global $wpdb;
 		
 		// Verify if this is an auto save routine. If it is our form has not been submitted,
@@ -201,53 +202,24 @@ jQuery(function($) {
 			return $post_id;
 		}
 		
-		if ( empty( $_POST ) || ! isset( $_POST['_ajax_nonce-order-page-parts'] ) || ! wp_verify_nonce( $_POST['_ajax_nonce-order-page-parts'], 'order_page_parts' ) ) {
-			return $post_id;
+		// Save page part parent?
+		if ( isset( $_POST['page_parts_noncename'] ) && wp_verify_nonce( $_POST['page_parts_noncename'], plugin_basename( __FILE__ ) ) ) {
+			if ( isset( $_POST['parent_id'] ) && current_user_can( 'edit_page', $post_id ) ) {
+				$parent_id = absint( $_POST['parent_id'] );
+				$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
+			}
 		}
 		
-		// OK, we're authenticated: we need to find and save the data
-		if ( isset( $_POST['page_parts_order'] ) && is_array( $_POST['page_parts_order'] ) ) {
-			foreach ( $_POST['page_parts_order'] as $key => $val ) {
-				if ( absint( $key ) > 0 ) {
-					$wpdb->update( $wpdb->posts, array( 'menu_order' => absint( $val ) ), array( 'ID' => absint( $key ) ), array( '%d' ), array( '%d' ) );
+		// Save page parts order?
+		if ( isset( $_POST['_ajax_nonce-order-page-parts'] ) && wp_verify_nonce( $_POST['_ajax_nonce-order-page-parts'], 'order_page_parts' ) ) {
+			if ( isset( $_POST['page_parts_order'] ) && is_array( $_POST['page_parts_order'] ) ) {
+				foreach ( $_POST['page_parts_order'] as $key => $val ) {
+					if ( absint( $key ) > 0 ) {
+						$wpdb->update( $wpdb->posts, array( 'menu_order' => absint( $val ) ), array( 'ID' => absint( $key ) ), array( '%d' ), array( '%d' ) );
+					}
 				}
 			}
 		}
-		
-		return $_POST;
-	}
-	
-	/**
-	 * Save Page Part Parent
-	 *
-	 * @param $post_id int Post ID.
-	 * @return string Data.
-	 */
-	function save_page_part_parent( $post_id ) {
-		global $wpdb;
-		
-		// Verify if this is an auto save routine. 
-		// If it is our form has not been submitted, so we dont want to do anything
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
-			return;
-		
-		// Verify this came from the our screen and with proper authorization,
-		// because save_post can be triggered at other times
-		if ( ! isset( $_POST['page_parts_noncename'] ) || ! wp_verify_nonce( $_POST['page_parts_noncename'], plugin_basename( __FILE__ ) ) )
-			return;
-		
-		// Check permissions
-		if ( 'page-part' == $_POST['post_type'] ) {
-			if ( ! current_user_can( 'edit_page', $post_id ) ) {
-				return;
-			}
-		}
-		
-		// OK, we're authenticated: we need to find and save the data
-		$parent_id = absint( $_POST['parent_id'] );
-		$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
-		
-		return $parent_id;
 	}
 	
 	/**
@@ -273,9 +245,9 @@ jQuery(function($) {
 			<thead>
 				<tr>
 					<th scope="col" id="preview" class="manage-column column-title desc" style="width:50px;"></th>
-					<th scope="col" id="title" class="manage-column column-title desc"><div style="padding:4px 7px 5px 8px; border-bottom: none;">' . __( 'Title', 'page-parts' ) . '</div></th>
-					<th scope="col" id="order" class="manage-column column-author desc"><div style="padding:4px 7px 5px 8px; border-bottom: none;">' . __( 'Order', 'page-parts' ) . '</div></th>
-					<th scope="col" id="date" class="manage-column column-date asc"><div style="padding:4px 7px 5px 8px; border-bottom: none;">' . __( 'Status', 'page-parts' ) . '</div></th>
+					<th scope="col" id="title" class="manage-column column-title desc">' . __( 'Title', 'page-parts' ) . '</th>
+					<th scope="col" id="order" class="manage-column column-author desc">' . __( 'Order', 'page-parts' ) . '</th>
+					<th scope="col" id="status" class="manage-column column-status">' . __( 'Status', 'page-parts' ) . '</th>
 				</tr>
 			</thead>
 			<tbody id="the-list">';
@@ -295,7 +267,7 @@ jQuery(function($) {
 				<td class="order column-author" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">
 					<input name="page_parts_order[' . $post->ID . ']" type="text" size="4" id="page_parts_order[' . $post->ID . ']" value="' . $post->menu_order . '">
 				</td>
-				<td class="date column-date" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">' . get_post_status( $post->ID ) . '</td>
+				<td class="status column-status" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">' . $this->get_post_status_display( $post->ID ) . '</td>
 			</tr>';
 		endwhile;
 		
@@ -308,6 +280,32 @@ jQuery(function($) {
 		rewind_posts();
 		$post = clone $temp_post;
 	}
+	
+	function get_post_status_display( $post_id ) {
+		$status = get_post_status( $post_id );
+		switch ( $status ) {
+			case 'private':
+				$status = __( 'Privately Published' );
+				break;
+			case 'publish':
+				$status = __( 'Published' );
+				break;
+			case 'future':
+				$status = __( 'Scheduled' );
+				break;
+			case 'pending':
+				$status = __( 'Pending Review' );
+				break;
+			case 'draft':
+			case 'auto-draft':
+				$status = __( 'Draft' );
+				break;
+		}
+		return $status;
+	}
+
+
+
 	
 	/**
 	 * Don't do plugin update notifications
