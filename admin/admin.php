@@ -6,7 +6,6 @@ class Page_Parts_Admin {
 	 * Constructor
 	 */
 	function Page_Parts_Admin() {
-		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'save_post', array( $this, 'save_page_parts_order' ) );
@@ -50,6 +49,13 @@ class Page_Parts_Admin {
 	 * Add Meta Boxes
 	 */
 	function add_meta_boxes() {
+		add_meta_box(
+			'page_parts',
+			__( 'Page Parts', 'page-parts' ),
+			array( $this, 'page_parts_meta_box' ),
+			'page',
+			'advanced'
+		);
 		add_meta_box(
 			'page_parts_parent',
 			__( 'Parent Page', 'page-parts' ), 
@@ -165,15 +171,6 @@ jQuery(function($) {
 	 */
 	function admin_enqueue_scripts() {
 		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
-	}
-	
-	/**
-	 * Admin Menu
-	 */
-	function admin_menu() {
-		if ( function_exists( 'add_meta_box' ) ) {
-			add_meta_box( 'page_parts', __( 'Page Parts', 'page-parts' ), array( 'Page_Parts_Admin', 'page_parts_meta_box' ), 'page', 'advanced' );
-		}
 	}
 	
 	/**
