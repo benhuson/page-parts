@@ -27,7 +27,7 @@ class Page_Parts_Admin {
 		foreach ( $columns as $column => $value ) {
 			$new_columns[$column] = $value;
 			if ( $column == 'title' ) {
-				$new_columns['parent'] = 'Parent Page';
+				$new_columns['parent'] = __( 'Parent Page', 'page-parts' );
 			}
 		}
 		return $new_columns;
@@ -84,7 +84,7 @@ class Page_Parts_Admin {
 		);
 		echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
 		if ( $post->post_parent > 0 ) {
-			edit_post_link( 'Edit ' . get_the_title( $post->post_parent ), '<p>', '</p>', $post->post_parent );
+			edit_post_link( __( 'Edit', 'page-parts' ) . ' ' . get_the_title( $post->post_parent ), '<p>', '</p>', $post->post_parent );
 		}
 	}
 	
@@ -96,19 +96,19 @@ class Page_Parts_Admin {
 		
 		$messages['page-part'] = array(
 			0  => '', // Unused. Messages start at index 1.
-			1  => sprintf( __( 'Page Part updated. <a href="%s">View page part</a>' ), esc_url( get_permalink( $post_ID ) ) ),
+			1  => sprintf( __( 'Page Part updated. <a href="%s">View page part</a>', 'page-parts' ), esc_url( get_permalink( $post_ID ) ) ),
 			2  => __( 'Custom field updated.' ),
 			3  => __( 'Custom field deleted.' ),
-			4  => __( 'Page Part updated.' ),
+			4  => __( 'Page Part updated.', 'page-parts' ),
 			// translators: %s: date and time of the revision
-			5  => isset( $_GET['revision'] ) ? sprintf( __('Page Part restored to revision from %s' ), wp_post_revision_title( ( int ) $_GET['revision'], false ) ) : false,
-			6  => sprintf( __( 'Page Part published. <a href="%s">View page part</a>' ), esc_url( get_permalink( $post_ID ) ) ),
-			7  => __( 'Page Part saved.' ),
-			8  => sprintf( __( 'Page Part submitted. <a target="_blank" href="%s">Preview page part</a>' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
-			9  => sprintf( __( 'Page Part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>' ),
+			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Page Part restored to revision from %s', 'page-parts' ), wp_post_revision_title( ( int ) $_GET['revision'], false ) ) : false,
+			6  => sprintf( __( 'Page Part published. <a href="%s">View page part</a>', 'page-parts' ), esc_url( get_permalink( $post_ID ) ) ),
+			7  => __( 'Page Part saved.', 'page-parts' ),
+			8  => sprintf( __( 'Page Part submitted. <a target="_blank" href="%s">Preview page part</a>', 'page-parts' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+			9  => sprintf( __( 'Page Part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>', 'page-parts' ),
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
-			10 => sprintf( __( 'Page Part draft updated. <a target="_blank" href="%s">Preview page part</a>' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+				date_i18n( __( 'M j, Y @ G:i', 'page-parts' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
+			10 => sprintf( __( 'Page Part draft updated. <a target="_blank" href="%s">Preview page part</a>', 'page-parts' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
 		);
 		return $messages;
 	}
@@ -120,10 +120,10 @@ class Page_Parts_Admin {
 		//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
 		if ( 'page-part' == $screen->id ) {
 			$contextual_help =
-				'<p>' . __( 'Things to remember when adding or editing a page part:' ) . '</p>' .
-				'<p>Not a lot.</p>';
+				'<p>' . __( 'Things to remember when adding or editing a page part:', 'page-parts' ) . '</p>' .
+				'<p>' . __( 'Not a lot.', 'page-parts' ) . '</p>';
 		} elseif ( 'edit-page-part' == $screen->id ) {
-			$contextual_help = '<p>' . __( 'No page part documentation.' ) . '</p>';
+			$contextual_help = '<p>' . __( 'No page part documentation.', 'page-parts' ) . '</p>';
 		}
 		return $contextual_help;
 	}
@@ -172,7 +172,7 @@ jQuery(function($) {
 	 */
 	function admin_menu() {
 		if ( function_exists( 'add_meta_box' ) ) {
-			add_meta_box( 'page_parts', 'Page Parts', array( 'Page_Parts_Admin', 'page_parts_meta_box' ), 'page', 'advanced' );
+			add_meta_box( 'page_parts', __( 'Page Parts', 'page-parts' ), array( 'Page_Parts_Admin', 'page_parts_meta_box' ), 'page', 'advanced' );
 		}
 	}
 	
@@ -242,7 +242,7 @@ jQuery(function($) {
 		
 		$temp_post = clone $post;
 		
-		echo '<p><a href="post-new.php?post_type=page-part&parent_id=' . $post->ID . '">Add new page part</a></p>';
+		echo '<p><a href="post-new.php?post_type=page-part&parent_id=' . $post->ID . '">' . __( 'Add new page part', 'page-parts' ) . '</a></p>';
 		
 		$temp_query = new WP_Query( array(
 			'post_type'      => 'page-part',
@@ -257,9 +257,9 @@ jQuery(function($) {
 			<thead>
 				<tr>
 					<th scope="col" id="preview" class="manage-column column-title desc" style="width:50px;"></th>
-					<th scope="col" id="title" class="manage-column column-title desc" style=""><div style="padding:4px 7px 5px 8px; border-bottom: none;">Title</div></th>
-					<th scope="col" id="order" class="manage-column column-author desc" style=""><div style="padding:4px 7px 5px 8px; border-bottom: none;">Order</div></th>
-					<th scope="col" id="date" class="manage-column column-date asc" style=""><div style="padding:4px 7px 5px 8px; border-bottom: none;">Status</div></th>
+					<th scope="col" id="title" class="manage-column column-title desc"><div style="padding:4px 7px 5px 8px; border-bottom: none;">' . __( 'Title', 'page-parts' ) . '</div></th>
+					<th scope="col" id="order" class="manage-column column-author desc"><div style="padding:4px 7px 5px 8px; border-bottom: none;">' . __( 'Order', 'page-parts' ) . '</div></th>
+					<th scope="col" id="date" class="manage-column column-date asc"><div style="padding:4px 7px 5px 8px; border-bottom: none;">' . __( 'Status', 'page-parts' ) . '</div></th>
 				</tr>
 			</thead>
 			<tbody id="the-list">';
@@ -285,7 +285,7 @@ jQuery(function($) {
 		
 		echo '</tbody></table>';
 		
-		echo '<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="Order Page Parts">';
+		echo '<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="' . __( 'Order Page Parts', 'page-parts' ) . '">';
 		wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' );
 		
 		wp_reset_postdata();
