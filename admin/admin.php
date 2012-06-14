@@ -281,6 +281,12 @@ jQuery(function($) {
 		$post = clone $temp_post;
 	}
 	
+	/**
+	 * Get Post Status Display
+	 *
+	 * @param $post_id int Post ID.
+	 * @return string Post status display.
+	 */
 	function get_post_status_display( $post_id ) {
 		$status = get_post_status( $post_id );
 		switch ( $status ) {
@@ -303,9 +309,6 @@ jQuery(function($) {
 		}
 		return $status;
 	}
-
-
-
 	
 	/**
 	 * Don't do plugin update notifications
