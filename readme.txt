@@ -2,8 +2,8 @@
 Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.4
-Tested up to: 3.4
-Stable tag: 0.2
+Tested up to: 3.7.1
+Stable tag: 0.3
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,13 @@ Manage subsections of a page. Create 'page parts' as children of a page to displ
 Either enter numbers in the order fields or drag them into the order you want.
 
 == Changelog ==
+
+= 0.3 =
+
+* Shows post thumbnail if available.
+* Added language support.
+* Display page part status in admin list.
+* Added 'register_page_part_args' filter.
 
 = 0.2 =
 

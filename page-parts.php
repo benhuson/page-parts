@@ -4,7 +4,7 @@
 Plugin Name: Page Parts
 Plugin URI: https://github.com/benhuson/page-parts
 Description: Manage subsections of a page. Requires WordPress 3.4.
-Version: 0.2
+Version: 0.3
 Author: Ben Huson
 Author URI: http://profiles.wordpress.org/husobj
 License: GPL2
