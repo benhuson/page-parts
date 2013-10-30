@@ -1,7 +1,7 @@
 <?php
 
 class Page_Parts_Admin {
-	
+
 	/**
 	 * Constructor
 	 */
@@ -16,12 +16,12 @@ class Page_Parts_Admin {
 		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 	}
-	
+
 	/**
 	 * Manage Page Part Columns
 	 *
-	 * @param $columns array Key/value pairs of columns.
-	 * @return array List of columns.
+	 * @param   array  $columns  Key/value pairs of columns.
+	 * @return  array            List of columns.
 	 */
 	function manage_edit_page_part_columns( $columns ) {
 		$new_columns = array();
@@ -33,22 +33,22 @@ class Page_Parts_Admin {
 		}
 		return $new_columns;
 	}
-	
+
 	/**
 	 * Manage Page Part Columns Output
 	 *
-	 * @param $name string Current column name.
+	 * @param  string  $name  Current column name.
 	 */
 	function manage_posts_custom_column( $name ) {
 		global $post;
-		
+
 		switch ( $name ) {
 			case 'parent':
 				$parent = $post->post_parent;
 				edit_post_link( get_the_title( $post->post_parent ), null, null, $post->post_parent );
 		}
 	}
-	
+
 	/**
 	 * Add Meta Boxes
 	 */
@@ -69,19 +69,19 @@ class Page_Parts_Admin {
 			'core'
 		);
 	}
-	
+
 	/**
 	 * Add Parent Meta Box
 	 */
 	function parent_meta_box() {
 		global $post;
-		
+
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'page_parts_noncename' );
-		
+
 		if ( empty( $post->post_parent ) && isset( $_REQUEST['parent_id'] ) )
 			$post->post_parent = $_REQUEST['parent_id'];
-		
+
 		// The actual fields for data entry
 		$args = array(
 			'selected'    => absint( $post->post_parent ),
@@ -97,16 +97,16 @@ class Page_Parts_Admin {
 			edit_post_link( __( 'Edit', 'page-parts' ) . ' ' . get_the_title( $post->post_parent ), '<p>', '</p>', $post->post_parent );
 		}
 	}
-	
+
 	/**
 	 * Updated Messages
 	 *
-	 * @param $messages array List of messages.
-	 * @return array List of messages.
+	 * @param   array  $messages  List of messages.
+	 * @return  array             List of messages.
 	 */
 	function updated_messages( $messages ) {
 		global $post, $post_ID;
-		
+
 		$messages['page-part'] = array(
 			0  => '', // Unused. Messages start at index 1.
 			1  => sprintf( __( 'Page Part updated. <a href="%s">View page part</a>', 'page-parts' ), esc_url( get_permalink( $post_ID ) ) ),
@@ -125,14 +125,14 @@ class Page_Parts_Admin {
 		);
 		return $messages;
 	}
-	
+
 	/**
 	 * Contextual Help
 	 *
-	 * @param $contextual_help string Contextual help HTML.
-	 * @param $screen_id string Screen ID.
-	 * @param $screen object Screen object.
-	 * @return string HTML output.
+	 * @param   string  $contextual_help  Contextual help HTML.
+	 * @param   string  $screen_id        Screen ID.
+	 * @param   object  $screen           Screen object.
+	 * @return  string                    HTML output.
 	 */
 	function contextual_help( $contextual_help, $screen_id, $screen ) { 
 		//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
@@ -145,7 +145,7 @@ class Page_Parts_Admin {
 		}
 		return $contextual_help;
 	}
-	
+
 	/**
 	 * Admin Head
 	 */
@@ -180,28 +180,28 @@ jQuery(function($) {
 </script>
 		";
 	}
-	
+
 	/**
 	 * Admin Enqueue Scripts
 	 */
 	function admin_enqueue_scripts() {
 		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
 	}
-	
+
 	/**
 	 * Save Page Parts
 	 *
-	 * @param $post_id int Post ID.
+	 * @param  int  $post_id  Post ID.
 	 */
 	function save_page_parts( $post_id ) {
 		global $wpdb;
-		
+
 		// Verify if this is an auto save routine. If it is our form has not been submitted,
 		// so we dont want to do anything
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return $post_id;
 		}
-		
+
 		// Save page part parent?
 		if ( isset( $_POST['page_parts_noncename'] ) && wp_verify_nonce( $_POST['page_parts_noncename'], plugin_basename( __FILE__ ) ) ) {
 			if ( isset( $_POST['parent_id'] ) && current_user_can( 'edit_page', $post_id ) ) {
@@ -209,7 +209,7 @@ jQuery(function($) {
 				$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
 			}
 		}
-		
+
 		// Save page parts order?
 		if ( isset( $_POST['_ajax_nonce-order-page-parts'] ) && wp_verify_nonce( $_POST['_ajax_nonce-order-page-parts'], 'order_page_parts' ) ) {
 			if ( isset( $_POST['page_parts_order'] ) && is_array( $_POST['page_parts_order'] ) ) {
@@ -221,17 +221,17 @@ jQuery(function($) {
 			}
 		}
 	}
-	
+
 	/**
 	 * Page Parts Meta Box
 	 */
 	function page_parts_meta_box() {
 		global $post, $wp_query;
-		
+
 		$temp_post = clone $post;
-		
+
 		echo '<p><a href="post-new.php?post_type=page-part&parent_id=' . $post->ID . '">' . __( 'Add new page part', 'page-parts' ) . '</a></p>';
-		
+
 		$temp_query = new WP_Query( array(
 			'post_type'      => 'page-part',
 			'post_parent'    => $post->ID,
@@ -240,7 +240,7 @@ jQuery(function($) {
 			'order'          => 'ASC',
 			'posts_per_page' => -1
 		) );
-		
+
 		echo '<table class="wp-list-table widefat fixed pages" cellspacing="0" style="margin:5px 0;">
 			<thead>
 				<tr>
@@ -251,7 +251,7 @@ jQuery(function($) {
 				</tr>
 			</thead>
 			<tbody id="the-list">';
-	
+
 		while ( $temp_query->have_posts() ) : $temp_query->the_post();
 			echo '<tr id="post-2" class="sortable alternate author-self status-publish format-default iedit" valign="top">
 				<td class="column-icon media-icon" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">';
@@ -270,22 +270,22 @@ jQuery(function($) {
 				<td class="status column-status" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">' . $this->get_post_status_display( $post->ID ) . '</td>
 			</tr>';
 		endwhile;
-		
+
 		echo '</tbody></table>';
-		
+
 		echo '<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="' . __( 'Order Page Parts', 'page-parts' ) . '">';
 		wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' );
-		
+
 		wp_reset_postdata();
 		rewind_posts();
 		$post = clone $temp_post;
 	}
-	
+
 	/**
 	 * Get Post Status Display
 	 *
-	 * @param $post_id int Post ID.
-	 * @return string Post status display.
+	 * @param   int  $post_id  Post ID.
+	 * @return  string         Post status display.
 	 */
 	function get_post_status_display( $post_id ) {
 		$status = get_post_status( $post_id );
@@ -309,7 +309,7 @@ jQuery(function($) {
 		}
 		return $status;
 	}
-	
+
 	/**
 	 * Don't do plugin update notifications
 	 * props. Mark Jaquith
@@ -323,7 +323,5 @@ jQuery(function($) {
 		$r['body']['plugins'] = serialize( $plugins );
 		return $r;
 	}
-	
-}
 
-?>
+}
