@@ -164,8 +164,6 @@ class Page_Parts_Admin {
 		</style>
 
 		<script type="text/javascript">
-		function sortPageParts() {
-		}
 		jQuery( function( $ ) {
 			$( '#page_parts table.wp-list-table tbody' ).sortable( {
 				accept : 'sortable',
