@@ -5,7 +5,7 @@ class Page_Parts_Admin {
 	/**
 	 * Constructor
 	 */
-	function Page_Parts_Admin() {
+	public function Page_Parts_Admin() {
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'save_post', array( $this, 'save_page_parts' ) );
@@ -23,10 +23,10 @@ class Page_Parts_Admin {
 	 * @param   array  $columns  Key/value pairs of columns.
 	 * @return  array            List of columns.
 	 */
-	function manage_edit_page_part_columns( $columns ) {
+	public function manage_edit_page_part_columns( $columns ) {
 		$new_columns = array();
 		foreach ( $columns as $column => $value ) {
-			$new_columns[$column] = $value;
+			$new_columns[ $column ] = $value;
 			if ( $column == 'title' ) {
 				$new_columns['parent'] = __( 'Parent Page', 'page-parts' );
 			}
@@ -39,7 +39,7 @@ class Page_Parts_Admin {
 	 *
 	 * @param  string  $name  Current column name.
 	 */
-	function manage_posts_custom_column( $name ) {
+	public function manage_posts_custom_column( $name ) {
 		global $post;
 
 		switch ( $name ) {
@@ -52,7 +52,7 @@ class Page_Parts_Admin {
 	/**
 	 * Add Meta Boxes
 	 */
-	function add_meta_boxes() {
+	public function add_meta_boxes() {
 		add_meta_box(
 			'page_parts',
 			__( 'Page Parts', 'page-parts' ),
@@ -73,14 +73,15 @@ class Page_Parts_Admin {
 	/**
 	 * Add Parent Meta Box
 	 */
-	function parent_meta_box() {
+	public function parent_meta_box() {
 		global $post;
 
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'page_parts_noncename' );
 
-		if ( empty( $post->post_parent ) && isset( $_REQUEST['parent_id'] ) )
+		if ( empty( $post->post_parent ) && isset( $_REQUEST['parent_id'] ) ) {
 			$post->post_parent = $_REQUEST['parent_id'];
+		}
 
 		// The actual fields for data entry
 		$args = array(
@@ -104,7 +105,7 @@ class Page_Parts_Admin {
 	 * @param   array  $messages  List of messages.
 	 * @return  array             List of messages.
 	 */
-	function updated_messages( $messages ) {
+	public function updated_messages( $messages ) {
 		global $post, $post_ID;
 
 		$messages['page-part'] = array(
@@ -114,7 +115,7 @@ class Page_Parts_Admin {
 			3  => __( 'Custom field deleted.' ),
 			4  => __( 'Page Part updated.', 'page-parts' ),
 			// translators: %s: date and time of the revision
-			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Page Part restored to revision from %s', 'page-parts' ), wp_post_revision_title( ( int ) $_GET['revision'], false ) ) : false,
+			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Page Part restored to revision from %s', 'page-parts' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6  => sprintf( __( 'Page Part published. <a href="%s">View page part</a>', 'page-parts' ), esc_url( get_permalink( $post_ID ) ) ),
 			7  => __( 'Page Part saved.', 'page-parts' ),
 			8  => sprintf( __( 'Page Part submitted. <a target="_blank" href="%s">Preview page part</a>', 'page-parts' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
@@ -134,7 +135,7 @@ class Page_Parts_Admin {
 	 * @param   object  $screen           Screen object.
 	 * @return  string                    HTML output.
 	 */
-	function contextual_help( $contextual_help, $screen_id, $screen ) { 
+	public function contextual_help( $contextual_help, $screen_id, $screen ) { 
 		//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
 		if ( 'page-part' == $screen->id ) {
 			$contextual_help =
@@ -149,42 +150,43 @@ class Page_Parts_Admin {
 	/**
 	 * Admin Head
 	 */
-	function admin_head() {
-		echo '
-<style>
-#page_parts .wp-list-table .media-icon img {
-	max-width:80px;
-	max-height:60px;
-}
-#page_parts .wp-list-table .column-status {
-	width:90px;
-}
-</style>
-			';
-		echo "
-<script type=\"text/javascript\">
-function sortPageParts() {
-}
-jQuery(function($) {
-	$('#page_parts table.wp-list-table tbody').sortable( {
-		accept: 'sortable',
-		stop: function(event, ui) {
-			var order_count = 0;
-			$('#page_parts table.wp-list-table td.order input').each(function(){
-				$(this).val(order_count);
-				order_count++;
-			});
+	public function admin_head() {
+		?>
+
+		<style>
+		#page_parts .wp-list-table .media-icon img {
+			max-width: 80px;
+			max-height: 60px;
 		}
-	} );
-});
-</script>
-		";
+		#page_parts .wp-list-table .column-status {
+			width: 90px;
+		}
+		</style>
+
+		<script type="text/javascript">
+		function sortPageParts() {
+		}
+		jQuery( function( $ ) {
+			$( '#page_parts table.wp-list-table tbody' ).sortable( {
+				accept : 'sortable',
+				stop   : function( event, ui ) {
+					var order_count = 0;
+					$( '#page_parts table.wp-list-table td.order input' ).each( function() {
+						$( this ).val( order_count );
+						order_count++;
+					} );
+				}
+			} );
+		} );
+		</script>
+
+		<?php
 	}
 
 	/**
 	 * Admin Enqueue Scripts
 	 */
-	function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts() {
 		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
 	}
 
@@ -193,7 +195,7 @@ jQuery(function($) {
 	 *
 	 * @param  int  $post_id  Post ID.
 	 */
-	function save_page_parts( $post_id ) {
+	public function save_page_parts( $post_id ) {
 		global $wpdb;
 
 		// Verify if this is an auto save routine. If it is our form has not been submitted,
@@ -225,7 +227,7 @@ jQuery(function($) {
 	/**
 	 * Page Parts Meta Box
 	 */
-	function page_parts_meta_box() {
+	public function page_parts_meta_box() {
 		global $post, $wp_query;
 
 		$temp_post = clone $post;
@@ -284,10 +286,10 @@ jQuery(function($) {
 	/**
 	 * Get Post Status Display
 	 *
-	 * @param   int  $post_id  Post ID.
-	 * @return  string         Post status display.
+	 * @param   int     $post_id  Post ID.
+	 * @return  string            Post status display.
 	 */
-	function get_post_status_display( $post_id ) {
+	public function get_post_status_display( $post_id ) {
 		$status = get_post_status( $post_id );
 		switch ( $status ) {
 			case 'private':
@@ -314,9 +316,10 @@ jQuery(function($) {
 	 * Don't do plugin update notifications
 	 * props. Mark Jaquith
 	 */
-	function http_request_args( $r, $url ) {
-		if ( 0 !== strpos( $url, 'http://api.wordpress.org/plugins/update-check' ) )
+	public function http_request_args( $r, $url ) {
+		if ( 0 !== strpos( $url, 'http://api.wordpress.org/plugins/update-check' ) ) {
 			return $r; // Not a plugin update request. Bail immediately.
+		}
 		$plugins = unserialize( $r['body']['plugins'] );
 		unset( $plugins->plugins[ plugin_basename( __FILE__ ) ] );
 		unset( $plugins->active[ array_search( plugin_basename( __FILE__ ), $plugins->active ) ] );

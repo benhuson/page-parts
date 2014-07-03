@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 Plugin Name: Page Parts
@@ -6,7 +6,7 @@ Plugin URI: https://github.com/benhuson/page-parts
 Description: Manage subsections of a page. Requires WordPress 3.4.
 Version: 0.3
 Author: Ben Huson
-Author URI: http://profiles.wordpress.org/husobj
+Author URI: https://github.com/benhuson
 License: GPL2
 */
 
@@ -17,7 +17,7 @@ class Page_Parts {
 	/**
 	 * Constructor
 	 */
-	function Page_Parts() {
+	public function Page_Parts() {
 
 		// Language
 		load_plugin_textdomain( 'page-parts', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -34,7 +34,7 @@ class Page_Parts {
 	/**
 	 * Register Post Part Post Type
 	 */
-	function register_post_types() {
+	public function register_post_types() {
 		$args = array(
 			'labels'              => array(
 				'name'               => _x( 'Page Parts', 'post type general name', 'page-parts' ),
@@ -70,16 +70,17 @@ class Page_Parts {
 
 	/**
 	 * Post Part Link
+	 *
 	 * By default, the link for a page part will link to an anchor with the post part slug.
 	 * For example http://www.example.com/my-page#my-page-part
 	 *
-	 * @param $post_link string Post Part URL.
-	 * @param $post object Post object.
-	 * @param $leavename bool Optional, defaults to false. Whether to keep post name.
-	 * @param $sample bool Optional, defaults to false. Is it a sample permalink.
-	 * @return string Post Part URL.
+	 * @param   string  $post_link  Post Part URL.
+	 * @param   object  $post       Post object.
+	 * @param   bool    $leavename  Optional, defaults to false. Whether to keep post name.
+	 * @param   bool    $sample     Optional, defaults to false. Is it a sample permalink.
+	 * @return  string              Post Part URL.
 	 */
-	function post_part_link( $post_link, $post, $leavename, $sample ) {
+	public function post_part_link( $post_link, $post, $leavename, $sample ) {
 		if ( $post->post_type == 'page-part' && $post->post_parent > 0 ) {
 			$post_link = get_permalink( $post->post_parent ) . '#' . $post->post_name;
 		}
