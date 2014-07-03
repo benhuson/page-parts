@@ -225,59 +225,63 @@ class Page_Parts_Admin {
 	 * Page Parts Meta Box
 	 */
 	public function page_parts_meta_box() {
-		global $post, $wp_query;
+		global $post;
 
-		$temp_post = clone $post;
-
-		echo '<p><a href="post-new.php?post_type=page-part&parent_id=' . $post->ID . '">' . __( 'Add new page part', 'page-parts' ) . '</a></p>';
-
-		$temp_query = new WP_Query( array(
+		$page_part_query = new WP_Query( array(
 			'post_type'      => 'page-part',
 			'post_parent'    => $post->ID,
-			'post_status'    => 'publish,pending,draft,auto-draft,future,private,trash',
+			'post_status'    => array( 'publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'trash' ),
 			'orderby'        => 'menu_order',
 			'order'          => 'ASC',
 			'posts_per_page' => -1
 		) );
 
-		echo '<table class="wp-list-table widefat fixed pages" cellspacing="0" style="margin:5px 0;">
+		?>
+
+		<p><a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>"><?php _e( 'Add new page part', 'page-parts' ); ?></a></p>
+
+		<table class="wp-list-table widefat fixed pages" cellspacing="0" style="margin: 5px 0;">
 			<thead>
 				<tr>
-					<th scope="col" id="preview" class="manage-column column-title desc" style="width:50px;"></th>
-					<th scope="col" id="title" class="manage-column column-title desc">' . __( 'Title', 'page-parts' ) . '</th>
-					<th scope="col" id="order" class="manage-column column-author desc">' . __( 'Order', 'page-parts' ) . '</th>
-					<th scope="col" id="status" class="manage-column column-status">' . __( 'Status', 'page-parts' ) . '</th>
+					<th scope="col" id="preview" class="manage-column column-title desc" style="width: 50px;"></th>
+					<th scope="col" id="title" class="manage-column column-title desc"><?php _e( 'Title', 'page-parts' ); ?></th>
+					<th scope="col" id="order" class="manage-column column-author desc"><?php _e( 'Order', 'page-parts' ); ?></th>
+					<th scope="col" id="status" class="manage-column column-status"><?php _e( 'Status', 'page-parts' ); ?></th>
 				</tr>
 			</thead>
-			<tbody id="the-list">';
+			<tbody id="the-list">
 
-		while ( $temp_query->have_posts() ) : $temp_query->the_post();
-			echo '<tr id="post-2" class="sortable alternate author-self status-publish format-default iedit" valign="top">
-				<td class="column-icon media-icon" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">';
-			if ( has_post_thumbnail() ) {
-				the_post_thumbnail( array( 80, 60 ) );
-			}
-			echo '
-				</td>
-				<td class="post-title page-title column-title" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;"><strong class="row-title">';
-					edit_post_link( get_the_title(), null, null, $post->ID );
-					echo '</strong>
-				</td>
-				<td class="order column-author" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">
-					<input name="page_parts_order[' . $post->ID . ']" type="text" size="4" id="page_parts_order[' . $post->ID . ']" value="' . $post->menu_order . '">
-				</td>
-				<td class="status column-status" style="padding:5px 8px;border-top: 1px solid #DFDFDF;border-bottom: none;">' . $this->get_post_status_display( $post->ID ) . '</td>
-			</tr>';
-		endwhile;
+				<?php while ( $page_part_query->have_posts() ) : $page_part_query->the_post(); ?>
 
-		echo '</tbody></table>';
+					<tr id="post-2" class="sortable alternate author-self status-publish format-default iedit" valign="top">
+						<td class="column-icon media-icon" style="padding: 5px 8px; border-top: 1px solid #DFDFDF; border-bottom: none;">
+							<?php
+							if ( has_post_thumbnail() ) {
+								the_post_thumbnail( array( 80, 60 ) );
+							}
+							?>
+						</td>
+						<td class="post-title page-title column-title" style="padding: 5px 8px; border-top: 1px solid #DFDFDF; border-bottom: none;">
+							<strong class="row-title"><?php edit_post_link( get_the_title(), null, null, get_the_ID() ); ?></strong>
+						</td>
+						<td class="order column-author" style="padding: 5px 8px; border-top: 1px solid #DFDFDF; border-bottom: none;">
+							<input name="page_parts_order[<?php the_ID(); ?>]" type="text" size="4" id="page_parts_order[<?php the_ID(); ?>]" value="<?php echo $post->menu_order; ?>" />
+						</td>
+						<td class="status column-status" style="padding: 5px 8px; border-top: 1px solid #DFDFDF; border-bottom: none;">
+							<?php echo $this->get_post_status_display( get_the_ID() ); ?>
+						</td>
+					</tr>
 
-		echo '<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="' . __( 'Order Page Parts', 'page-parts' ) . '">';
-		wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' );
+				<?php endwhile; ?>
+				<?php wp_reset_query(); ?>
 
-		wp_reset_postdata();
-		rewind_posts();
-		$post = clone $temp_post;
+			</tbody>
+		</table>
+
+		<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Order Page Parts', 'page-parts' ); ?>">
+		<?php wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' ); ?>
+
+		<?php
 	}
 
 	/**
