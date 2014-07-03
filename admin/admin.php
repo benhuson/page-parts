@@ -43,8 +43,7 @@ class Page_Parts_Admin {
 		global $post;
 
 		switch ( $name ) {
-			case 'parent':
-				$parent = $post->post_parent;
+			case 'parent' :
 				edit_post_link( get_the_title( $post->post_parent ), null, null, $post->post_parent );
 		}
 	}
