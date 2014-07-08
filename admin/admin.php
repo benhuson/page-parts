@@ -246,6 +246,10 @@ class Page_Parts_Admin {
 			height: auto;
 			max-width: 100%;
 		}
+		.wp-list-table.page-parts tr.ui-sortable-helper {
+			background-color: rgba( 255, 255, 255, .9 ) !important;
+			border: 1px solid #e5e5e5;
+		}
 		</style>
 
 		<?php
