@@ -226,91 +226,46 @@ class Page_Parts_Admin {
 	 */
 	public function page_parts_meta_box() {
 		global $post;
-
-		$page_part_query = new WP_Query( array(
-			'post_type'      => 'page-part',
-			'post_parent'    => $post->ID,
-			'post_status'    => array( 'publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'trash' ),
-			'orderby'        => 'menu_order',
-			'order'          => 'ASC',
-			'posts_per_page' => -1
-		) );
-
 		?>
 
-		<p><a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>"><?php _e( 'Add new page part', 'page-parts' ); ?></a></p>
+		<style type="text/css">
+		.wp-list-table.page-parts {
+			margin: 5px 0;
+		}
+		.wp-list-table.page-parts .column-preview {
+			width: 50px;
+		}
+		.wp-list-table.page-parts .column-order {
+			width: 65px;
+		}
+		.wp-list-table.page-parts .column-order input {
+			width: 100%;
+		}
+		.wp-list-table.page-parts tbody .column-preview {
+		}
+		.wp-list-table.page-parts tbody .column-preview img {
+			display: block;
+			height: auto;
+			max-width: 100%;
+		}
+		</style>
 
-		<table class="wp-list-table widefat fixed pages" cellspacing="0" style="margin: 5px 0;">
-			<thead>
-				<tr>
-					<th scope="col" id="preview" class="manage-column column-title desc" style="width: 50px;"></th>
-					<th scope="col" id="title" class="manage-column column-title desc"><?php _e( 'Title', 'page-parts' ); ?></th>
-					<th scope="col" id="order" class="manage-column column-author desc"><?php _e( 'Order', 'page-parts' ); ?></th>
-					<th scope="col" id="status" class="manage-column column-status"><?php _e( 'Status', 'page-parts' ); ?></th>
-				</tr>
-			</thead>
-			<tbody id="the-list">
+		<?php
+		require_once( dirname( __FILE__ ) . '/page-parts-list-table.php' );
 
-				<?php while ( $page_part_query->have_posts() ) : $page_part_query->the_post(); ?>
+		$wp_list_table = new Page_Parts_List_Table();
+		$wp_list_table->prepare_items();
+		$wp_list_table->display();
+		?>
 
-					<tr id="post-2" class="sortable alternate author-self status-publish format-default iedit" valign="top">
-						<td class="column-icon media-icon" style="padding: 5px 8px; border-top: 1px solid #DFDFDF; border-bottom: none;">
-							<?php
-							if ( has_post_thumbnail() ) {
-								the_post_thumbnail( array( 80, 60 ) );
-							}
-							?>
-						</td>
-						<td class="post-title page-title column-title" style="padding: 5px 8px; border-top: 1px solid #DFDFDF; border-bottom: none;">
-							<strong class="row-title"><?php edit_post_link( get_the_title(), null, null, get_the_ID() ); ?></strong>
-						</td>
-						<td class="order column-author" style="padding: 5px 8px; border-top: 1px solid #DFDFDF; border-bottom: none;">
-							<input name="page_parts_order[<?php the_ID(); ?>]" type="text" size="4" id="page_parts_order[<?php the_ID(); ?>]" value="<?php echo $post->menu_order; ?>" />
-						</td>
-						<td class="status column-status" style="padding: 5px 8px; border-top: 1px solid #DFDFDF; border-bottom: none;">
-							<?php echo $this->get_post_status_display( get_the_ID() ); ?>
-						</td>
-					</tr>
+		<p>
+			<a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>" class="button button-primary"><?php _e( 'Add new page part', 'page-parts' ); ?></a>
+			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Save Page Parts Order', 'page-parts' ); ?>">
+		</p>
 
-				<?php endwhile; ?>
-				<?php wp_reset_query(); ?>
-
-			</tbody>
-		</table>
-
-		<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Order Page Parts', 'page-parts' ); ?>">
 		<?php wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' ); ?>
 
 		<?php
-	}
-
-	/**
-	 * Get Post Status Display
-	 *
-	 * @param   int     $post_id  Post ID.
-	 * @return  string            Post status display.
-	 */
-	public function get_post_status_display( $post_id ) {
-		$status = get_post_status( $post_id );
-		switch ( $status ) {
-			case 'private':
-				$status = __( 'Privately Published' );
-				break;
-			case 'publish':
-				$status = __( 'Published' );
-				break;
-			case 'future':
-				$status = __( 'Scheduled' );
-				break;
-			case 'pending':
-				$status = __( 'Pending Review' );
-				break;
-			case 'draft':
-			case 'auto-draft':
-				$status = __( 'Draft' );
-				break;
-		}
-		return $status;
 	}
 
 	/**
