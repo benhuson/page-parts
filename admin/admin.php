@@ -93,9 +93,7 @@ class Page_Parts_Admin {
 	        'post_status' => 'publish,draft'
 		);
 		echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
-		if ( $post->post_parent > 0 ) {
-			edit_post_link( __( 'Edit', 'page-parts' ) . ' ' . get_the_title( $post->post_parent ), '<p>', '</p>', $post->post_parent );
-		}
+		echo '<p><a class="post-edit-link button button-small" href="' . get_edit_post_link( $post->post_parent ) . '">' . __( 'Edit Parent', 'page-parts' ) . '</a></p>';
 	}
 
 	/**
