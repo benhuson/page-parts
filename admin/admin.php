@@ -151,27 +151,64 @@ class Page_Parts_Admin {
 		?>
 
 		<style>
-		#page_parts .wp-list-table .media-icon img {
-			max-width: 80px;
-			max-height: 60px;
+
+		#page_parts table.wp-list-table.page-parts {
+			position: relative;
+			table-layout: fixed;
 		}
-		#page_parts .wp-list-table .column-status {
+		#page_parts table.wp-list-table.page-parts .column-preview img {
+			max-width: 50px;
+			max-height: 50px;
+		}
+		#page_parts table.wp-list-table.page-parts .column-status {
 			width: 90px;
+		}
+		.js #page_parts table.wp-list-table.page-parts .column-order {
+			text-align: center;
+		}
+		.js #page_parts table.wp-list-table.page-parts td.column-order .handle {
+			cursor: move;
+			display: inline-block;
+			font-size: 18px;
+			line-height: 24px;
+			opacity: .5;
+			width: 24px;
+			height: 24px;
+		}
+		.js #page_parts table.wp-list-table.page-parts td.column-order .handle:hover {
+			opacity: 1;
+		}
+		.js #page_parts table.wp-list-table.page-parts .sortable-placeholder {
+			background-color: #f1f1f1;
+		}
+		.js #page_parts table.wp-list-table.page-parts .ui-sortable-helper {
+			display: table;
+			table-layout: fixed;
 		}
 		</style>
 
 		<script type="text/javascript">
 		jQuery( function( $ ) {
+			var pagePartsTable = $( '#page_parts table.wp-list-table.page-parts' );
 			$( '#page_parts table.wp-list-table tbody' ).sortable( {
-				accept : 'sortable',
-				stop   : function( event, ui ) {
+				accept               : 'sortable',
+				containment          : 'parent',
+				forceHelperSize      : true,
+				forcePlaceholderSize : true,
+				handle               : '.handle',
+				placeholder          : 'sortable-placeholder',
+				stop                 : function( event, ui ) {
 					var order_count = 0;
-					$( '#page_parts table.wp-list-table td.order input' ).each( function() {
+					pagePartsTable.find( 'tr' ).removeClass( 'alternate' );
+					pagePartsTable.find( 'tr:odd' ).addClass( 'alternate' );
+					pagePartsTable.find( 'td.order input' ).each( function() {
 						$( this ).val( order_count );
 						order_count++;
 					} );
 				}
 			} );
+			pagePartsTable.find( 'tbody td.column-order' ).append( '<span class="handle dashicons dashicons-menu"></span>' );
+			pagePartsTable.find( 'tbody td.column-order input' ).css( 'display', 'none' );
 		} );
 		</script>
 
