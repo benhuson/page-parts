@@ -2,8 +2,8 @@
 Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.4
-Tested up to: 3.7.1
-Stable tag: 0.3
+Tested up to: 3.79.1
+Stable tag: 0.4
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,12 @@ Manage subsections of a page. Create 'page parts' as children of a page to displ
 Either enter numbers in the order fields or drag them into the order you want.
 
 == Changelog ==
+
+= 0.4 =
+
+* Improve drag and drop interface - uses a 'handle' so as to not interfere with links etc.
+* Order now updated immediate after drag and drop via AJAX.
+* Admin table displayed using WP_List_Table class.
 
 = 0.3 =
 
