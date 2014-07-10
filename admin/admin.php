@@ -285,7 +285,7 @@ class Page_Parts_Admin {
 		if ( ! empty( $failed ) ) {
 			$response['error'] = __( 'Unable to save the pag part sort order. Please try again.', 'page-parts' );
 			$response['errorIDs'] = $failed;
-			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $$response['errorIDs'] );
+			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $response['errorIDs'] );
 		}
 
 		// Response
