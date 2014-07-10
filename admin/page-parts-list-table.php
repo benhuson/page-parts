@@ -130,7 +130,6 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * Display Table
 	 */
 	function display() {
-		extract( $this->_args );
 		?>
 		<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
 			<thead>
@@ -138,7 +137,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 					<?php $this->print_column_headers(); ?>
 				</tr>
 			</thead>
-			<tbody id="the-list"<?php if ( $singular ) echo " data-wp-lists='list:$singular'"; ?>>
+			<tbody id="the-list" data-wp-lists="list:page-part">
 				<?php $this->display_rows_or_placeholder(); ?>
 			</tbody>
 		</table>
