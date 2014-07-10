@@ -171,19 +171,19 @@ class Page_Parts_Admin {
 			display: inline-block;
 			font-size: 18px;
 			line-height: 24px;
-			opacity: .5;
-			width: 24px;
+			opacity: .6;
+			width: 50px;
 			height: 24px;
 		}
 		.js #page_parts table.wp-list-table.page-parts td.column-order .handle:hover {
 			opacity: 1;
 		}
 		.js #page_parts table.wp-list-table.page-parts .sortable-placeholder {
-			background-color: #f1f1f1;
+			background-color: #fffbcc;
+			height: 60px;
 		}
 		.js #page_parts table.wp-list-table.page-parts .ui-sortable-helper {
-			display: table;
-			table-layout: fixed;
+			display: block;
 		}
 		</style>
 
