@@ -15,6 +15,7 @@ class Page_Parts_Admin {
 		add_filter( 'manage_edit-page-part_columns', array( $this, 'manage_edit_page_part_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
+		add_action( 'wp_ajax_page_parts_dragndrop_order', array( $this, 'dragndrop_order_ajax_callback' ) );
 	}
 
 	/**
@@ -170,10 +171,14 @@ class Page_Parts_Admin {
 			cursor: move;
 			display: inline-block;
 			font-size: 18px;
-			line-height: 24px;
+			line-height: 22px;
 			opacity: .6;
 			width: 50px;
-			height: 24px;
+			height: 22px;
+		}
+		.js #page_parts table.wp-list-table.page-parts td.column-order .spinner {
+			display: none;
+			float: none;
 		}
 		.js #page_parts table.wp-list-table.page-parts td.column-order .handle:hover {
 			opacity: 1;
@@ -185,6 +190,9 @@ class Page_Parts_Admin {
 		.js #page_parts table.wp-list-table.page-parts .ui-sortable-helper {
 			display: block;
 		}
+		.js #page_parts input#orderpagepartssub {
+			display: none;
+		}
 		</style>
 
 		<script type="text/javascript">
@@ -192,6 +200,7 @@ class Page_Parts_Admin {
 			var pagePartsTable = $( '#page_parts table.wp-list-table.page-parts' );
 			$( '#page_parts table.wp-list-table tbody' ).sortable( {
 				accept               : 'sortable',
+				axis                 : 'y',
 				containment          : 'parent',
 				forceHelperSize      : true,
 				forcePlaceholderSize : true,
@@ -205,9 +214,23 @@ class Page_Parts_Admin {
 						$( this ).val( order_count );
 						order_count++;
 					} );
+				},
+				update               : function( event, ui ) {
+					ui.item.find( '.column-order .spinner' ).css( 'display', 'inline-block' );
+					ui.item.find( '.column-order .handle' ).hide();
+					var data = {
+						action    : 'page_parts_dragndrop_order',
+						pageParts : $( '#page_parts table.wp-list-table tbody' ).sortable( 'toArray' )
+					};
+					$.post( ajaxurl, data, function( response ) {
+						setTimeout( function() {
+							pagePartsTable.find( '.column-order .spinner' ).css( 'display', 'none' );
+							pagePartsTable.find( '.column-order .handle' ).show();
+						}, 400 );
+					});
 				}
 			} );
-			pagePartsTable.find( 'tbody td.column-order' ).append( '<span class="handle dashicons dashicons-menu"></span>' );
+			pagePartsTable.find( 'tbody td.column-order' ).append( '<span class="handle dashicons dashicons-menu"></span><span class="spinner"></span>' );
 			pagePartsTable.find( 'tbody td.column-order input' ).css( 'display', 'none' );
 		} );
 		</script>
@@ -220,6 +243,53 @@ class Page_Parts_Admin {
 	 */
 	public function admin_enqueue_scripts() {
 		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
+	}
+
+	/**
+	 * Drag 'n' Drop Order AJAX Callback
+	 */
+	public function dragndrop_order_ajax_callback() {
+		global $wpdb;
+
+		// Get array of page part IDs in new order
+		$page_parts = array();
+		foreach ( $_POST['pageParts'] as $page_part ) {
+			$page_parts[] = (int) str_replace( 'page-part-', '', $page_part );
+		}
+
+		// Default response
+		$response = array(
+			'error'       => '',
+			'errorIDs'    => array(),
+			'message'     => '',
+			'pagePartIDs' => $page_parts
+		);
+
+		// Update page part orders
+		$failed = array();
+		foreach ( $page_parts as $order => $page_part_id ) {
+			$result = $wpdb->update(
+				$wpdb->posts,
+				array( 'menu_order' => $order ),
+				array( 'ID' => $page_part_id ),
+				array( '%d' ),
+				array( '%d' )
+			);
+			if ( $result == 0 ) {
+				$failed[] = $page_part_id;
+			}
+		}
+
+		// Log failed updates
+		if ( ! empty( $failed ) ) {
+			$response['error'] = __( 'Unable to save the pag part sort order. Please try again.', 'page-parts' );
+			$response['errorIDs'] = $failed;
+			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $$response['errorIDs'] );
+		}
+
+		// Response
+		echo json_encode( $response );
+		die();
 	}
 
 	/**

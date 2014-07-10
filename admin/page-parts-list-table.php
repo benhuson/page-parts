@@ -33,6 +33,22 @@ class Page_Parts_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Generates content for a single row of the table
+	 *
+	 * @access protected
+	 *
+	 * @param  object  $item  The current item
+	 */
+	protected function single_row( $item ) {
+		static $row_class = '';
+		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
+
+		echo '<tr id="page-part-' . $item->ID . '" ' . $row_class . '>';
+		$this->single_row_columns( $item );
+		echo '</tr>';
+	}
+
+	/**
 	 * Handle default column content
 	 * Uses if a function cannot be found.
 	 *
