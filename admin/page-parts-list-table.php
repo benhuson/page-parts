@@ -21,21 +21,30 @@ class Page_Parts_List_Table extends WP_List_Table {
 	/**
 	 * Get Columns
 	 *
+	 * @uses  apply_filters()  Calls page_parts_admin_columns allowing extra columns to be added to page parts table.
+	 *
 	 * @return  array  Column IDs and titles.
 	 */
 	function get_columns() {
-		$columns = array(
+		$columns = apply_filters( 'page_parts_admin_columns', array(
 			'preview' => '',
 			'title'   => __( 'Title', 'page-parts' ),
 			'order'   => __( 'Order', 'page-parts' ),
-		);
-		return $columns;
+		) );
+
+		// Santize column keys
+		$santized_columns = array();
+		foreach ( $columns as $key => $label ) {
+			$santized_columns[ sanitize_key( $key ) ] = $label;
+		}
+
+		return $santized_columns;
 	}
 
 	/**
 	 * Generates content for a single row of the table
 	 *
-	 * @access protected
+	 * @access  protected
 	 *
 	 * @param  object  $item  The current item
 	 */
@@ -49,15 +58,26 @@ class Page_Parts_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Handle default column content
-	 * Uses if a function cannot be found.
+	 * Handle column content.
+	 *
+	 * @uses  apply_filters()  Calls page_parts_admin_column_{$column_name} allowing extra column content to be added to page parts table.
 	 *
 	 * @param   object  $item         Post object.
 	 * @param   string  $column_name  Column ID.
 	 * @return  string                Column content.
 	 */
 	function column_default( $item, $column_name ) {
-		return '';
+		switch ( $column_name ) {
+			case 'preview' :
+				$value = $this->admin_column_preview( $item );
+				break;
+			case 'title' :
+				$value = $this->admin_column_title( $item );
+				break;
+			default :
+				$value = '';
+		}
+		return apply_filters( 'page_parts_admin_column_' . $column_name, $value, $item );
 	}
 
 	/**
@@ -66,7 +86,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @param   object  $item  Post object.
 	 * @return  string         Column content.
 	 */
-	function column_preview( $item ) {
+	function admin_column_preview( $item ) {
 		if ( has_post_thumbnail( $item->ID ) ) {
 			return get_the_post_thumbnail( $item->ID, array( 80, 60 ) );
 		}
@@ -79,7 +99,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @param   object  $item  Post object.
 	 * @return  string         Column content.
 	 */
-	function column_title( $item ) {
+	function admin_column_title( $item ) {
 		$title = '<a href="' . get_edit_post_link( $item ) . '">' . get_the_title( $item ) . '</a>';
 		if ( ! in_array( $item->post_status, array( 'publish', 'inherit' ) ) ) {
 			$title .= ' - <span class="post-state">' . $this->get_post_status_display( $item ) . '</span>';
