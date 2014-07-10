@@ -33,9 +33,19 @@ class Page_Parts_List_Table extends WP_List_Table {
 		) );
 
 		// Santize column keys
+		$order_column = null;
 		$santized_columns = array();
 		foreach ( $columns as $key => $label ) {
-			$santized_columns[ sanitize_key( $key ) ] = $label;
+			if ( 'order' == $key ) {
+				$order_column = $label;
+			} else {
+				$santized_columns[ sanitize_key( $key ) ] = $label;
+			}
+		}
+
+		// Ensure order column is always last
+		if ( ! is_null( $order_column ) ) {
+			$santized_columns['order'] = $order_column;
 		}
 
 		return $santized_columns;
