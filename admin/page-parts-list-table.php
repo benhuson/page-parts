@@ -58,7 +58,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 *
 	 * @param  object  $item  The current item
 	 */
-	protected function single_row( $item ) {
+	public function single_row( $item ) {
 		static $row_class = '';
 		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
 
