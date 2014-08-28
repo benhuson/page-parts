@@ -17,6 +17,8 @@ class Page_Parts_Admin {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'wp_ajax_page_parts_dragndrop_order', array( $this, 'dragndrop_order_ajax_callback' ) );
 		add_filter( 'post_updated_messages', array( $this, 'page_part_updated_messages' ) );
+		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+		add_filter( 'admin_menu', array( $this, 'add_documentation_page' ) );
 	}
 
 	/**
@@ -450,6 +452,49 @@ class Page_Parts_Admin {
 			10 => sprintf( __( 'Page part draft updated. <a target="_blank" href="%s">Preview page part</a>' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
 		);
 		return $messages;
+	}
+
+	/**
+	 * Plugin Row Meta
+	 *
+	 * Adds documentation link below the plugin description on the plugins page.
+	 *
+	 * @since  0.5
+	 *
+	 * @param   array   $plugin_meta  Plugin meta display array.
+	 * @param   string  $plugin_file  Plugin reference.
+	 * @return  array                 Plugin meta array.
+	 */
+	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
+
+		if ( plugin_basename( PAGE_PARTS_FILE ) == $plugin_file ) {
+			$plugin_meta[] = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=page-parts-documentation' ), __( 'Documentation', 'page-parts' ) );
+		}
+
+		return $plugin_meta;
+
+	}
+
+	/**
+	 * Add Documentation Page
+	 *
+	 * @since  0.5
+	 */
+	public function add_documentation_page() {
+
+		add_submenu_page( null, __( 'Page Parts Documentation', 'page-parts' ), __( 'Page Parts Documentation', 'page-parts' ), 'manage_options', 'page-parts-documentation', array( $this, 'documentation_page' ) );
+
+	}
+
+	/**
+	 * Documentation Page
+	 *
+	 * @since  0.5
+	 */
+	public function documentation_page() {
+
+		include( dirname( __FILE__ ) . '/documentation.php' );
+
 	}
 
 }
