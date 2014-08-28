@@ -32,7 +32,7 @@ class Page_Parts_Admin {
 		foreach ( $columns as $column => $value ) {
 			$new_columns[ $column ] = $value;
 			if ( $column == 'title' ) {
-				$new_columns['parent'] = __( 'Parent Page', 'page-parts' );
+				$new_columns['parent'] = __( 'Parent Page', PAGE_PARTS_TEXTDOMAIN );
 			}
 		}
 		return $new_columns;
@@ -66,7 +66,7 @@ class Page_Parts_Admin {
 
 				add_meta_box(
 					'page_parts',
-					__( 'Page Parts', 'page-parts' ),
+					__( 'Page Parts', PAGE_PARTS_TEXTDOMAIN ),
 					array( $this, 'page_parts_meta_box' ),
 					$post_type,
 					'advanced'
@@ -77,7 +77,7 @@ class Page_Parts_Admin {
 
 		add_meta_box(
 			'page_parts_parent',
-			__( 'Parent Page', 'page-parts' ), 
+			__( 'Parent Page', PAGE_PARTS_TEXTDOMAIN ), 
 			array( $this, 'parent_meta_box' ),
 			'page-part',
 			'side',
@@ -121,7 +121,7 @@ class Page_Parts_Admin {
 
 		}
 
-		echo '<p><a class="post-edit-link button button-small" href="' . get_edit_post_link( $post->post_parent ) . '">' . __( 'Edit Parent', 'page-parts' ) . '</a></p>';
+		echo '<p><a class="post-edit-link button button-small" href="' . get_edit_post_link( $post->post_parent ) . '">' . __( 'Edit Parent', PAGE_PARTS_TEXTDOMAIN ) . '</a></p>';
 
 	}
 
@@ -136,19 +136,19 @@ class Page_Parts_Admin {
 
 		$messages['page-part'] = array(
 			0  => '', // Unused. Messages start at index 1.
-			1  => sprintf( __( 'Page Part updated. <a href="%s">View page part</a>', 'page-parts' ), esc_url( get_permalink( $post_ID ) ) ),
+			1  => sprintf( __( 'Page Part updated. <a href="%s">View page part</a>', PAGE_PARTS_TEXTDOMAIN ), esc_url( get_permalink( $post_ID ) ) ),
 			2  => __( 'Custom field updated.' ),
 			3  => __( 'Custom field deleted.' ),
-			4  => __( 'Page Part updated.', 'page-parts' ),
+			4  => __( 'Page Part updated.', PAGE_PARTS_TEXTDOMAIN ),
 			// translators: %s: date and time of the revision
-			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Page Part restored to revision from %s', 'page-parts' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6  => sprintf( __( 'Page Part published. <a href="%s">View page part</a>', 'page-parts' ), esc_url( get_permalink( $post_ID ) ) ),
-			7  => __( 'Page Part saved.', 'page-parts' ),
-			8  => sprintf( __( 'Page Part submitted. <a target="_blank" href="%s">Preview page part</a>', 'page-parts' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
-			9  => sprintf( __( 'Page Part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>', 'page-parts' ),
+			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Page Part restored to revision from %s', PAGE_PARTS_TEXTDOMAIN ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			6  => sprintf( __( 'Page Part published. <a href="%s">View page part</a>', PAGE_PARTS_TEXTDOMAIN ), esc_url( get_permalink( $post_ID ) ) ),
+			7  => __( 'Page Part saved.', PAGE_PARTS_TEXTDOMAIN ),
+			8  => sprintf( __( 'Page Part submitted. <a target="_blank" href="%s">Preview page part</a>', PAGE_PARTS_TEXTDOMAIN ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+			9  => sprintf( __( 'Page Part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>', PAGE_PARTS_TEXTDOMAIN ),
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i', 'page-parts' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
-			10 => sprintf( __( 'Page Part draft updated. <a target="_blank" href="%s">Preview page part</a>', 'page-parts' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+				date_i18n( __( 'M j, Y @ G:i', PAGE_PARTS_TEXTDOMAIN ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
+			10 => sprintf( __( 'Page Part draft updated. <a target="_blank" href="%s">Preview page part</a>', PAGE_PARTS_TEXTDOMAIN ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
 		);
 		return $messages;
 	}
@@ -165,10 +165,10 @@ class Page_Parts_Admin {
 		//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
 		if ( 'page-part' == $screen->id ) {
 			$contextual_help =
-				'<p>' . __( 'Things to remember when adding or editing a page part:', 'page-parts' ) . '</p>' .
-				'<p>' . __( 'Not a lot.', 'page-parts' ) . '</p>';
+				'<p>' . __( 'Things to remember when adding or editing a page part:', PAGE_PARTS_TEXTDOMAIN ) . '</p>' .
+				'<p>' . __( 'Not a lot.', PAGE_PARTS_TEXTDOMAIN ) . '</p>';
 		} elseif ( 'edit-page-part' == $screen->id ) {
-			$contextual_help = '<p>' . __( 'No page part documentation.', 'page-parts' ) . '</p>';
+			$contextual_help = '<p>' . __( 'No page part documentation.', PAGE_PARTS_TEXTDOMAIN ) . '</p>';
 		}
 		return $contextual_help;
 	}
@@ -310,7 +310,7 @@ class Page_Parts_Admin {
 
 		// Log failed updates
 		if ( ! empty( $failed ) ) {
-			$response['error'] = __( 'Unable to save the pag part sort order. Please try again.', 'page-parts' );
+			$response['error'] = __( 'Unable to save the pag part sort order. Please try again.', PAGE_PARTS_TEXTDOMAIN );
 			$response['errorIDs'] = $failed;
 			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $response['errorIDs'] );
 		}
@@ -402,8 +402,8 @@ class Page_Parts_Admin {
 		?>
 
 		<p>
-			<a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>" class="button button-primary"><?php _e( 'Add new page part', 'page-parts' ); ?></a>
-			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Save Page Parts Order', 'page-parts' ); ?>">
+			<a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>" class="button button-primary"><?php _e( 'Add new page part', PAGE_PARTS_TEXTDOMAIN ); ?></a>
+			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Save Page Parts Order', PAGE_PARTS_TEXTDOMAIN ); ?>">
 		</p>
 
 		<?php wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' ); ?>
@@ -468,7 +468,7 @@ class Page_Parts_Admin {
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 
 		if ( plugin_basename( PAGE_PARTS_FILE ) == $plugin_file ) {
-			$plugin_meta[] = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=page-parts-documentation' ), __( 'Documentation', 'page-parts' ) );
+			$plugin_meta[] = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=page-parts-documentation' ), __( 'Documentation', PAGE_PARTS_TEXTDOMAIN ) );
 		}
 
 		return $plugin_meta;
@@ -482,7 +482,7 @@ class Page_Parts_Admin {
 	 */
 	public function add_documentation_page() {
 
-		add_submenu_page( null, __( 'Page Parts Documentation', 'page-parts' ), __( 'Page Parts Documentation', 'page-parts' ), 'manage_options', 'page-parts-documentation', array( $this, 'documentation_page' ) );
+		add_submenu_page( null, __( 'Page Parts Documentation', PAGE_PARTS_TEXTDOMAIN ), __( 'Page Parts Documentation', PAGE_PARTS_TEXTDOMAIN ), 'manage_options', 'page-parts-documentation', array( $this, 'documentation_page' ) );
 
 	}
 

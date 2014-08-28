@@ -28,8 +28,8 @@ class Page_Parts_List_Table extends WP_List_Table {
 	function get_columns() {
 		$columns = apply_filters( 'page_parts_admin_columns', array(
 			'preview' => '',
-			'title'   => __( 'Title', 'page-parts' ),
-			'order'   => __( 'Order', 'page-parts' ),
+			'title'   => __( 'Title', PAGE_PARTS_TEXTDOMAIN ),
+			'order'   => __( 'Order', PAGE_PARTS_TEXTDOMAIN ),
 		) );
 
 		// Santize column keys

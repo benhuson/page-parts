@@ -24,7 +24,7 @@ class Page_Parts {
 	public function Page_Parts() {
 
 		// Language
-		load_plugin_textdomain( 'page-parts', false, dirname( plugin_basename( PAGE_PARTS_FILE ) ) . '/languages' );
+		load_plugin_textdomain( PAGE_PARTS_TEXTDOMAIN, false, dirname( plugin_basename( PAGE_PARTS_FILE ) ) . '/languages' );
 
 		add_action( 'init', array( $this, 'register_post_types' ), 6 );
 		add_filter( 'post_type_link', array( $this, 'post_part_link' ), 10, 4 );
@@ -41,20 +41,20 @@ class Page_Parts {
 	public function register_post_types() {
 		$args = array(
 			'labels'              => array(
-				'name'               => _x( 'Page Parts', 'post type general name', 'page-parts' ),
-				'singular_name'      => _x( 'Page Part', 'post type singular name', 'page-parts' ),
-				'add_new'            => _x( 'Add New', 'magazine', 'page-parts' ),
-				'add_new_item'       => __( 'Add New Page Part', 'page-parts' ),
-				'edit_item'          => __( 'Edit Page Part', 'page-parts' ),
-				'new_item'           => __( 'New Page Part', 'page-parts' ),
-				'view_item'          => __( 'View Page Part', 'page-parts' ),
-				'search_items'       => __( 'Search Page Parts', 'page-parts' ),
-				'not_found'          => __( 'No page parts found', 'page-parts' ),
-				'not_found_in_trash' => __( 'No page parts found in Trash', 'page-parts' ),
+				'name'               => _x( 'Page Parts', 'post type general name', PAGE_PARTS_TEXTDOMAIN ),
+				'singular_name'      => _x( 'Page Part', 'post type singular name', PAGE_PARTS_TEXTDOMAIN ),
+				'add_new'            => _x( 'Add New', 'magazine', PAGE_PARTS_TEXTDOMAIN ),
+				'add_new_item'       => __( 'Add New Page Part', PAGE_PARTS_TEXTDOMAIN ),
+				'edit_item'          => __( 'Edit Page Part', PAGE_PARTS_TEXTDOMAIN ),
+				'new_item'           => __( 'New Page Part', PAGE_PARTS_TEXTDOMAIN ),
+				'view_item'          => __( 'View Page Part', PAGE_PARTS_TEXTDOMAIN ),
+				'search_items'       => __( 'Search Page Parts', PAGE_PARTS_TEXTDOMAIN ),
+				'not_found'          => __( 'No page parts found', PAGE_PARTS_TEXTDOMAIN ),
+				'not_found_in_trash' => __( 'No page parts found in Trash', PAGE_PARTS_TEXTDOMAIN ),
 				'parent_item_colon'  => '',
-				'menu_name'          => __( 'Page Parts', 'page-parts' )
+				'menu_name'          => __( 'Page Parts', PAGE_PARTS_TEXTDOMAIN )
 			),
-			'description'         => __( 'Content that makes up part of a page.', 'page-parts' ),
+			'description'         => __( 'Content that makes up part of a page.', PAGE_PARTS_TEXTDOMAIN ),
 			'public'              => true,
 			'publicly_queryable'  => false,
 			'exclude_from_search' => true,
