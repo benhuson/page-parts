@@ -87,6 +87,22 @@ class Page_Parts {
 		return apply_filters( 'post_part_post_type_link', $post_link, $post, $leavename, $sample );
 	}
 
+	/**
+	 * Supported Post Types
+	 *
+	 * Gets an array of suuported post types.
+	 *
+	 * @since  0.5
+	 * @uses  apply_filters  Calls 'page_parts_supported_post_types'.
+	 *
+	 * @return  array  Supported post types.
+	 */
+	public function supported_post_types() {
+
+		return apply_filters( 'page_parts_supported_post_types', array( 'page' ) );
+
+	}
+
 }
 
 global $Page_Parts;

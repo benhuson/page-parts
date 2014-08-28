@@ -54,13 +54,25 @@ class Page_Parts_Admin {
 	 * Add Meta Boxes
 	 */
 	public function add_meta_boxes() {
-		add_meta_box(
-			'page_parts',
-			__( 'Page Parts', 'page-parts' ),
-			array( $this, 'page_parts_meta_box' ),
-			'page',
-			'advanced'
-		);
+
+		global $Page_Parts;
+
+		$post_types = $Page_Parts->supported_post_types();
+
+		foreach ( $post_types as $post_type ) {
+			if ( post_type_exists( $post_type ) ) {
+
+				add_meta_box(
+					'page_parts',
+					__( 'Page Parts', 'page-parts' ),
+					array( $this, 'page_parts_meta_box' ),
+					$post_type,
+					'advanced'
+				);
+
+			}
+		}
+
 		add_meta_box(
 			'page_parts_parent',
 			__( 'Parent Page', 'page-parts' ), 
@@ -84,18 +96,31 @@ class Page_Parts_Admin {
 			$post->post_parent = $_REQUEST['parent_id'];
 		}
 
-		// The actual fields for data entry
-		$args = array(
-			'selected'    => absint( $post->post_parent ),
-			'echo'        => 0,
-			'name'        => 'parent_id',
-			'sort_order'  => 'ASC',
-			'sort_column' => 'menu_order,post_title',
-			'post_type'   => 'page',
-	        'post_status' => 'publish,draft'
-		);
-		echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
+		$post->post_parent = absint( $post->post_parent );
+
+		// Handle pages (hierarchical) and non-hierarchical post types
+		if ( 0 == $post->post_parent || is_post_type_hierarchical( get_post_type( $post->post_parent ) ) ) {
+
+			$args = array(
+				'selected'    => absint( $post->post_parent ),
+				'echo'        => 0,
+				'name'        => 'parent_id',
+				'sort_order'  => 'ASC',
+				'sort_column' => 'menu_order,post_title',
+				'post_type'   => get_post_type( $post->post_parent ),
+				'post_status' => 'publish,draft'
+			);
+			echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
+
+		} else {
+
+			echo '<p>' . get_the_title( $post->post_parent ) . '</p>';
+			echo '<input type="hidden" name="parent_id" value="' . absint( $post->post_parent ) . '" />';
+
+		}
+
 		echo '<p><a class="post-edit-link button button-small" href="' . get_edit_post_link( $post->post_parent ) . '">' . __( 'Edit Parent', 'page-parts' ) . '</a></p>';
+
 	}
 
 	/**
@@ -310,8 +335,14 @@ class Page_Parts_Admin {
 		// Save page part parent?
 		if ( isset( $_POST['page_parts_noncename'] ) && wp_verify_nonce( $_POST['page_parts_noncename'], plugin_basename( __FILE__ ) ) ) {
 			if ( isset( $_POST['parent_id'] ) && current_user_can( 'edit_page', $post_id ) ) {
+
 				$parent_id = absint( $_POST['parent_id'] );
-				$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
+				$post_type_object = get_post_type_object( get_post_type( $parent_id ) );
+
+				if ( 0 == $parent_id || ( $post_type_object && current_user_can( $post_type_object->cap->edit_post, $post_id ) ) ) {
+					$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
+				}
+
 			}
 		}
 
