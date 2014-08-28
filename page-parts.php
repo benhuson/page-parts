@@ -11,6 +11,7 @@ License: GPL2
 */
 
 define( 'PAGE_PARTS_VERSION', '0.4' );
+define( 'PAGE_PARTS_FILE', __FILE__ );
 define( 'PAGE_PARTS_TEXTDOMAIN', 'page-parts' );
 
 class Page_Parts {
@@ -23,13 +24,13 @@ class Page_Parts {
 	public function Page_Parts() {
 
 		// Language
-		load_plugin_textdomain( 'page-parts', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain( 'page-parts', false, dirname( plugin_basename( PAGE_PARTS_FILE ) ) . '/languages' );
 
 		add_action( 'init', array( $this, 'register_post_types' ), 6 );
 		add_filter( 'post_type_link', array( $this, 'post_part_link' ), 10, 4 );
 
 		if ( is_admin() ) {
-			require_once( dirname( __FILE__ ) . '/admin/admin.php' );
+			require_once( dirname( PAGE_PARTS_FILE ) . '/admin/admin.php' );
 			$this->admin = new Page_Parts_Admin();
 		}
 	}
