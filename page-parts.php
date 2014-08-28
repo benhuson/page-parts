@@ -10,6 +10,9 @@ Author URI: https://github.com/benhuson
 License: GPL2
 */
 
+define( 'PAGE_PARTS_VERSION', '0.4' );
+define( 'PAGE_PARTS_TEXTDOMAIN', 'page-parts' );
+
 class Page_Parts {
 
 	var $admin;
