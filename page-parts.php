@@ -85,10 +85,19 @@ class Page_Parts {
 	 * @return  string              Post Part URL.
 	 */
 	public function post_part_link( $post_link, $post, $leavename, $sample ) {
-		if ( $post->post_type == 'page-part' && $post->post_parent > 0 ) {
-			$post_link = get_permalink( $post->post_parent ) . '#' . $post->post_name;
+
+		if ( $post->post_type == 'page-part' ) {
+
+			if ( $post->post_parent > 0 ) {
+				$post_link = get_permalink( $post->post_parent ) . '#' . $post->post_name;
+			}
+
+			return apply_filters( 'post_part_post_type_link', $post_link, $post, $leavename, $sample );	
+
 		}
-		return apply_filters( 'post_part_post_type_link', $post_link, $post, $leavename, $sample );
+
+		return $post_link;
+
 	}
 
 	/**
