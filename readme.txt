@@ -2,8 +2,8 @@
 Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.4
-Tested up to: 3.79.1
-Stable tag: 0.4
+Tested up to: 4.0
+Stable tag: 0.5
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,12 @@ Manage subsections of a page. Create 'page parts' as children of a page to displ
 Either enter numbers in the order fields or drag them into the order you want.
 
 == Changelog ==
+
+= 0.5 =
+
+* Add plugin documentation (link on plugins page).
+* Add 'page_parts_supported_post_types' filter to enable support for other post types.
+* Added 'page_parts_admin_columns' and 'page_parts_admin_column_{$column_name}' filters for adding extra columns to the page parts table.
 
 = 0.4 =
 
