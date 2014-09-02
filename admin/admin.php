@@ -162,15 +162,26 @@ class Page_Parts_Admin {
 	 * @return  string                    HTML output.
 	 */
 	public function contextual_help( $contextual_help, $screen_id, $screen ) { 
+
 		//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
+
 		if ( 'page-part' == $screen->id ) {
+
+			// Edit Page Part
 			$contextual_help =
-				'<p>' . __( 'Things to remember when adding or editing a page part:', PAGE_PARTS_TEXTDOMAIN ) . '</p>' .
-				'<p>' . __( 'Not a lot.', PAGE_PARTS_TEXTDOMAIN ) . '</p>';
+				'<p>' . __( 'By default you can only associate a new page part with a page.', PAGE_PARTS_TEXTDOMAIN ) . '</p>' .
+				'<p>' . __( 'If additional post types are supported you must create the new page part by editing the post. Once a page part is associated with a page (or post type) the "Parent Page" panel with allow you to change the parent via a dropdown menu for hierarchical post types. There is not yet the option to re-associate a page part with a different parent for non-hierarchical post types.', PAGE_PARTS_TEXTDOMAIN ) . '</p>';
+
 		} elseif ( 'edit-page-part' == $screen->id ) {
-			$contextual_help = '<p>' . __( 'No page part documentation.', PAGE_PARTS_TEXTDOMAIN ) . '</p>';
+
+			// Page Parts Admin Table
+			$contextual_help = '<p>' . __( 'Page parts allow you to add extra content relating to a page.', PAGE_PARTS_TEXTDOMAIN ) . '</p>'
+				. '<p>' . __( 'Click on a page part parent to edit the associated page and view that page\'s other page parts.', PAGE_PARTS_TEXTDOMAIN ) . '</p>';
+
 		}
+
 		return $contextual_help;
+
 	}
 
 	/**
