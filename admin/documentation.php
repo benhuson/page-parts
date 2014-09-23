@@ -17,6 +17,7 @@
 			<li><a href="#register_page_part_args">Alter Registered Post Type Args</a></li>
 			<li><a href="#post_part_post_type_link">Change format of page part links</a></li>
 			<li><a href="#page_parts_supported_post_types">Add support for additional post types</a></li>
+			<li><a href="#page_parts_nested">Nested Page Parts (page parts within page parts)</a></li>
 			<li><a href="#page_parts_admin_columns">Add an extra column to the page parts overview table</a></li>
 			<li><a href="#page_parts_admin_column_column_name">Handle the output of a column in the page parts overview table</a></li>
 		</ul>
@@ -105,6 +106,83 @@ function my_page_parts_supported_post_types( $post_types ) {
 }
 
 add_filter( 'page_parts_supported_post_types', 'my_page_parts_supported_post_types' );
+
+?&gt;</textarea>
+		</p>
+	</div>
+
+	<div id="page_parts_nested" class="tool-box">
+		<h3 class="title">Nested Page Parts (page parts within page parts)</h3>
+		<p>It is possible to have have page parts within page parts. You should have to be careful to reset the query correctly after looping through the nested page parts.</p>
+		<p>Firstly, add support for nested page parts:</p>
+		<p>
+			<textarea cols="70" rows="19" wrap="off" style="width: 100%;" class="code">&lt;?php
+
+/**
+ * Add Nested Page Part Support
+ *
+ * @param   array  $post_types  Supported post types.
+ * @return  array               Post types.
+ */
+function my_support_nested_page_parts( $post_types ) {
+
+	$post_types[] = 'page-part';
+
+	return $post_types;
+
+}
+
+add_filter( 'page_parts_supported_post_types', 'my_support_nested_page_parts' );
+
+?&gt;</textarea>
+		</p>
+		<p>Then, when looping through nested page parts:</p>
+		<p>
+			<textarea cols="70" rows="19" wrap="off" style="width: 100%;" class="code">&lt;?php
+
+/**
+ * Display page parts with nested page parts
+ */
+
+// Get top level page parts
+$page_parts = new WP_Query( array(
+	'order'       => 'ASC',
+	'orderby'     => 'menu_order',
+	'post_type'   => 'page-part',
+	'post_parent' => get_the_ID()  // Current post/page ID
+) );
+if ( $page_parts->have_posts() ) {
+	while ( $page_parts->have_posts() ) {
+		$page_parts->the_post();
+
+		// Display top level page part details here
+		// e.g. the_title();
+
+		// Loop through the current page part's page parts
+		$page_parts_sub = new WP_Query( array(
+			'order'       => 'ASC',
+			'orderby'     => 'menu_order',
+			'post_type'   => 'page-part',
+			'post_parent' => get_the_ID()  // Current page part ID
+		) );
+		if ( $page_parts_sub->have_posts() ) {
+			while ( $page_parts_sub->have_posts() ) {
+				$page_parts_sub->the_post();
+
+				// Display nested page part details here
+				// e.g. the_title();
+
+			}
+
+			// After looping through all nested page parts, reset the current post to the current top level page page
+			$page_parts->reset_postdata();
+		}
+
+	}
+
+	// After looping through all page parts, reset the main query
+	wp_reset_postdata();
+}
 
 ?&gt;</textarea>
 		</p>
