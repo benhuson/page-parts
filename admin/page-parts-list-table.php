@@ -185,14 +185,22 @@ class Page_Parts_List_Table extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		$this->items = get_posts( array(
-			'order'          => 'ASC',
-			'orderby'        => 'menu_order',
-			'post_parent'    => absint( $_GET['post'] ),
-			'post_status'    => 'all',
-			'post_type'      => 'page-part',
-			'posts_per_page' => -1
-		) );
+		if ( isset( $_GET['post'] ) ) {
+
+			$this->items = get_posts( array(
+				'order'          => 'ASC',
+				'orderby'        => 'menu_order',
+				'post_parent'    => absint( $_GET['post'] ),
+				'post_status'    => 'all',
+				'post_type'      => 'page-part',
+				'posts_per_page' => -1
+			) );
+
+		} else {
+
+			$this->items = array();
+
+		}
 
 		$total_items = count( $this->items );
 
