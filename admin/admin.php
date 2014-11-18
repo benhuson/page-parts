@@ -88,6 +88,7 @@ class Page_Parts_Admin {
 	 * Add Parent Meta Box
 	 */
 	public function parent_meta_box() {
+
 		global $post;
 
 		// Use nonce for verification
@@ -120,7 +121,10 @@ class Page_Parts_Admin {
 
 		}
 
-		echo '<p><a class="post-edit-link button button-small" href="' . get_edit_post_link( $post->post_parent ) . '">' . __( 'Edit Parent', PAGE_PARTS_TEXTDOMAIN ) . '</a></p>';
+		echo '<p>';
+		printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), __( 'Edit Parent', PAGE_PARTS_TEXTDOMAIN ) );
+		printf( '<a class="button button-small button-primary" href="post-new.php?post_type=page-part&parent_id=%s" class="button button-primary">%s</a>', $post->post_parent, __( 'Add new page part', PAGE_PARTS_TEXTDOMAIN ) );
+		echo '</p>';
 
 	}
 
