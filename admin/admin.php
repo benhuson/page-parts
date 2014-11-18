@@ -122,7 +122,7 @@ class Page_Parts_Admin {
 		}
 
 		echo '<p>';
-		printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), __( 'Edit Parent', PAGE_PARTS_TEXTDOMAIN ) );
+		printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), __( 'Edit parent', PAGE_PARTS_TEXTDOMAIN ) );
 		printf( '<a class="button button-small button-primary" href="post-new.php?post_type=page-part&parent_id=%s" class="button button-primary">%s</a>', $post->post_parent, __( 'Add new page part', PAGE_PARTS_TEXTDOMAIN ) );
 		echo '</p>';
 
@@ -175,6 +175,12 @@ class Page_Parts_Admin {
 			max-width: 50px;
 			max-height: 50px;
 		}
+		#page_parts table.wp-list-table.page-parts .column-location {
+			width: 140px;
+		}
+			#page_parts table.wp-list-table.page-parts .column-location select {
+				width: 100%;
+			}
 		#page_parts table.wp-list-table.page-parts .column-status {
 			width: 90px;
 		}
@@ -389,7 +395,7 @@ class Page_Parts_Admin {
 
 		<p>
 			<a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>" class="button button-primary"><?php _e( 'Add new page part', PAGE_PARTS_TEXTDOMAIN ); ?></a>
-			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Save Page Parts Order', PAGE_PARTS_TEXTDOMAIN ); ?>">
+			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Save page parts', PAGE_PARTS_TEXTDOMAIN ); ?>">
 		</p>
 
 		<?php wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' ); ?>
