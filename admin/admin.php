@@ -448,13 +448,13 @@ class Page_Parts_Admin {
 
 		$messages['page-part'] = array(
 			0  => '', // Unused. Messages start at index 1.
-			1  => sprintf( __( 'Page part updated. <a href="%s">View page part</a> / <a href="%s">Edit parent</a>' ), esc_url( get_permalink( $post_ID ) ), esc_url( get_edit_post_link( $post->post_parent ) ) ),
+			1  => sprintf( __( 'Page part updated. <a href="%s">View page part</a> / <a href="%s">Edit parent</a>' ), esc_url( get_permalink( $post_ID ) ), esc_url( get_edit_post_link( $post->post_parent ) . '#page_parts' ) ),
 			2  => __( 'Custom field updated.' ),
 			3  => __( 'Custom field deleted.' ),
 			4  => __( 'Page part updated.' ),
 			// translators: %s: date and time of the revision
 			5  => isset( $_GET['revision'] ) ? sprintf( __('Page part restored to revision from %s' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6  => sprintf( __( 'Page part published. <a href="%s">View page part</a> / <a href="%s">Edit parent</a>' ), esc_url( get_permalink( $post_ID ) ), esc_url( get_edit_post_link( $post->post_parent ) ) ),
+			6  => sprintf( __( 'Page part published. <a href="%s">View page part</a> / <a href="%s">Edit parent</a>' ), esc_url( get_permalink( $post_ID ) ), esc_url( get_edit_post_link( $post->post_parent ) . '#page_parts' ) ),
 			7  => __( 'Page part saved.' ),
 			8  => sprintf( __( 'Page part submitted. <a target="_blank" href="%s">Preview page part</a>' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
 			9  => sprintf( __( 'Page part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>' ),
