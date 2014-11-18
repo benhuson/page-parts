@@ -10,7 +10,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		parent::__construct( array(
 			'singular' => 'page-part',  // singular name of the listed records
 			'plural'   => 'page-parts', // plural name of the listed records
@@ -25,7 +25,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 *
 	 * @return  array  Column IDs and titles.
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = apply_filters( 'page_parts_admin_columns', array(
 			'preview' => '',
 			'title'   => __( 'Title', PAGE_PARTS_TEXTDOMAIN ),
@@ -76,7 +76,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @param   string  $column_name  Column ID.
 	 * @return  string                Column content.
 	 */
-	function column_default( $item, $column_name ) {
+	public function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
 			case 'preview' :
 				$value = $this->admin_column_preview( $item );
@@ -96,7 +96,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @param   object  $item  Post object.
 	 * @return  string         Column content.
 	 */
-	function admin_column_preview( $item ) {
+	public function admin_column_preview( $item ) {
 		if ( has_post_thumbnail( $item->ID ) ) {
 			return get_the_post_thumbnail( $item->ID, array( 80, 60 ) );
 		}
@@ -109,7 +109,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @param   object  $item  Post object.
 	 * @return  string         Column content.
 	 */
-	function admin_column_title( $item ) {
+	public function admin_column_title( $item ) {
 		$title = '<a href="' . get_edit_post_link( $item ) . '">' . get_the_title( $item ) . '</a>';
 		if ( ! in_array( $item->post_status, array( 'publish', 'inherit' ) ) ) {
 			$title .= ' - <span class="post-state">' . $this->get_post_status_display( $item ) . '</span>';
@@ -123,7 +123,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @param   object  $item  Post object.
 	 * @return  string         Column content.
 	 */
-	function column_order( $item ) {
+	public function column_order( $item ) {
 		return '<input name="page_parts_order[' . $item->ID . ']" type="text" size="4" id="page_parts_order[' . $item->ID . ']" value="' . $item->menu_order . '" />';
 	}
 
@@ -159,7 +159,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	/**
 	 * Display Table
 	 */
-	function display() {
+	public function display() {
 		?>
 		<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
 			<thead>
@@ -177,7 +177,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	/**
 	 * Message to be displayed when there are no items
 	 */
-	function no_items() {
+	public function no_items() {
 
 		global $post;
 
@@ -191,7 +191,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * Prepare Items
 	 * Gets the data to display in the table.
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 		$hidden = array();
 		$columns = $this->get_columns();
 		$sortable = $this->get_sortable_columns();
