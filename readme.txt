@@ -3,7 +3,7 @@ Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.4
 Tested up to: 4.0
-Stable tag: 0.5
+Stable tag: 0.6
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,13 @@ Manage subsections of a page. Create 'page parts' as children of a page to displ
 Either enter numbers in the order fields or drag them into the order you want.
 
 == Changelog ==
+
+= 0.6 =
+
+* Add "Add new page part" button on page parts to add a new part to the parent.
+* Add support for author, excerpt, custom-fields and revisions.
+* Added contextual documentation.
+* Added PAGE_PARTS_TEXTDOMAIN constant.
 
 = 0.5 =
 
