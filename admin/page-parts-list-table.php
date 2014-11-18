@@ -33,6 +33,16 @@ class Page_Parts_List_Table extends WP_List_Table {
 			'order'    => __( 'Order', PAGE_PARTS_TEXTDOMAIN ),
 		) );
 
+		// Remove location column if no locations
+		if ( isset( $_GET['post'] ) ) {
+			$locations = $this->get_locations( get_post_type( absint( $_GET['post'] ) ) );
+			if ( 0 == count( $locations ) ) {
+				unset( $columns['location'] );
+			}
+		} else {
+			unset( $columns['location'] );
+		}
+
 		// Santize column keys
 		$order_column = null;
 		$santized_columns = array();
@@ -128,10 +138,35 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @return  string         Column content.
 	 */
 	public function admin_column_location( $item ) {
-		$options = '<option>–– Default ––</option>';
-		$options .= '<option>Secondary</option>';
-		$options .= '<option>Tertiary</option>';
-		return '<select>' . $options . '</select>';
+
+		$locations = $this->get_locations( get_post_type( $item->post_parent ) );
+
+		$options = '<option>' . __( '–– Default ––', PAGE_PARTS_TEXTDOMAIN ) . '</option>';
+		foreach ( $locations as $key => $location ) {
+			$options .= '<option value="' . $key . '">' . esc_html( $location ) . '</option>';
+		}
+
+		return '<select name="page_parts_location[' . $item->ID . ']" id="page_parts_location[' . $item->ID . ']">' . $options . '</select>';
+
+	}
+
+	/**
+	 * Get Locations.
+	 *
+	 * @param   string  $post_type  Post type.
+	 * @return  string              Page part locations.
+	 */
+	public function get_locations( $post_type ) {
+
+		$locations = array();
+		$location_names = array_unique( apply_filters( 'page_parts_locations', array(), $post_type ) );
+
+		foreach ( $location_names as $location_name ) {
+			$locations[ sanitize_key( $location_name )  ] = $location_name;
+		}
+
+		return $locations;
+
 	}
 
 	/**
@@ -243,3 +278,18 @@ class Page_Parts_List_Table extends WP_List_Table {
 	}
 
 }
+
+
+function my_page_parts_locations( $locations, $post_type ) {
+	if ( 'page' == $post_type ) {
+		$locations[] = 'Pri';
+		$locations[] = 'Sec Temp';
+	}
+	if ( 'post' == $post_type ) {
+		$locations[] = 'PP Two';
+		$locations[] = 'XXXX';
+		$locations[] = 'OUT';
+	}
+	return $locations;
+}
+add_filter( 'page_parts_locations', 'my_page_parts_locations', 10, 2 );
