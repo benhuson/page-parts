@@ -27,9 +27,10 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = apply_filters( 'page_parts_admin_columns', array(
-			'preview' => '',
-			'title'   => __( 'Title', PAGE_PARTS_TEXTDOMAIN ),
-			'order'   => __( 'Order', PAGE_PARTS_TEXTDOMAIN ),
+			'preview'  => '',
+			'title'    => __( 'Title', PAGE_PARTS_TEXTDOMAIN ),
+			'location' => __( 'Theme Location', PAGE_PARTS_TEXTDOMAIN ),
+			'order'    => __( 'Order', PAGE_PARTS_TEXTDOMAIN ),
 		) );
 
 		// Santize column keys
@@ -84,6 +85,9 @@ class Page_Parts_List_Table extends WP_List_Table {
 			case 'title' :
 				$value = $this->admin_column_title( $item );
 				break;
+			case 'location' :
+				$value = $this->admin_column_location( $item );
+				break;
 			default :
 				$value = '';
 		}
@@ -115,6 +119,19 @@ class Page_Parts_List_Table extends WP_List_Table {
 			$title .= ' - <span class="post-state">' . $this->get_post_status_display( $item ) . '</span>';
 		}
 		return '<strong class="row-title">' . $title . '</strong>';
+	}
+
+	/**
+	 * Location Column.
+	 *
+	 * @param   object  $item  Post object.
+	 * @return  string         Column content.
+	 */
+	public function admin_column_location( $item ) {
+		$options = '<option>–– Default ––</option>';
+		$options .= '<option>Secondary</option>';
+		$options .= '<option>Tertiary</option>';
+		return '<select>' . $options . '</select>';
 	}
 
 	/**
