@@ -175,6 +175,19 @@ class Page_Parts_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Message to be displayed when there are no items
+	 */
+	function no_items() {
+
+		global $post;
+
+		$add_url = admin_url( sprintf( 'post-new.php?post_type=page-part&parent_id=%s', $post->ID ) );
+
+		printf( __( 'No page parts found. <a %s>Add one?</a>', PAGE_PARTS_TEXTDOMAIN ), 'href="' . $add_url . '"' );
+
+	}
+
+	/**
 	 * Prepare Items
 	 * Gets the data to display in the table.
 	 */
