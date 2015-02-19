@@ -26,6 +26,14 @@ Manage subsections of a page. Create 'page parts' as children of a page to displ
 
 Either enter numbers in the order fields or drag them into the order you want.
 
+== Screenshots ==
+
+1. Page Parts meta box.
+2. Page Parts meta box with 3 Page Parts.
+3. Support for Page Part theme locations (like theme_location for WordPress Menus) and featured images.
+4. Page Part URLs are rewritten to their parent page passing the page part slug as an anchor.
+5. Page Part meta box with link back to parent page and option to add a new sibling page part.
+
 == Changelog ==
 
 = 0.6 =
