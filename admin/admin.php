@@ -302,7 +302,7 @@ class Page_Parts_Admin {
 
 		// Log failed updates
 		if ( ! empty( $failed ) ) {
-			$response['error'] = __( 'Unable to save the pag part sort order. Please try again.', PAGE_PARTS_TEXTDOMAIN );
+			$response['error'] = __( 'Unable to save the page part sort order. Please try again.', PAGE_PARTS_TEXTDOMAIN );
 			$response['errorIDs'] = $failed;
 			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $response['errorIDs'] );
 		}
