@@ -140,10 +140,11 @@ class Page_Parts_List_Table extends WP_List_Table {
 	public function admin_column_location( $item ) {
 
 		$locations = $this->get_locations( get_post_type( $item->post_parent ) );
+		$location_value = get_post_meta( $item->ID, '_page_part_location', true );
 
-		$options = '<option>' . __( '–– Default ––', PAGE_PARTS_TEXTDOMAIN ) . '</option>';
+		$options = '<option value="">' . __( '–– Default ––', PAGE_PARTS_TEXTDOMAIN ) . '</option>';
 		foreach ( $locations as $key => $location ) {
-			$options .= '<option value="' . $key . '">' . esc_html( $location ) . '</option>';
+			$options .= '<option value="' . $key . '"' . selected( $key, $location_value, false ) . '>' . esc_html( $location ) . '</option>';
 		}
 
 		return '<select name="page_parts_location[' . $item->ID . ']" id="page_parts_location[' . $item->ID . ']">' . $options . '</select>';

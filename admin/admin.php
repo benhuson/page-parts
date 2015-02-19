@@ -345,8 +345,7 @@ class Page_Parts_Admin {
 			if ( isset( $_POST['page_parts_location'] ) && is_array( $_POST['page_parts_location'] ) ) {
 				foreach ( $_POST['page_parts_location'] as $key => $val ) {
 					if ( absint( $key ) > 0 ) {
-						//update_post_meta();
-						//$wpdb->update( $wpdb->posts, array( 'menu_order' => absint( $val ) ), array( 'ID' => absint( $key ) ), array( '%d' ), array( '%d' ) );
+						update_post_meta( $key, '_page_part_location', $val );
 					}
 				}
 			}
