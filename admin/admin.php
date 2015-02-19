@@ -15,6 +15,7 @@ class Page_Parts_Admin {
 		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'wp_ajax_page_parts_dragndrop_order', array( $this, 'dragndrop_order_ajax_callback' ) );
+		add_action( 'wp_ajax_page_parts_location', array( $this, 'location_ajax_callback' ) );
 		add_filter( 'post_updated_messages', array( $this, 'page_part_updated_messages' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'admin_menu', array( $this, 'add_documentation_page' ) );
@@ -252,6 +253,30 @@ class Page_Parts_Admin {
 			} );
 			pagePartsTable.find( 'tbody td.column-order' ).append( '<span class="handle dashicons dashicons-menu"></span><span class="spinner"></span>' );
 			pagePartsTable.find( 'tbody td.column-order input' ).css( 'display', 'none' );
+
+			// Page Part Location Menu
+			$( '#page_parts table.wp-list-table tbody .column-location select' ).on( 'change', function( e ) {
+
+				var name = $( this ).attr( 'name' );
+				var id = name.substr( 20, name.length - 21 );
+				var val = $( this ).val();
+
+				$( this ).closest( 'tr' ).find( '.column-order .spinner' ).css( 'display', 'inline-block' );
+				$( this ).closest( 'tr' ).find( '.column-order .handle' ).hide();
+				var data = {
+					action   : 'page_parts_location',
+					post_id  : id,
+					location : val
+				};
+				$.post( ajaxurl, data, function( response ) {
+					setTimeout( function() {
+						pagePartsTable.find( '.column-order .spinner' ).css( 'display', 'none' );
+						pagePartsTable.find( '.column-order .handle' ).show();
+					}, 400 );
+				});
+
+			} );
+
 		} );
 		</script>
 
@@ -304,6 +329,38 @@ class Page_Parts_Admin {
 		if ( ! empty( $failed ) ) {
 			$response['error'] = __( 'Unable to save the page part sort order. Please try again.', PAGE_PARTS_TEXTDOMAIN );
 			$response['errorIDs'] = $failed;
+			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $response['errorIDs'] );
+		}
+
+		// Response
+		echo json_encode( $response );
+		die();
+	}
+
+	/**
+	 * Location AJAX Callback
+	 */
+	public function location_ajax_callback() {
+
+		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$location = isset( $_POST['location'] ) ? $_POST['location'] : '';
+
+		if ( $post_id > 0 ) {
+			$updated = update_post_meta( $post_id, '_page_part_location', sanitize_key( $location ) );
+		}
+
+		// Default response
+		$response = array(
+			'error'       => '',
+			'errorIDs'    => array(),
+			'message'     => '',
+			'post_id'     => $post_id
+		);
+
+		// Log failed updates
+		if ( ! $updated ) {
+			$response['error'] = __( 'Unable to update the page part location.', PAGE_PARTS_TEXTDOMAIN );
+			$response['errorIDs'] = $post_id;
 			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $response['errorIDs'] );
 		}
 
