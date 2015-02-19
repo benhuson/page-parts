@@ -340,7 +340,19 @@ class Page_Parts_Admin {
 			}
 		}
 
-		// Save page parts order?
+		// Save page parts location
+		if ( isset( $_POST['_ajax_nonce-page-parts-location'] ) && wp_verify_nonce( $_POST['_ajax_nonce-page-parts-location'], 'page_parts_location' ) ) {
+			if ( isset( $_POST['page_parts_location'] ) && is_array( $_POST['page_parts_location'] ) ) {
+				foreach ( $_POST['page_parts_location'] as $key => $val ) {
+					if ( absint( $key ) > 0 ) {
+						//update_post_meta();
+						//$wpdb->update( $wpdb->posts, array( 'menu_order' => absint( $val ) ), array( 'ID' => absint( $key ) ), array( '%d' ), array( '%d' ) );
+					}
+				}
+			}
+		}
+
+		// Save page parts order
 		if ( isset( $_POST['_ajax_nonce-order-page-parts'] ) && wp_verify_nonce( $_POST['_ajax_nonce-order-page-parts'], 'order_page_parts' ) ) {
 			if ( isset( $_POST['page_parts_order'] ) && is_array( $_POST['page_parts_order'] ) ) {
 				foreach ( $_POST['page_parts_order'] as $key => $val ) {
@@ -399,6 +411,7 @@ class Page_Parts_Admin {
 		</p>
 
 		<?php wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' ); ?>
+		<?php wp_nonce_field( 'page_parts_location', '_ajax_nonce-page-parts-location' ); ?>
 
 		<?php
 	}
