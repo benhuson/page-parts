@@ -278,18 +278,3 @@ class Page_Parts_List_Table extends WP_List_Table {
 	}
 
 }
-
-
-function my_page_parts_locations( $locations, $post_type ) {
-	if ( 'page' == $post_type ) {
-		$locations[] = 'Pri';
-		$locations[] = 'Sec Temp';
-	}
-	if ( 'post' == $post_type ) {
-		$locations[] = 'PP Two';
-		$locations[] = 'XXXX';
-		$locations[] = 'OUT';
-	}
-	return $locations;
-}
-add_filter( 'page_parts_locations', 'my_page_parts_locations', 10, 2 );
