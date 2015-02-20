@@ -241,7 +241,8 @@ class Page_Parts_Admin {
 					ui.item.find( '.column-order .handle' ).hide();
 					var data = {
 						action    : 'page_parts_dragndrop_order',
-						pageParts : $( '#page_parts table.wp-list-table tbody' ).sortable( 'toArray' )
+						pageParts : $( '#page_parts table.wp-list-table tbody' ).sortable( 'toArray' ),
+						ajaxNonce : '<?php echo wp_create_nonce( "order_page_parts" ); ?>'
 					};
 					$.post( ajaxurl, data, function( response ) {
 						setTimeout( function() {
@@ -264,9 +265,10 @@ class Page_Parts_Admin {
 				$( this ).closest( 'tr' ).find( '.column-order .spinner' ).css( 'display', 'inline-block' );
 				$( this ).closest( 'tr' ).find( '.column-order .handle' ).hide();
 				var data = {
-					action   : 'page_parts_location',
-					post_id  : id,
-					location : val
+					action    : 'page_parts_location',
+					post_id   : id,
+					location  : val,
+					ajaxNonce : '<?php echo wp_create_nonce( "page_parts_location" ); ?>'
 				};
 				$.post( ajaxurl, data, function( response ) {
 					setTimeout( function() {
@@ -312,17 +314,24 @@ class Page_Parts_Admin {
 
 		// Update page part orders
 		$failed = array();
-		foreach ( $page_parts as $order => $page_part_id ) {
-			$result = $wpdb->update(
-				$wpdb->posts,
-				array( 'menu_order' => $order ),
-				array( 'ID' => $page_part_id ),
-				array( '%d' ),
-				array( '%d' )
-			);
-			if ( $result == 0 ) {
-				$failed[] = $page_part_id;
+
+		if ( isset( $_POST['ajaxNonce'] ) && wp_verify_nonce( $_POST['ajaxNonce'], 'order_page_parts' ) ) {
+
+			foreach ( $page_parts as $order => $page_part_id ) {
+				$result = $wpdb->update(
+					$wpdb->posts,
+					array( 'menu_order' => $order ),
+					array( 'ID' => $page_part_id ),
+					array( '%d' ),
+					array( '%d' )
+				);
+				if ( $result == 0 ) {
+					$failed[] = $page_part_id;
+				}
 			}
+
+		} else {
+			$failed[] = 0;
 		}
 
 		// Log failed updates
@@ -345,9 +354,7 @@ class Page_Parts_Admin {
 		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
 		$location = isset( $_POST['location'] ) ? $_POST['location'] : '';
 
-		if ( $post_id > 0 ) {
-			$updated = update_post_meta( $post_id, '_page_part_location', sanitize_key( $location ) );
-		}
+		$updated = false;
 
 		// Default response
 		$response = array(
@@ -356,6 +363,12 @@ class Page_Parts_Admin {
 			'message'     => '',
 			'post_id'     => $post_id
 		);
+
+		if ( isset( $_POST['ajaxNonce'] ) && wp_verify_nonce( $_POST['ajaxNonce'], 'page_parts_location' ) ) {
+			if ( $post_id > 0 ) {
+				$updated = update_post_meta( $post_id, '_page_part_location', sanitize_key( $location ) );
+			}
+		}
 
 		// Log failed updates
 		if ( ! $updated ) {
