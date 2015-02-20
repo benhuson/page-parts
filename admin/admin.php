@@ -300,8 +300,10 @@ class Page_Parts_Admin {
 
 		// Get array of page part IDs in new order
 		$page_parts = array();
-		foreach ( $_POST['pageParts'] as $page_part ) {
-			$page_parts[] = (int) str_replace( 'page-part-', '', $page_part );
+		if ( isset( $_POST['pageParts'] ) && is_array( $_POST['pageParts'] ) ) {
+			foreach ( $_POST['pageParts'] as $page_part ) {
+				$page_parts[] = (int) str_replace( 'page-part-', '', $page_part );
+			}
 		}
 
 		// Default response
@@ -315,7 +317,7 @@ class Page_Parts_Admin {
 		// Update page part orders
 		$failed = array();
 
-		if ( isset( $_POST['ajaxNonce'] ) && wp_verify_nonce( $_POST['ajaxNonce'], 'order_page_parts' ) ) {
+		if ( count( $page_parts ) > 0 && isset( $_POST['ajaxNonce'] ) && wp_verify_nonce( $_POST['ajaxNonce'], 'order_page_parts' ) ) {
 
 			foreach ( $page_parts as $order => $page_part_id ) {
 				$result = $wpdb->update(
