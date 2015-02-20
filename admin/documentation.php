@@ -11,6 +11,7 @@
 			<li><code><a href="#page_parts_supported_post_types">page_parts_supported_post_types</a></code></li>
 			<li><code><a href="#page_parts_admin_columns">page_parts_admin_columns</a></code></li>
 			<li><code><a href="#page_parts_admin_column_column_name">page_parts_admin_column_{$column_name}</a></code></li>
+			<li><code><a href="#page_parts_locations">page_parts_locations</a></code></li>
 		</ul>
 		<h3 class="title">How to...</h3>
 		<ul>
@@ -20,6 +21,7 @@
 			<li><a href="#page_parts_nested">Nested Page Parts (page parts within page parts)</a></li>
 			<li><a href="#page_parts_admin_columns">Add an extra column to the page parts overview table</a></li>
 			<li><a href="#page_parts_admin_column_column_name">Handle the output of a column in the page parts overview table</a></li>
+			<li><a href="#page_parts_locations">Add Page Part theme locations</a></li>
 		</ul>
 	</div>
 
@@ -233,6 +235,43 @@ function my_page_parts_admin_column_id( $value, $item ) {
 }
 
 add_filter( 'page_parts_admin_column_id', 'my_page_parts_admin_column_id', 10, 2 );
+
+?&gt;</textarea>
+		</p>
+	</div>
+
+	<div id="page_parts_locations" class="tool-box">
+		<h3 class="title">Add Page Part Theme Locations</h3>
+		<p>The following example uses the <code>page_parts_locations</code> filter to register theme locations for post types. This will add an addition column into the Page Parts table in the admin where you can associate a Page Part with a theme location.</p>
+		<p>
+			<textarea cols="70" rows="30" wrap="off" style="width: 100%;" class="code">&lt;?php
+
+/**
+ * Register Page Part Theme Locations
+ *
+ * @param   array   $locations  Locations for post type.
+ * @param   string  $post_type  Post type.
+ * @return  array               Locations for post type.
+ */
+function my_page_parts_locations( $locations, $post_type ) {
+
+	// Page Locations
+	if ( 'page' == $post_type ) {
+		$locations[] = 'Left';
+		$locations[] = 'Bottom';
+	}
+
+	// Post Locations
+	if ( 'post' == $post_type ) {
+		$locations[] = 'Sidebar';
+		$locations[] = 'Right';
+		$locations[] = 'Bottom';
+	}
+
+	return $locations;
+
+}
+add_filter( 'page_parts_locations', 'my_page_parts_locations', 10, 2 );
 
 ?&gt;</textarea>
 		</p>
