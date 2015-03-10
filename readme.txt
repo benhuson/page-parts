@@ -13,12 +13,12 @@ Manage subsections of a page. Create 'page parts' as children of a page to displ
 
 Manage subsections of a page. Create 'page parts' as children of a page to display in different areas of your templates. Requires WordPress 3.4.
 
+For more information, view the documentation link on the admin plugins page after activating the plugin.
+
 == Installation ==
 
 1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-
-(more details about configuring the plugin will be added at a later date)
+2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
 
