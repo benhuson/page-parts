@@ -142,7 +142,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 		$locations = $this->get_locations( get_post_type( $item->post_parent ) );
 		$location_value = get_post_meta( $item->ID, '_page_part_location', true );
 
-		$options = '<option value="">' . __( '–– Default ––', PAGE_PARTS_TEXTDOMAIN ) . '</option>';
+		$options = '<option value="">–– ' . __( 'Default', PAGE_PARTS_TEXTDOMAIN ) . ' ––</option>';
 		foreach ( $locations as $key => $location ) {
 			$options .= '<option value="' . $key . '"' . selected( $key, $location_value, false ) . '>' . esc_html( $location ) . '</option>';
 		}
