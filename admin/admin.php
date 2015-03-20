@@ -102,28 +102,34 @@ class Page_Parts_Admin {
 		$post->post_parent = absint( $post->post_parent );
 
 		// Handle pages (hierarchical) and non-hierarchical post types
-		if ( 0 == $post->post_parent || is_post_type_hierarchical( get_post_type( $post->post_parent ) ) ) {
+		if ( $post->post_parent > 0 && is_post_type_hierarchical( get_post_type( $post->post_parent ) ) ) {
 
 			$args = array(
-				'selected'    => absint( $post->post_parent ),
-				'echo'        => 0,
-				'name'        => 'parent_id',
-				'sort_order'  => 'ASC',
-				'sort_column' => 'menu_order,post_title',
-				'post_type'   => get_post_type( $post->post_parent ),
-				'post_status' => 'publish,draft'
+				'selected'          => absint( $post->post_parent ),
+				'echo'              => 0,
+				'name'              => 'parent_id',
+				'show_option_none'  => sprintf( '–– %s ––', __( 'No Parent', PAGE_PARTS_TEXTDOMAIN ) ),
+				'option_none_value' => 0,
+				'sort_order'        => 'ASC',
+				'sort_column'       => 'menu_order,post_title',
+				'post_type'         => get_post_type( $post->post_parent ),
+				'post_status'       => 'publish,draft'
 			);
 			echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
 
 		} else {
 
-			echo '<p>' . get_the_title( $post->post_parent ) . '</p>';
-			echo '<input type="hidden" name="parent_id" value="' . absint( $post->post_parent ) . '" />';
+			echo '<p>';
+			_e( 'Parent ID:', PAGE_PARTS_TEXTDOMAIN );
+			printf( ' <input type="text" name="parent_id" value="%s" class="small-text" />', $post->post_parent );
+			echo '</p>';
 
 		}
 
 		echo '<p>';
-		printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), __( 'Edit parent', PAGE_PARTS_TEXTDOMAIN ) );
+		if ( $post->post_parent > 0 ) {
+			printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), __( 'Edit parent', PAGE_PARTS_TEXTDOMAIN ) );
+		}
 		printf( '<a class="button button-small button-primary" href="post-new.php?post_type=page-part&parent_id=%s" class="button button-primary">%s</a>', $post->post_parent, __( 'Add new page part', PAGE_PARTS_TEXTDOMAIN ) );
 		echo '</p>';
 
