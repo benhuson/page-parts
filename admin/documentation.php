@@ -74,7 +74,7 @@ add_filter( 'register_page_part_args', 'my_register_page_part_args' );
 function my_post_part_post_type_link( $post_link, $post, $leavename, $sample ) {
 
 	if ( $post->post_parent > 0 ) {
-		$post_link = add_query_arg( 'page-part', $post->ID, get_permalink( $post->post_parent ) );
+		$post_link = esc_url_raw( add_query_arg( 'page-part', $post->ID, get_permalink( $post->post_parent ) ) );
 	}
 
 	return $post_link;

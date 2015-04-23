@@ -92,7 +92,7 @@ class Page_Parts {
 				$post_link = get_permalink( $post->post_parent ) . '#' . $post->post_name;
 			}
 
-			return apply_filters( 'post_part_post_type_link', $post_link, $post, $leavename, $sample );	
+			return esc_url_raw( apply_filters( 'post_part_post_type_link', $post_link, $post, $leavename, $sample ) );
 
 		}
 
