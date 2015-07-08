@@ -44,12 +44,18 @@ class Page_Parts_Admin {
 	 * @param  string  $name  Current column name.
 	 */
 	public function manage_posts_custom_column( $name ) {
+
 		global $post;
 
-		switch ( $name ) {
-			case 'parent' :
-				edit_post_link( get_the_title( $post->post_parent ), null, null, $post->post_parent );
+		if ( 'page-part' == get_post_type( $post ) ) {
+
+			switch ( $name ) {
+				case 'parent' :
+					edit_post_link( get_the_title( $post->post_parent ), null, null, $post->post_parent );
+			}
+
 		}
+
 	}
 
 	/**
