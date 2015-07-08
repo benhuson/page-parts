@@ -130,7 +130,7 @@ class Page_Parts_Admin {
 		foreach ( $columns as $column => $value ) {
 			$new_columns[ $column ] = $value;
 			if ( $column == 'title' ) {
-				$new_columns['parent'] = __( 'Parent Page', PAGE_PARTS_TEXTDOMAIN );
+				$new_columns['parent'] = __( 'Parent Page', 'page-parts' );
 			}
 		}
 		return $new_columns;
@@ -170,7 +170,7 @@ class Page_Parts_Admin {
 
 				add_meta_box(
 					'page_parts',
-					__( 'Page Parts', PAGE_PARTS_TEXTDOMAIN ),
+					__( 'Page Parts', 'page-parts' ),
 					array( $this, 'page_parts_meta_box' ),
 					$post_type,
 					'advanced'
@@ -181,7 +181,7 @@ class Page_Parts_Admin {
 
 		add_meta_box(
 			'page_parts_parent',
-			__( 'Parent Page', PAGE_PARTS_TEXTDOMAIN ), 
+			__( 'Parent Page', 'page-parts' ), 
 			array( $this, 'parent_meta_box' ),
 			'page-part',
 			'side',
@@ -212,7 +212,7 @@ class Page_Parts_Admin {
 				'selected'          => absint( $post->post_parent ),
 				'echo'              => 0,
 				'name'              => 'parent_id',
-				'show_option_none'  => sprintf( '–– %s ––', __( 'No Parent', PAGE_PARTS_TEXTDOMAIN ) ),
+				'show_option_none'  => sprintf( '–– %s ––', __( 'No Parent', 'page-parts' ) ),
 				'option_none_value' => 0,
 				'sort_order'        => 'ASC',
 				'sort_column'       => 'menu_order,post_title',
@@ -224,7 +224,7 @@ class Page_Parts_Admin {
 		} else {
 
 			echo '<p>';
-			_e( 'Parent ID:', PAGE_PARTS_TEXTDOMAIN );
+			_e( 'Parent ID:', 'page-parts' );
 			printf( ' <input type="text" name="parent_id" value="%s" class="small-text" />', $post->post_parent );
 			echo '</p>';
 
@@ -232,9 +232,9 @@ class Page_Parts_Admin {
 
 		echo '<p>';
 		if ( $post->post_parent > 0 ) {
-			printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), __( 'Edit parent', PAGE_PARTS_TEXTDOMAIN ) );
+			printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), __( 'Edit parent', 'page-parts' ) );
 		}
-		printf( '<a class="button button-small button-primary" href="post-new.php?post_type=page-part&parent_id=%s" class="button button-primary">%s</a>', $post->post_parent, __( 'Add new page part', PAGE_PARTS_TEXTDOMAIN ) );
+		printf( '<a class="button button-small button-primary" href="post-new.php?post_type=page-part&parent_id=%s" class="button button-primary">%s</a>', $post->post_parent, __( 'Add new page part', 'page-parts' ) );
 		echo '</p>';
 
 	}
@@ -255,14 +255,14 @@ class Page_Parts_Admin {
 
 			// Edit Page Part
 			$contextual_help =
-				'<p>' . __( 'By default you can only associate a new page part with a page.', PAGE_PARTS_TEXTDOMAIN ) . '</p>' .
-				'<p>' . __( 'If additional post types are supported you must create the new page part by editing the post. Once a page part is associated with a page (or post type) the "Parent Page" panel with allow you to change the parent via a dropdown menu for hierarchical post types. There is not yet the option to re-associate a page part with a different parent for non-hierarchical post types.', PAGE_PARTS_TEXTDOMAIN ) . '</p>';
+				'<p>' . __( 'By default you can only associate a new page part with a page.', 'page-parts' ) . '</p>' .
+				'<p>' . __( 'If additional post types are supported you must create the new page part by editing the post. Once a page part is associated with a page (or post type) the "Parent Page" panel with allow you to change the parent via a dropdown menu for hierarchical post types. There is not yet the option to re-associate a page part with a different parent for non-hierarchical post types.', 'page-parts' ) . '</p>';
 
 		} elseif ( 'edit-page-part' == $screen->id ) {
 
 			// Page Parts Admin Table
-			$contextual_help = '<p>' . __( 'Page parts allow you to add extra content relating to a page.', PAGE_PARTS_TEXTDOMAIN ) . '</p>'
-				. '<p>' . __( 'Click on a page part parent to edit the associated page and view that page\'s other page parts.', PAGE_PARTS_TEXTDOMAIN ) . '</p>';
+			$contextual_help = '<p>' . __( 'Page parts allow you to add extra content relating to a page.', 'page-parts' ) . '</p>'
+				. '<p>' . __( 'Click on a page part parent to edit the associated page and view that page\'s other page parts.', 'page-parts' ) . '</p>';
 
 		}
 
@@ -478,7 +478,7 @@ class Page_Parts_Admin {
 
 		// Log failed updates
 		if ( ! empty( $failed ) ) {
-			$response['error'] = __( 'Unable to save the page part sort order. Please try again.', PAGE_PARTS_TEXTDOMAIN );
+			$response['error'] = __( 'Unable to save the page part sort order. Please try again.', 'page-parts' );
 			$response['errorIDs'] = $failed;
 			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $response['errorIDs'] );
 		}
@@ -514,7 +514,7 @@ class Page_Parts_Admin {
 
 		// Log failed updates
 		if ( ! $updated ) {
-			$response['error'] = __( 'Unable to update the page part location.', PAGE_PARTS_TEXTDOMAIN );
+			$response['error'] = __( 'Unable to update the page part location.', 'page-parts' );
 			$response['errorIDs'] = $post_id;
 			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $response['errorIDs'] );
 		}
@@ -617,8 +617,8 @@ class Page_Parts_Admin {
 		?>
 
 		<p>
-			<a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>" class="button button-primary"><?php _e( 'Add new page part', PAGE_PARTS_TEXTDOMAIN ); ?></a>
-			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Save page parts', PAGE_PARTS_TEXTDOMAIN ); ?>">
+			<a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>" class="button button-primary"><?php _e( 'Add new page part', 'page-parts' ); ?></a>
+			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Save page parts', 'page-parts' ); ?>">
 		</p>
 
 		<?php wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' ); ?>
@@ -654,19 +654,19 @@ class Page_Parts_Admin {
 
 		$messages['page-part'] = array(
 			0  => '', // Unused. Messages start at index 1.
-			1  => sprintf( __( 'Page part updated. <a href="%s">View page part</a> / <a href="%s">Edit parent</a>', PAGE_PARTS_TEXTDOMAIN ), esc_url( get_permalink( $post_ID ) ), esc_url( get_edit_post_link( $post->post_parent ) . '#page_parts' ) ),
-			2  => __( 'Custom field updated.', PAGE_PARTS_TEXTDOMAIN ),
-			3  => __( 'Custom field deleted.', PAGE_PARTS_TEXTDOMAIN ),
-			4  => __( 'Page part updated.', PAGE_PARTS_TEXTDOMAIN ),
+			1  => sprintf( __( 'Page part updated. <a href="%s">View page part</a> / <a href="%s">Edit parent</a>', 'page-parts' ), esc_url( get_permalink( $post_ID ) ), esc_url( get_edit_post_link( $post->post_parent ) . '#page_parts' ) ),
+			2  => __( 'Custom field updated.', 'page-parts' ),
+			3  => __( 'Custom field deleted.', 'page-parts' ),
+			4  => __( 'Page part updated.', 'page-parts' ),
 			// translators: %s: date and time of the revision
-			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Page part restored to revision from %s', PAGE_PARTS_TEXTDOMAIN ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6  => sprintf( __( 'Page part published. <a href="%s">View page part</a> / <a href="%s">Edit parent</a>', PAGE_PARTS_TEXTDOMAIN ), esc_url( get_permalink( $post_ID ) ), esc_url( get_edit_post_link( $post->post_parent ) . '#page_parts' ) ),
-			7  => __( 'Page part saved.', PAGE_PARTS_TEXTDOMAIN ),
-			8  => sprintf( __( 'Page part submitted. <a target="_blank" href="%s">Preview page part</a>', PAGE_PARTS_TEXTDOMAIN ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
-			9  => sprintf( __( 'Page part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>', PAGE_PARTS_TEXTDOMAIN ),
+			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Page part restored to revision from %s', 'page-parts' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			6  => sprintf( __( 'Page part published. <a href="%s">View page part</a> / <a href="%s">Edit parent</a>', 'page-parts' ), esc_url( get_permalink( $post_ID ) ), esc_url( get_edit_post_link( $post->post_parent ) . '#page_parts' ) ),
+			7  => __( 'Page part saved.', 'page-parts' ),
+			8  => sprintf( __( 'Page part submitted. <a target="_blank" href="%s">Preview page part</a>', 'page-parts' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+			9  => sprintf( __( 'Page part scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview page part</a>', 'page-parts' ),
 				// translators: Publish box date format, see http://php.net/date
-				date_i18n( __( 'M j, Y @ G:i', PAGE_PARTS_TEXTDOMAIN ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
-			10 => sprintf( __( 'Page part draft updated. <a target="_blank" href="%s">Preview page part</a>', PAGE_PARTS_TEXTDOMAIN ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
+				date_i18n( __( 'M j, Y @ G:i', 'page-parts' ), strtotime( $post->post_date ) ), esc_url( get_permalink( $post_ID ) ) ),
+			10 => sprintf( __( 'Page part draft updated. <a target="_blank" href="%s">Preview page part</a>', 'page-parts' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) ),
 		);
 		return $messages;
 	}
@@ -685,7 +685,7 @@ class Page_Parts_Admin {
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 
 		if ( plugin_basename( PAGE_PARTS_FILE ) == $plugin_file ) {
-			$plugin_meta[] = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=page-parts-documentation' ), __( 'Documentation', PAGE_PARTS_TEXTDOMAIN ) );
+			$plugin_meta[] = sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=page-parts-documentation' ), __( 'Documentation', 'page-parts' ) );
 		}
 
 		return $plugin_meta;
@@ -699,7 +699,7 @@ class Page_Parts_Admin {
 	 */
 	public function add_documentation_page() {
 
-		add_submenu_page( null, __( 'Page Parts Documentation', PAGE_PARTS_TEXTDOMAIN ), __( 'Page Parts Documentation', PAGE_PARTS_TEXTDOMAIN ), 'manage_options', 'page-parts-documentation', array( $this, 'documentation_page' ) );
+		add_submenu_page( null, __( 'Page Parts Documentation', 'page-parts' ), __( 'Page Parts Documentation', 'page-parts' ), 'manage_options', 'page-parts-documentation', array( $this, 'documentation_page' ) );
 
 	}
 

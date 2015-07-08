@@ -46,7 +46,7 @@ Either enter numbers in the order fields or drag them into the order you want.
 * Add "Add new page part" button on page parts to add a new part to the parent.
 * Add support for author, excerpt, custom-fields and revisions.
 * Added contextual documentation.
-* Added PAGE_PARTS_TEXTDOMAIN constant.
+* Added 'page-parts' constant.
 
 = 0.5 =
 

@@ -28,9 +28,9 @@ class Page_Parts_List_Table extends WP_List_Table {
 	public function get_columns() {
 		$columns = apply_filters( 'page_parts_admin_columns', array(
 			'preview'  => '',
-			'title'    => __( 'Title', PAGE_PARTS_TEXTDOMAIN ),
-			'location' => __( 'Theme Location', PAGE_PARTS_TEXTDOMAIN ),
-			'order'    => __( 'Order', PAGE_PARTS_TEXTDOMAIN ),
+			'title'    => __( 'Title', 'page-parts' ),
+			'location' => __( 'Theme Location', 'page-parts' ),
+			'order'    => __( 'Order', 'page-parts' ),
 		) );
 
 		// Remove location column if no locations
@@ -142,7 +142,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 		$locations = $this->get_locations( get_post_type( $item->post_parent ) );
 		$location_value = get_post_meta( $item->ID, '_page_part_location', true );
 
-		$options = '<option value="">–– ' . __( 'Default', PAGE_PARTS_TEXTDOMAIN ) . ' ––</option>';
+		$options = '<option value="">–– ' . __( 'Default', 'page-parts' ) . ' ––</option>';
 		foreach ( $locations as $key => $location ) {
 			$options .= '<option value="' . $key . '"' . selected( $key, $location_value, false ) . '>' . esc_html( $location ) . '</option>';
 		}
@@ -236,7 +236,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 
 		$add_url = admin_url( sprintf( 'post-new.php?post_type=page-part&parent_id=%s', $post->ID ) );
 
-		printf( __( 'No page parts found. <a %s>Add one?</a>', PAGE_PARTS_TEXTDOMAIN ), 'href="' . $add_url . '"' );
+		printf( __( 'No page parts found. <a %s>Add one?</a>', 'page-parts' ), 'href="' . $add_url . '"' );
 
 	}
 
