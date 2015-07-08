@@ -6,6 +6,7 @@ class Page_Parts_Admin {
 	 * Constructor
 	 */
 	public function Page_Parts_Admin() {
+		add_action( 'wp', array( $this, 'add_post_type_part_column' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'save_post', array( $this, 'save_page_parts' ) );
@@ -19,6 +20,101 @@ class Page_Parts_Admin {
 		add_filter( 'post_updated_messages', array( $this, 'page_part_updated_messages' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'admin_menu', array( $this, 'add_documentation_page' ) );
+	}
+
+	/**
+	 * Add post type page part admin columns
+	 *
+	 * @since  0.8
+	 * @internal
+	 */
+	public function add_post_type_part_column() {
+
+		global $Page_Parts;
+
+		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
+
+			$current_screen = get_current_screen();
+
+			if ( 'edit' == $current_screen->base ) {
+
+				$post_types = $Page_Parts->supported_post_types();
+
+				if ( in_array( $current_screen->post_type, $post_types ) ) {
+
+					add_filter( 'manage_edit-' . $current_screen->post_type . '_columns', array( $this, 'manage_post_type_part_column' ) );
+					add_action( 'manage_' . $current_screen->post_type . '_posts_custom_column', array( $this, 'manage_post_type_part_column_content' ), 10, 2 );
+
+				}
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Add post type page part admin column.
+	 *
+	 * @since  0.8
+	 * @internal
+	 *
+	 * @param   array  $columns  Columns
+	 * @return  array            Updated columns.
+	 */
+	public function manage_post_type_part_column( $columns ) {
+
+		$new_columns = array();
+
+		foreach ( $columns as $column => $value ) {
+			$new_columns[ $column ] = $value;
+			if ( 'title' == $column ) {
+				$new_columns['page_parts'] = __( 'Page Parts', 'page-parts' );
+			}
+		}
+
+		return $new_columns;
+
+	}
+
+	/**
+	 * Add post type page part admin column content.
+	 *
+	 * @since  0.8
+	 * @internal
+	 *
+	 * @param  string  $column_name  Column name.
+	 * @param  int     $post_id      Post ID
+	 */
+	public function manage_post_type_part_column_content( $column_name, $post_id ) {
+
+		if ( $column_name == 'page_parts' ) {
+
+			$page_parts = new WP_Query( array(
+				'nopaging'       => true,
+				'post_parent'    => $post_id,
+				'post_type'      => 'page-part',
+				'posts_per_page' => -1
+			) );
+
+			if ( $page_parts->have_posts() ) {
+
+				$page_parts_count = sprintf( _n( '%s Page Part', '%s Page Parts', $page_parts->found_posts, 'page-parts' ), $page_parts->found_posts );
+
+				echo '<div class="post-type-page-part-column">';
+				printf( '<span class="dashicons-before dashicons-arrow-right page-parts-count">%s</span><br />', esc_html( $page_parts_count ) );
+				echo '<ul>';
+				while ( $page_parts->have_posts() ) {
+					$page_parts->the_post();
+					printf( '<li><a href="%s">%s</a></li>', esc_url( get_edit_post_link( get_the_ID() ) ), esc_html( get_the_title( get_the_ID(), '', '', false ) ) );
+				}
+				echo '</ul>';
+				echo '</div>';
+			}
+			wp_reset_postdata();
+
+		}
+
 	}
 
 	/**
@@ -226,10 +322,30 @@ class Page_Parts_Admin {
 		.js #page_parts input#orderpagepartssub {
 			display: none;
 		}
+		.post-type-page-part-column .page-parts-count {
+			cursor: pointer;
+		}
+		.post-type-page-part-column.show .page-parts-count::before {
+			-webkit-transform: rotate( 90deg );
+			-ms-transform: rotate( 90deg );
+			transform: rotate( 90deg );
+		}
+		.post-type-page-part-column ul {
+			display: none;
+			margin: 0px;
+			padding-left: 1.5em;
+		}
+		.post-type-page-part-column.show ul {
+			display: block;
+		}
+		.post-type-page-part-column ul li {
+			margin: 0px;
+		}
 		</style>
 
 		<script type="text/javascript">
 		jQuery( function( $ ) {
+
 			var pagePartsTable = $( '#page_parts table.wp-list-table.page-parts' );
 			$( '#page_parts table.wp-list-table tbody' ).sortable( {
 				accept               : 'sortable',
@@ -289,6 +405,12 @@ class Page_Parts_Admin {
 					}, 400 );
 				});
 
+			} );
+
+			$( document ).on( 'ready', function() {
+				$( '.post-type-page-part-column .page-parts-count' ).on( 'click', function( e ) {
+					$( this ).closest( '.post-type-page-part-column' ).toggleClass( 'show' );
+				} );
 			} );
 
 		} );
