@@ -308,8 +308,12 @@ class Page_Parts_Admin {
 			height: 22px;
 		}
 		.js #page_parts table.wp-list-table.page-parts td.column-order .spinner {
-			display: none;
 			float: none;
+			visibility: hidden;
+		}
+		.js #page_parts table.wp-list-table.page-parts td.column-order .spinner.is-active {
+			display: inline-block;
+			visibility: visible;
 		}
 		.js #page_parts table.wp-list-table.page-parts td.column-order .handle:hover {
 			opacity: 1;
@@ -367,7 +371,7 @@ class Page_Parts_Admin {
 					} );
 				},
 				update               : function( event, ui ) {
-					ui.item.find( '.column-order .spinner' ).css( 'display', 'inline-block' );
+					ui.item.find( '.column-order .spinner' ).addClass( 'is-active' );
 					ui.item.find( '.column-order .handle' ).hide();
 					var data = {
 						action    : 'page_parts_dragndrop_order',
@@ -376,7 +380,7 @@ class Page_Parts_Admin {
 					};
 					$.post( ajaxurl, data, function( response ) {
 						setTimeout( function() {
-							pagePartsTable.find( '.column-order .spinner' ).css( 'display', 'none' );
+							pagePartsTable.find( '.column-order .spinner' ).removeClass( 'is-active' );
 							pagePartsTable.find( '.column-order .handle' ).show();
 						}, 400 );
 					});
@@ -392,7 +396,7 @@ class Page_Parts_Admin {
 				var id = name.substr( 20, name.length - 21 );
 				var val = $( this ).val();
 
-				$( this ).closest( 'tr' ).find( '.column-order .spinner' ).css( 'display', 'inline-block' );
+				$( this ).closest( 'tr' ).find( '.column-order .spinner' ).addClass( 'is-active' );
 				$( this ).closest( 'tr' ).find( '.column-order .handle' ).hide();
 				var data = {
 					action    : 'page_parts_location',
@@ -402,7 +406,7 @@ class Page_Parts_Admin {
 				};
 				$.post( ajaxurl, data, function( response ) {
 					setTimeout( function() {
-						pagePartsTable.find( '.column-order .spinner' ).css( 'display', 'none' );
+						pagePartsTable.find( '.column-order .spinner' ).removeClass( 'is-active' );
 						pagePartsTable.find( '.column-order .handle' ).show();
 					}, 400 );
 				});
