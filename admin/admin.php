@@ -92,6 +92,8 @@ class Page_Parts_Admin {
 
 			$page_parts = new WP_Query( array(
 				'nopaging'       => true,
+				'order'          => 'ASC',
+				'orderby'        => 'menu_order',
 				'post_parent'    => $post_id,
 				'post_type'      => 'page-part',
 				'posts_per_page' => -1
