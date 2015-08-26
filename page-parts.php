@@ -59,6 +59,7 @@ class Page_Parts {
 			'exclude_from_search' => true,
 			'show_ui'             => true, 
 			'show_in_menu'        => 'edit.php?post_type=page', 
+			'show_in_nav_menus'   => false,
 			'query_var'           => true,
 			'rewrite'             => true,
 			'capability_type'     => 'page',
