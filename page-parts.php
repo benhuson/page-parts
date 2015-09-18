@@ -89,7 +89,16 @@ class Page_Parts {
 		if ( $post->post_type == 'page-part' ) {
 
 			if ( $post->post_parent > 0 ) {
-				$post_link = get_permalink( $post->post_parent ) . '#' . $post->post_name;
+				if ( 'page-part' == get_post_type( $post->post_parent ) ) {
+					$ancestors = get_ancestors( $post->post_parent, 'post' );
+					foreach ( $ancestors as $ancestor ) {
+						if ( 'page-part' != get_post_type( $ancestor ) ) {
+							$post_link = $this->create_permalink( $ancestor, $post->post_name );
+						}
+					}
+				} else {
+					$post_link = $this->create_permalink( $post->post_parent, $post->post_name );
+				}
 			}
 
 			return esc_url_raw( apply_filters( 'post_part_post_type_link', $post_link, $post, $leavename, $sample ) );
@@ -97,6 +106,19 @@ class Page_Parts {
 		}
 
 		return $post_link;
+
+	}
+
+	/**
+	 * Create Permalink
+	 *
+	 * @param   int     $post_id  Post ID.
+	 * @param   string  $anchor   Anchor text.
+	 * @return  string            URL.
+	 */
+	private function create_permalink( $post_id, $anchor ) {
+
+		return get_permalink( $post_id ) . '#' . $anchor;
 
 	}
 
