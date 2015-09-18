@@ -39,8 +39,9 @@ Either enter numbers in the order fields or drag them into the order you want.
 = 0.8 =
 * Add option to set parent ID manually (if page part is not connected to a post).
 * Add page part column to post type admin pages.
-* Textdomain should be a string - using a variable causes issues for parsers.
 * Don't show Page Parts meta box in admin nav menus.
+* Better handling of default permalinks with anchors (where page part is a child of another page part).
+* Textdomain should be a string - using a variable causes issues for parsers.
 * Check and escape filtered URLs.
 
 = 0.7 =
