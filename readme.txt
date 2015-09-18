@@ -1,9 +1,9 @@
 === Page Parts ===
 Contributors: husobj
 Tags: pages, cms
-Requires at least: 3.4
-Tested up to: 4.2
-Stable tag: 0.7
+Requires at least: 3.7
+Tested up to: 4.3.1
+Stable tag: 0.8
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,13 @@ Either enter numbers in the order fields or drag them into the order you want.
 5. Page Part meta box with link back to parent page and option to add a new sibling page part.
 
 == Changelog ==
+
+= 0.8 =
+* Add option to set parent ID manually (if page part is not connected to a post).
+* Add page part column to post type admin pages.
+* Textdomain should be a string - using a variable causes issues for parsers.
+* Don't show Page Parts meta box in admin nav menus.
+* Check and escape filtered URLs.
 
 = 0.7 =
 * Added API to specify theme locations.
