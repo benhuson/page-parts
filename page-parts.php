@@ -28,6 +28,7 @@ class Page_Parts {
 
 		add_action( 'init', array( $this, 'register_post_types' ), 6 );
 		add_filter( 'post_type_link', array( $this, 'post_part_link' ), 10, 4 );
+		add_filter( 'post_class', array( $this, 'post_class' ), 10, 3 );
 
 		// Template
 		require_once( dirname( PAGE_PARTS_FILE ) . '/includes/templates.php' );
@@ -124,6 +125,44 @@ class Page_Parts {
 	private function create_permalink( $post_id, $anchor ) {
 
 		return get_permalink( $post_id ) . '#' . $anchor;
+
+	}
+
+	/**
+	 * Add Page Part Post Classes
+	 *
+	 * This only adds the page part template filename-based class.
+	 * It doesn't add multiple classes based on folder structure as
+	 * WordPress custom page templates do.
+	 *
+	 * This could cause issues if you had multiple page part templates
+	 * with the same name existing in different folders.
+	 * Let's not worry about that for now though.
+	 *
+	 * @param   array    $classes  Post classes.
+	 * @param   string   $class    A comma-separated list of additional classes added to the post.
+	 * @param   integer  $post_id  Post ID.
+	 * @return  array              Filtered classes.
+	 */
+	public function post_class( $classes, $class, $post_id ) {
+
+		$post = get_post( $post_id );
+
+		// Only add classes for page parts
+		if ( 'page-part' != $post->post_type ) {
+			return $classes;
+		}
+
+		$template = self::get_page_part_template_slug( $post_id );
+
+		if ( ! empty( $template ) ) {
+			$classes[] = 'page-part-template';
+			$classes[] = 'page-part-template-' . sanitize_html_class( basename( $template, '.php' ) );
+		} else {
+			$classes[] = 'page-part-template-default';
+		}
+
+		return $classes;
 
 	}
 
