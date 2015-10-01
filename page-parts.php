@@ -204,6 +204,40 @@ class Page_Parts {
 
 	}
 
+	/**
+	 * Get Page Part Template
+	 * 
+	 * This method is used to load a custom Page Part template from the
+	 * current actuve theme. If a custom Page Part template cannot
+	 * be found in the theme it will look for a 'page-part.php' template
+	 * in the root of the theme.
+	 *
+	 * If no valid template is found in the theme then it will fallback
+	 * to loading 'templates/page-part.php' in the Page Parts plugin folder.
+	 */
+	public static function get_page_part_template() {
+
+		$post = get_post();
+
+		$template_names = array();
+
+		if ( 'page-part' == $post->post_type ) {
+			$template = self::get_page_part_template_slug( $post->ID );
+			if ( ! empty( $template ) ) {
+				$template_names[] = $template;
+			}
+		}
+
+		$template_names[] = 'page-part.php';
+
+		$located = locate_template( $template_names, true, false );
+
+		if ( ! $located ) {
+			load_template( dirname( PAGE_PARTS_FILE ) . '/templates/page-part.php' );
+		}
+
+	}
+
 }
 
 global $Page_Parts;
