@@ -143,6 +143,29 @@ class Page_Parts {
 
 	}
 
+	/**
+	 * Get the specific template name for a page part.
+	 *
+	 * @param  int           $post_id  Optional. The page ID to check. Defaults to the current post in the loop.
+	 * @return string|false            Page template filename. Returns an empty string when the default
+	 *                                 page part template is in use. Returns false if the post is not a page part.
+	 */
+	public static function get_page_part_template_slug( $post_id = null ) {
+
+		$post = get_post( $post_id );
+		if ( ! $post || 'page-part' != $post->post_type ) {
+			return false;
+		}
+
+		$template = get_post_meta( $post->ID, '_page_part_template', true );
+		if ( ! $template || 'default' == $template ) {
+			return '';
+		}
+
+		return $template;
+
+	}
+
 }
 
 global $Page_Parts;
