@@ -16,6 +16,7 @@ define( 'PAGE_PARTS_FILE', __FILE__ );
 class Page_Parts {
 
 	var $admin;
+	var $templates;
 
 	/**
 	 * Constructor
@@ -27,6 +28,10 @@ class Page_Parts {
 
 		add_action( 'init', array( $this, 'register_post_types' ), 6 );
 		add_filter( 'post_type_link', array( $this, 'post_part_link' ), 10, 4 );
+
+		// Template
+		require_once( dirname( PAGE_PARTS_FILE ) . '/includes/templates.php' );
+		$this->templates = new Page_Parts_Templates();
 
 		if ( is_admin() ) {
 			require_once( dirname( PAGE_PARTS_FILE ) . '/admin/admin.php' );
