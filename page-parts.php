@@ -132,8 +132,9 @@ class Page_Parts {
 	 * Add Page Part Post Classes
 	 *
 	 * This only adds the page part template filename-based class.
-	 * It doesn't add multiple classes based on folder structure as
-	 * WordPress custom page templates do.
+	 * It doesn't add a default template class. It also doesn't add
+	 * multiple classes based on folder structure as WordPress
+	 * custom page templates do.
 	 *
 	 * This could cause issues if you had multiple page part templates
 	 * with the same name existing in different folders.
@@ -158,8 +159,6 @@ class Page_Parts {
 		if ( ! empty( $template ) ) {
 			$classes[] = 'page-part-template';
 			$classes[] = 'page-part-template-' . sanitize_html_class( basename( $template, '.php' ) );
-		} else {
-			$classes[] = 'page-part-template-default';
 		}
 
 		return $classes;
