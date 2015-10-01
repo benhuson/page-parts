@@ -30,6 +30,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 			'preview'  => '',
 			'title'    => __( 'Title', 'page-parts' ),
 			'location' => __( 'Theme Location', 'page-parts' ),
+			'template' => __( 'Template', 'page-parts' ),
 			'order'    => __( 'Order', 'page-parts' ),
 		) );
 
@@ -98,6 +99,9 @@ class Page_Parts_List_Table extends WP_List_Table {
 			case 'location' :
 				$value = $this->admin_column_location( $item );
 				break;
+			case 'template' :
+				$value = $this->admin_column_template( $item );
+				break;
 			default :
 				$value = '';
 		}
@@ -148,6 +152,25 @@ class Page_Parts_List_Table extends WP_List_Table {
 		}
 
 		return '<select name="page_parts_location[' . $item->ID . ']" id="page_parts_location[' . $item->ID . ']">' . $options . '</select>';
+
+	}
+
+	/**
+	 * Template Column.
+	 *
+	 * @param   object  $item  Post object.
+	 * @return  string         Column content.
+	 */
+	public function admin_column_template( $item ) {
+
+		global $Page_Parts;
+
+		$template = get_post_meta( $item->ID, '_page_part_template', true );
+
+		$options = '<option value="">' . esc_html__( 'Default Template', 'page-parts' ) . '</option>';
+		$options .= $Page_Parts->templates->page_part_template_dropdown( $template );
+
+		return '<select name="page_parts_template[' . $item->ID . ']" id="page_parts_template[' . $item->ID . ']">' . $options . '</select>';
 
 	}
 
