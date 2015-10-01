@@ -17,6 +17,7 @@ class Page_Parts_Admin {
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'wp_ajax_page_parts_dragndrop_order', array( $this, 'dragndrop_order_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_location', array( $this, 'location_ajax_callback' ) );
+		add_action( 'wp_ajax_page_parts_template', array( $this, 'template_ajax_callback' ) );
 		add_filter( 'post_updated_messages', array( $this, 'page_part_updated_messages' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'admin_menu', array( $this, 'add_documentation_page' ) );
@@ -299,7 +300,12 @@ class Page_Parts_Admin {
 		#page_parts table.wp-list-table.page-parts .column-location {
 			width: 140px;
 		}
-			#page_parts table.wp-list-table.page-parts .column-location select {
+		#page_parts table.wp-list-table.page-parts .column-template {
+			width: 150px;
+		}
+			#page_parts table.wp-list-table.page-parts .column-location select,
+			#page_parts table.wp-list-table.page-parts .column-template select {
+				white-space: nowrap;
 				width: 100%;
 			}
 		#page_parts table.wp-list-table.page-parts .column-status {
@@ -423,6 +429,30 @@ class Page_Parts_Admin {
 
 			} );
 
+			// Page Part Template Menu
+			$( '#page_parts table.wp-list-table tbody .column-template select' ).on( 'change', function( e ) {
+
+				var name = $( this ).attr( 'name' );
+				var id = name.substr( 20, name.length - 21 );
+				var val = $( this ).val();
+
+				$( this ).closest( 'tr' ).find( '.column-order .spinner' ).addClass( 'is-active' );
+				$( this ).closest( 'tr' ).find( '.column-order .handle' ).hide();
+				var data = {
+					action    : 'page_parts_template',
+					post_id   : id,
+					template  : val,
+					ajaxNonce : '<?php echo wp_create_nonce( "page_parts_template" ); ?>'
+				};
+				$.post( ajaxurl, data, function( response ) {
+					setTimeout( function() {
+						pagePartsTable.find( '.column-order .spinner' ).removeClass( 'is-active' );
+						pagePartsTable.find( '.column-order .handle' ).show();
+					}, 400 );
+				});
+
+			} );
+
 			$( document ).on( 'ready', function() {
 				$( '.post-type-page-part-column .page-parts-count' ).on( 'click', function( e ) {
 					$( this ).closest( '.post-type-page-part-column' ).toggleClass( 'show' );
@@ -526,7 +556,43 @@ class Page_Parts_Admin {
 		if ( ! $updated ) {
 			$response['error'] = __( 'Unable to update the page part location.', 'page-parts' );
 			$response['errorIDs'] = $post_id;
-			$error = new WP_Error( 'page_parts_ajax_save_order', $response['error'], $response['errorIDs'] );
+			$error = new WP_Error( 'page_parts_ajax_save_location', $response['error'], $response['errorIDs'] );
+		}
+
+		// Response
+		echo json_encode( $response );
+		die();
+	}
+
+	/**
+	 * Template AJAX Callback
+	 */
+	public function template_ajax_callback() {
+
+		$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+		$template = isset( $_POST['template'] ) ? $_POST['template'] : '';
+
+		$updated = false;
+
+		// Default response
+		$response = array(
+			'error'       => '',
+			'errorIDs'    => array(),
+			'message'     => '',
+			'post_id'     => $post_id
+		);
+
+		if ( isset( $_POST['ajaxNonce'] ) && wp_verify_nonce( $_POST['ajaxNonce'], 'page_parts_template' ) ) {
+			if ( $post_id > 0 ) {
+				$updated = update_post_meta( $post_id, '_page_part_template', sanitize_text_field( $template ) );
+			}
+		}
+
+		// Log failed updates
+		if ( ! $updated ) {
+			$response['error'] = __( 'Unable to update the page part template.', 'page-parts' );
+			$response['errorIDs'] = $post_id;
+			$error = new WP_Error( 'page_parts_ajax_save_template', $response['error'], $response['errorIDs'] );
 		}
 
 		// Response
