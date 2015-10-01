@@ -3,6 +3,12 @@
 /**
  * @package     Page Parts
  * @subpackage  Templates
+ *
+ * Create Page Part Templates in exactly the same way as WordPress custom templates:
+ * https://developer.wordpress.org/themes/template-files-section/page-template-files/page-templates/#creating-custom-page-templates-for-global-use
+ *
+ * The only difference is that rather than specifying a "Template Name"
+ * in the template header instead add a "Page Part Name".
  */
 
 /**
