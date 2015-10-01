@@ -165,7 +165,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 
 		global $Page_Parts;
 
-		$template = get_post_meta( $item->ID, '_page_part_template', true );
+		$template = Page_Parts::get_page_part_template_slug( $item->ID );
 
 		$options = '<option value="">' . esc_html__( 'Default Template', 'page-parts' ) . '</option>';
 		$options .= $Page_Parts->templates->page_part_template_dropdown( $template );
