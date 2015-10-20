@@ -239,7 +239,7 @@ class Page_Parts {
 		$located = locate_template( $template_names, true, false );
 
 		if ( ! $located ) {
-			load_template( dirname( PAGE_PARTS_FILE ) . '/templates/page-part.php' );
+			load_template( dirname( PAGE_PARTS_FILE ) . '/templates/page-part.php', false );
 		}
 
 	}
