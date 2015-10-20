@@ -13,7 +13,7 @@ class Page_Parts_Admin {
 		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 5, 2 );
 		add_action( 'contextual_help', array( $this, 'contextual_help' ), 10, 3 );
 		add_filter( 'manage_edit-page-part_columns', array( $this, 'manage_edit_page_part_columns' ) );
-		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ) );
+		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'wp_ajax_page_parts_dragndrop_order', array( $this, 'dragndrop_order_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_location', array( $this, 'location_ajax_callback' ) );
@@ -130,7 +130,7 @@ class Page_Parts_Admin {
 		foreach ( $columns as $column => $value ) {
 			$new_columns[ $column ] = $value;
 			if ( $column == 'title' ) {
-				$new_columns['parent'] = __( 'Parent Page', 'page-parts' );
+				$new_columns['page-part-parent'] = __( 'Parent', 'page-parts' );
 			}
 		}
 		return $new_columns;
@@ -139,17 +139,27 @@ class Page_Parts_Admin {
 	/**
 	 * Manage Page Part Columns Output
 	 *
-	 * @param  string  $name  Current column name.
+	 * @param  string  $name     Current column name.
+	 * @param  int     $post_id  Current post ID.
 	 */
-	public function manage_posts_custom_column( $name ) {
+	public function manage_posts_custom_column( $name, $post_id ) {
 
 		global $post;
 
-		if ( 'page-part' == get_post_type( $post ) ) {
+		if ( 'page-part' == get_post_type( $post_id ) ) {
+
+			$ancestors = array_reverse( get_ancestors( $post_id, get_post_type( $post_id ) ) );
 
 			switch ( $name ) {
-				case 'parent' :
-					edit_post_link( get_the_title( $post->post_parent ), null, null, $post->post_parent );
+				case 'page-part-parent' :
+					$i = 0;
+					foreach ( $ancestors as $ancestor ) {
+						if ( $i > 0 ) {
+							echo _x( ' &rarr; ', 'Admin hierarchy seperator', 'page-parts' );
+						}
+						edit_post_link( get_the_title( $ancestor ), null, null, $ancestor );
+						$i++;
+					}
 			}
 
 		}
