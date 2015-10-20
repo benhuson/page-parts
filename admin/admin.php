@@ -566,6 +566,8 @@ class Page_Parts_Admin {
 
 	/**
 	 * Template AJAX Callback
+	 *
+	 * @since  1.0
 	 */
 	public function template_ajax_callback() {
 

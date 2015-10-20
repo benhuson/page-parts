@@ -140,6 +140,8 @@ class Page_Parts {
 	 * with the same name existing in different folders.
 	 * Let's not worry about that for now though.
 	 *
+	 * @since  1.0
+	 *
 	 * @param   array    $classes  Post classes.
 	 * @param   string   $class    A comma-separated list of additional classes added to the post.
 	 * @param   integer  $post_id  Post ID.
@@ -184,6 +186,8 @@ class Page_Parts {
 	/**
 	 * Get the specific template name for a page part.
 	 *
+	 * @since  1.0
+	 *
 	 * @param  int           $post_id  Optional. The page ID to check. Defaults to the current post in the loop.
 	 * @return string|false            Page template filename. Returns an empty string when the default
 	 *                                 page part template is in use. Returns false if the post is not a page part.
@@ -214,6 +218,8 @@ class Page_Parts {
 	 *
 	 * If no valid template is found in the theme then it will fallback
 	 * to loading 'templates/page-part.php' in the Page Parts plugin folder.
+	 *
+	 * @since  1.0
 	 */
 	public static function get_page_part_template() {
 

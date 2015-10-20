@@ -1,18 +1,22 @@
 <?php
 
 /**
- * @package     Page Parts
- * @subpackage  Templates
- *
  * Create Page Part Templates in exactly the same way as WordPress custom templates:
  * https://developer.wordpress.org/themes/template-files-section/page-template-files/page-templates/#creating-custom-page-templates-for-global-use
  *
  * The only difference is that rather than specifying a "Template Name"
  * in the template header instead add a "Page Part Name".
+ *
+ * @package     Page Parts
+ * @subpackage  Templates
+ *
+ * @since  1.0
  */
 
 /**
  * Page Parts Templates Class
+ *
+ * @since  1.0
  */
 class Page_Parts_Templates {
 
@@ -20,6 +24,8 @@ class Page_Parts_Templates {
 	 * Theme Root
 	 *
 	 * Used for generating cache keys.
+	 *
+	 * @since  1.0
 	 *
 	 * @var  string
 	 */
@@ -30,12 +36,16 @@ class Page_Parts_Templates {
 	 *
 	 * Used for generating cache keys.
 	 *
+	 * @since  1.0
+	 *
 	 * @var  string
 	 */
 	private $stylesheet;
 
 	/**
 	 * Cache Hash
+	 *
+	 * @since  1.0
 	 *
 	 * @var  string
 	 */
@@ -44,12 +54,16 @@ class Page_Parts_Templates {
 	/**
 	 * Cache Expiration Time
 	 *
+	 * @since  1.0
+	 *
 	 * @var  integer
 	 */
 	private static $cache_expiration = 1800;
 
 	/**
 	 * Constructor
+	 *
+	 * @since  1.0
 	 *
 	 * Sets up cache hache used when getting templates.
 	 */
@@ -65,6 +79,8 @@ class Page_Parts_Templates {
 	/**
 	 * Get Cache
 	 *
+	 * @since  1.0
+	 *
 	 * @param   string  $key  Cache key.
 	 * @return  array         Cached templates data.
 	 */
@@ -74,6 +90,8 @@ class Page_Parts_Templates {
 
 	/**
 	 * Add Cache
+	 *
+	 * @since  1.0
 	 *
 	 * @param   string   $key   Cache key.
 	 * @param   string   $data  Cached templates data.
@@ -87,6 +105,8 @@ class Page_Parts_Templates {
 	 * Get Page Part Templates
 	 *
 	 * Gets an array of possible page part templates for a post.
+	 *
+	 * @since  1.0
 	 *
 	 * @param   int|WP_Post  $post  Post ID or object.
 	 * @return  array               Templates.
@@ -148,6 +168,8 @@ class Page_Parts_Templates {
 	 * not intended for use by plugins.
 	 *
 	 * Strips close comment and close php tags from file headers.
+	 *
+	 * @since  1.0
 	 * 
 	 * @param   string  $str  String to clean.
 	 * @return  string        Cleaned string.
@@ -160,6 +182,8 @@ class Page_Parts_Templates {
 
 	/**
 	 * Page Part Template Dropdown
+	 *
+	 * @since  1.0
 	 *
 	 * @param   string  $default  Selected template.
 	 * @return  string            HTML <option> list for dropdrop.

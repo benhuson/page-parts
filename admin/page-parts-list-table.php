@@ -158,6 +158,8 @@ class Page_Parts_List_Table extends WP_List_Table {
 	/**
 	 * Template Column.
 	 *
+	 * @since  1.0
+	 *
 	 * @param   object  $item  Post object.
 	 * @return  string         Column content.
 	 */
