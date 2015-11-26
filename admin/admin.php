@@ -198,6 +198,16 @@ class Page_Parts_Admin {
 			'side',
 			'core'
 		);
+
+		add_meta_box(
+			'page_parts_template',
+			__( 'Page Part Template', 'page-parts' ), 
+			array( $this, 'template_meta_box' ),
+			'page-part',
+			'side',
+			'core'
+		);
+
 	}
 
 	/**
@@ -247,6 +257,25 @@ class Page_Parts_Admin {
 		}
 		printf( '<a class="button button-small button-primary" href="post-new.php?post_type=page-part&parent_id=%s" class="button button-primary">%s</a>', $post->post_parent, __( 'Add new page part', 'page-parts' ) );
 		echo '</p>';
+
+	}
+
+	/**
+	 * Template Meta Box
+	 */
+	public function template_meta_box() {
+
+		global $post, $Page_Parts;
+
+		// Use nonce for verification
+		wp_nonce_field( plugin_basename( __FILE__ ), 'page_parts_template_noncename' );
+
+		$template = Page_Parts::get_page_part_template_slug( $post->ID );
+
+		$options = '<option value="">' . esc_html__( 'Default Template', 'page-parts' ) . '</option>';
+		$options .= $Page_Parts->templates->page_part_template_dropdown( $template );
+
+		echo '<select name="template" id="template">' . $options . '</select>';
 
 	}
 
@@ -548,7 +577,11 @@ class Page_Parts_Admin {
 
 		if ( isset( $_POST['ajaxNonce'] ) && wp_verify_nonce( $_POST['ajaxNonce'], 'page_parts_location' ) ) {
 			if ( $post_id > 0 ) {
-				$updated = update_post_meta( $post_id, '_page_part_location', sanitize_key( $location ) );
+				if ( empty( $location ) ) {
+					delete_post_meta( $post_id, '_page_part_location' );
+				} else {
+					$updated = update_post_meta( $post_id, '_page_part_location', sanitize_key( $location ) );
+				}
 			}
 		}
 
@@ -625,6 +658,19 @@ class Page_Parts_Admin {
 
 				if ( 0 == $parent_id || ( $post_type_object && current_user_can( $post_type_object->cap->edit_post, $post_id ) ) ) {
 					$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
+				}
+
+			}
+		}
+
+		// Save page part template?
+		if ( isset( $_POST['page_parts_template_noncename'] ) && wp_verify_nonce( $_POST['page_parts_template_noncename'], plugin_basename( __FILE__ ) ) ) {
+			if ( isset( $_POST['template'] ) && current_user_can( 'edit_page', $post_id ) ) {
+
+				if ( empty( $_POST['template'] ) ) {
+					delete_post_meta( $post_id, '_page_part_template' );
+				} else {
+					update_post_meta( $post_id, '_page_part_template', sanitize_text_field( $_POST['template'] ) );
 				}
 
 			}
