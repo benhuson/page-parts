@@ -181,6 +181,21 @@ class Page_Parts_Templates {
 	}
 
 	/**
+	 * Has Page Part Templates
+	 *
+	 * @since  1.0
+	 *
+	 * @return  boolean  Post has page part templates?
+	 */
+	public function has_page_part_templates() {
+
+		$templates = $this->get_page_part_templates( get_post() );
+
+		return count( $templates ) > 0;
+
+	}
+
+	/**
 	 * Page Part Template Dropdown
 	 *
 	 * @since  1.0
