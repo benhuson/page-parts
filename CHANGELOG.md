@@ -8,12 +8,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Add support for Page Part templates.
 - Show parent hierarchy in page parts admin.
 
-## [0.9] - 0000-00-00
+## [0.9] - 2015-09-18
 
 ### Changed
 - Better handling of default permalinks with anchors (where page part is a child of another page part).
 
-## [0.8] - 0000-00-00
+## [0.8] - 2015-09-18
 
 ### Added
 - Add option to set parent ID manually (if page part is not connected to a post).
@@ -28,7 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Security
 - Check and escape filtered URLs.
 
-## [0.7] - 0000-00-00
+## [0.7] - 2015-02-20
 
 ### Added
 - Added API to specify theme locations.
@@ -37,7 +37,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Security
 - Tightened up AJAX security with better POST validation and nonces.
 
-## [0.6] - 0000-00-00
+## [0.6] - 2014-11-18
 
 ### Added
 - Add "Add new page part" button on page parts to add a new part to the parent.
@@ -45,14 +45,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added contextual documentation.
 - Added 'page-parts' constant.
 
-## [0.5] - 0000-00-00
+## [0.5] - 2014-08-28
 
 ### Added
 - Add plugin documentation (link on plugins page).
 - Add 'page_parts_supported_post_types' filter to enable support for other post types.
 - Added 'page_parts_admin_columns' and 'page_parts_admin_column_{$column_name}' filters for adding extra columns to the page parts table.
 
-## [0.4] - 0000-00-00
+## [0.4] - 2014-07-10
 
 ### Added
 - Improve drag and drop interface - uses a 'handle' so as to not interfere with links etc.
@@ -63,7 +63,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Order now updated immediate after drag and drop via AJAX.
 
-## [0.3] - 0000-00-00
+## [0.3] - 2013-10-30
 
 ### Added
 - Shows post thumbnail if available.
@@ -71,7 +71,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Display page part status in admin list.
 - Added 'register_page_part_args' filter.
 
-## [0.2] - 0000-00-00
+## [0.2] - 2012-06-14
 
 ### Added
 - First public release.
