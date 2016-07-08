@@ -834,7 +834,7 @@ class Page_Parts_Admin {
 	 */
 	public function documentation_page() {
 
-		include( dirname( __FILE__ ) . '/documentation.php' );
+		include( dirname( __FILE__ ) . '/documentation/index.php' );
 
 	}
 
