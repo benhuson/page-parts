@@ -529,16 +529,20 @@ class Page_Parts_Admin {
 		if ( count( $page_parts ) > 0 && isset( $_POST['ajaxNonce'] ) && wp_verify_nonce( $_POST['ajaxNonce'], 'order_page_parts' ) ) {
 
 			foreach ( $page_parts as $order => $page_part_id ) {
-				$result = $wpdb->update(
-					$wpdb->posts,
-					array( 'menu_order' => $order ),
-					array( 'ID' => $page_part_id ),
-					array( '%d' ),
-					array( '%d' )
-				);
+
+				$result = 0;
+
+				if ( ! wp_is_post_revision( $page_part_id ) ) {
+					$result = wp_update_post( array(
+						'ID'         => $page_part_id,
+						'menu_order' => $order
+					) );
+				}
+
 				if ( $result == 0 ) {
 					$failed[] = $page_part_id;
 				}
+
 			}
 
 		} else {
