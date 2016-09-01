@@ -8,6 +8,7 @@ class Page_Parts_Admin {
 	public function Page_Parts_Admin() {
 		add_action( 'wp', array( $this, 'add_post_type_part_column' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'save_post', array( $this, 'save_page_parts' ) );
 		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 5, 2 );
@@ -283,12 +284,37 @@ class Page_Parts_Admin {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'page_parts_template_noncename' );
 
-		$template = Page_Parts::get_page_part_template_slug( $post->ID );
+		$current_template = Page_Parts::get_page_part_template_slug( $post->ID );
 
 		$options = '<option value="">' . esc_html__( 'Default Template', 'page-parts' ) . '</option>';
-		$options .= $Page_Parts->templates->page_part_template_dropdown( $template );
+		$options .= $Page_Parts->templates->page_part_template_dropdown( $current_template );
 
 		echo '<select name="template" id="template">' . $options . '</select>';
+
+		// Images
+
+		$templates = $Page_Parts->templates->get_page_part_templates( $post->ID );
+		$images = $Page_Parts->templates->get_page_part_template_images( $post );
+		$image_grid = '';
+
+		foreach ( $templates as $name => $template ) {
+
+			if ( ! isset( $images[ $template ] ) ) {
+				continue;
+			}
+
+			$class = $template == $current_template ? 'page-part-image selected' : 'page-part-image';
+			$image_grid .= sprintf( '<img src="%s" width="80" height="50" alt="%s" title="%s" rel="%s" class="%s" />', esc_attr( $images[ $template ] ), esc_attr( $name ), esc_attr( $name ), esc_attr( $template ), $class );
+
+		}
+
+		// If there are options...
+		if ( ! empty( $image_grid ) ) {
+			$class = empty( $current_template ) ? 'page-part-image selected' : 'page-part-image';
+			$image_grid = '<div class="page-part-image-container"><img src="' . plugins_url( 'images/templates/default.png', dirname( __FILE__ ) ) . '" width="80" height="50" alt="Remove Template..." title="Remove Template..." class="' . $class . '">' . $image_grid . '</div>';
+			echo $image_grid;
+		}
+
 
 	}
 
@@ -508,10 +534,20 @@ class Page_Parts_Admin {
 	}
 
 	/**
+	 * Admin Enqueue Styles
+	 */
+	public function admin_enqueue_styles() {
+
+		wp_enqueue_style( 'page-parts-admin', plugins_url( 'admin/css/admin.css', dirname( __FILE__ ) ) );
+
+	}
+
+	/**
 	 * Admin Enqueue Scripts
 	 */
 	public function admin_enqueue_scripts() {
 		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
+		wp_enqueue_script( 'page-parts-admin', plugins_url( 'admin/js/admin-post.js', dirname( __FILE__ ) ), 'jquery' );
 	}
 
 	/**
