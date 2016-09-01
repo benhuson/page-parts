@@ -12,6 +12,7 @@
 
 	#page_parts_template .page-part-image {
 		border: 1px solid #E6E6E6;
+		cursor: pointer;
 		float: left;
 		margin: 0 4px 4px 0;
 		padding: 1px;
