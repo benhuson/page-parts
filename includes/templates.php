@@ -181,6 +181,50 @@ class Page_Parts_Templates {
 	}
 
 	/**
+	 * Get Page Part Template Images
+	 *
+	 * Gets an array of image URLs for page part templates.
+	 *
+	 * @since  1.0
+	 *
+	 * @param   int|WP_Post  $post  Post ID or object.
+	 * @return  array               Template images.
+	 */
+	public function get_page_part_template_images( $post = null ) {
+
+		$theme = wp_get_theme();
+
+		// If you screw up your current theme and we invalidate your parent, most things still work. Let it slide.
+		if ( $theme->errors() && $theme->errors()->get_error_codes() !== array( 'theme_parent_invalid' ) ) {
+			return array();
+		}
+
+		$page_templates = $this->cache_get( 'page_part_template_images' );
+
+		if ( ! is_array( $page_templates ) ) {
+			$page_templates = array();
+
+			$files = (array) $theme->get_files( 'php', 1 );
+
+			foreach ( $files as $file => $full_path ) {
+				if ( ! preg_match( '|Page Part Image:(.*)$|mi', file_get_contents( $full_path ), $header ) ) {
+					continue;
+				}
+				$page_templates[ $file ] = trailingslashit( get_stylesheet_directory_uri() ) . $this->cleanup_header_comment( $header[1] );
+			}
+
+			$this->cache_add( 'page_part_template_images', $page_templates );
+		}
+
+		// @todo  If theme has parent theme, check parent template if child version does not exist.
+
+		$return = apply_filters( 'page_part_theme_template_images', $page_templates, $theme, $post );
+
+		return array_intersect_assoc( $return, $page_templates );
+
+	}
+
+	/**
 	 * Has Page Part Templates
 	 *
 	 * @since  1.0
