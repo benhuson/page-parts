@@ -38,6 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="define_a_custom_template">
 		<h3>Define a Custom Template</h3>
 		<p>Define your template name by adding a <code>Page Part Name:</code> docblock to the top of your template file. Your template can exist in a sub-folder of your theme, it does not have to be in the root.</p>
+		<p>Optionally, you can specify a template image by including the <code>Page Part Image:</code> docblock. This will activate and display the image-based template select admin interface which helps to give a clearer indication to the user of the template layout. The image path should be relative to the theme folder.</p>
 		<p><?php include( dirname( __FILE__ ) . '/code-samples/custom-template-header.php' ); ?></p>
 	</div>
 
