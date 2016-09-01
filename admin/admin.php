@@ -547,6 +547,7 @@ class Page_Parts_Admin {
 	 */
 	public function admin_enqueue_scripts() {
 		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
+		wp_enqueue_script( 'page-parts-admin', plugins_url( 'admin/js/admin-post.js', dirname( __FILE__ ) ), 'jquery' );
 	}
 
 	/**
