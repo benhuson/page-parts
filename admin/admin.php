@@ -14,7 +14,7 @@ class Page_Parts_Admin {
 		add_action( 'contextual_help', array( $this, 'contextual_help' ), 10, 3 );
 		add_filter( 'manage_edit-page-part_columns', array( $this, 'manage_edit_page_part_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
 		add_action( 'wp_ajax_page_parts_dragndrop_order', array( $this, 'dragndrop_order_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_location', array( $this, 'location_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_template', array( $this, 'template_ajax_callback' ) );
@@ -169,21 +169,24 @@ class Page_Parts_Admin {
 
 	/**
 	 * Add Meta Boxes
+	 *
+	 * @param  string   $post_type  Post type.
+	 * @param  WP_Post  $post       Post object.
 	 */
-	public function add_meta_boxes() {
+	public function add_meta_boxes( $post_type, $post ) {
 
 		global $Page_Parts;
 
 		$post_types = $Page_Parts->supported_post_types();
 
-		foreach ( $post_types as $post_type ) {
-			if ( post_type_exists( $post_type ) ) {
+		foreach ( $post_types as $type ) {
+			if ( post_type_exists( $type ) ) {
 
 				add_meta_box(
 					'page_parts',
 					__( 'Page Parts', 'page-parts' ),
 					array( $this, 'page_parts_meta_box' ),
-					$post_type,
+					$type,
 					'advanced'
 				);
 
@@ -199,14 +202,24 @@ class Page_Parts_Admin {
 			'core'
 		);
 
-		add_meta_box(
-			'page_parts_template',
-			__( 'Page Part Template', 'page-parts' ), 
-			array( $this, 'template_meta_box' ),
-			'page-part',
-			'side',
-			'core'
-		);
+		/**
+		 * Template Meta Box
+		 */
+
+		$templates = $Page_Parts->templates->get_page_part_templates( $post );
+
+		if ( ! empty( $templates ) ) {
+
+			add_meta_box(
+				'page_parts_template',
+				__( 'Page Part Template', 'page-parts' ), 
+				array( $this, 'template_meta_box' ),
+				'page-part',
+				'side',
+				'core'
+			);
+
+		}
 
 	}
 
