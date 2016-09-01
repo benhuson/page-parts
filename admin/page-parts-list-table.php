@@ -26,6 +26,9 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @return  array  Column IDs and titles.
 	 */
 	public function get_columns() {
+
+		global $Page_Parts;
+
 		$columns = apply_filters( 'page_parts_admin_columns', array(
 			'preview'  => '',
 			'title'    => __( 'Title', 'page-parts' ),
@@ -42,6 +45,16 @@ class Page_Parts_List_Table extends WP_List_Table {
 			}
 		} else {
 			unset( $columns['location'] );
+		}
+
+		// Remove template column if no templates
+		if ( isset( $_GET['post'] ) ) {
+			$templates = $Page_Parts->templates->get_page_part_templates( $_GET['post'] );
+			if ( 0 == count( $templates ) ) {
+				unset( $columns['template'] );
+			}
+		} else {
+			unset( $columns['template'] );
 		}
 
 		// Santize column keys

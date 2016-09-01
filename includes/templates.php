@@ -111,7 +111,7 @@ class Page_Parts_Templates {
 	 * @param   int|WP_Post  $post  Post ID or object.
 	 * @return  array               Templates.
 	 */
-	private function get_page_part_templates( $post = null ) {
+	public function get_page_part_templates( $post = null ) {
 
 		$theme = wp_get_theme();
 

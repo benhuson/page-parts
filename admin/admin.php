@@ -172,7 +172,7 @@ class Page_Parts_Admin {
 	 */
 	public function add_meta_boxes() {
 
-		global $Page_Parts;
+		global $Page_Parts, $post;
 
 		$post_types = $Page_Parts->supported_post_types();
 
@@ -199,14 +199,24 @@ class Page_Parts_Admin {
 			'core'
 		);
 
-		add_meta_box(
-			'page_parts_template',
-			__( 'Page Part Template', 'page-parts' ), 
-			array( $this, 'template_meta_box' ),
-			'page-part',
-			'side',
-			'core'
-		);
+		/**
+		 * Template Meta Box
+		 */
+
+		$templates = $Page_Parts->templates->get_page_part_templates( $post );
+
+		if ( ! empty( $templates ) ) {
+
+			add_meta_box(
+				'page_parts_template',
+				__( 'Page Part Template', 'page-parts' ), 
+				array( $this, 'template_meta_box' ),
+				'page-part',
+				'side',
+				'core'
+			);
+
+		}
 
 	}
 
