@@ -141,7 +141,15 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @return  string         Column content.
 	 */
 	public function admin_column_title( $item ) {
-		$title = '<a href="' . get_edit_post_link( $item ) . '">' . get_the_title( $item ) . '</a>';
+
+		$post_title = get_the_title( $item );
+
+		if ( empty( $post_title ) ) {
+			$post_title = __( '(no title)' );
+		}
+
+		$title = '<a href="' . get_edit_post_link( $item ) . '">' . $post_title . '</a>';
+
 		if ( ! in_array( $item->post_status, array( 'publish', 'inherit' ) ) ) {
 			$title .= ' - <span class="post-state">' . $this->get_post_status_display( $item ) . '</span>';
 		}
