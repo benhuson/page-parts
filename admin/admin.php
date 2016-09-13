@@ -262,6 +262,9 @@ class Page_Parts_Admin {
 
 	/**
 	 * Template Meta Box
+	 *
+	 * @since     1.0
+	 * @internal
 	 */
 	public function template_meta_box() {
 
@@ -563,6 +566,9 @@ class Page_Parts_Admin {
 
 	/**
 	 * Location AJAX Callback
+	 *
+	 * @since     1.0
+	 * @internal
 	 */
 	public function location_ajax_callback() {
 
