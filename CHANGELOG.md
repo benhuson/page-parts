@@ -8,6 +8,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Add support for Page Part templates.
 - Show parent hierarchy in page parts admin.
 
+### Changed
+- Improved documentation accessible via the plugins admin page.
+- Use `wp_update_post()` when updating `menu_order` via AJAX.
+
+### Fixed
+- If page part has no title, show “(no title)” in admin edit list table.
+
 ## [0.9] - 2015-09-18
 
 ### Changed

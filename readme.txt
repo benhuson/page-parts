@@ -42,6 +42,13 @@ __Added__
 * Add support for Page Part templates.
 * Show parent hierarchy in page parts admin.
 
+__Changed__
+* Improved documentation accessible via the plugins admin page.
+* Use wp_update_post() when updating `menu_order` via AJAX.
+
+__Fixed__
+* If page part has no title, show “(no title)” in admin edit list table.
+
 = 0.9 =
 
 __Changed__
