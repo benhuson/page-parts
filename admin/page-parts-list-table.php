@@ -26,6 +26,9 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @return  array  Column IDs and titles.
 	 */
 	public function get_columns() {
+
+		global $Page_Parts;
+
 		$columns = apply_filters( 'page_parts_admin_columns', array(
 			'preview'  => '',
 			'title'    => __( 'Title', 'page-parts' ),
@@ -42,6 +45,16 @@ class Page_Parts_List_Table extends WP_List_Table {
 			}
 		} else {
 			unset( $columns['location'] );
+		}
+
+		// Remove template column if no templates
+		if ( isset( $_GET['post'] ) ) {
+			$templates = $Page_Parts->templates->get_page_part_templates( $_GET['post'] );
+			if ( 0 == count( $templates ) ) {
+				unset( $columns['template'] );
+			}
+		} else {
+			unset( $columns['template'] );
 		}
 
 		// Santize column keys
@@ -128,7 +141,15 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @return  string         Column content.
 	 */
 	public function admin_column_title( $item ) {
-		$title = '<a href="' . get_edit_post_link( $item ) . '">' . get_the_title( $item ) . '</a>';
+
+		$post_title = get_the_title( $item );
+
+		if ( empty( $post_title ) ) {
+			$post_title = __( '(no title)' );
+		}
+
+		$title = '<a href="' . get_edit_post_link( $item ) . '">' . $post_title . '</a>';
+
 		if ( ! in_array( $item->post_status, array( 'publish', 'inherit' ) ) ) {
 			$title .= ' - <span class="post-state">' . $this->get_post_status_display( $item ) . '</span>';
 		}

@@ -2,8 +2,8 @@
 Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.7
-Tested up to: 4.6
-Stable tag: 0.9
+Tested up to: 4.6.1
+Stable tag: 1.0
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,9 +38,18 @@ Either enter numbers in the order fields or drag them into the order you want.
 
 = Unreleased =
 
+= 1.0 =
+
 __Added__
 * Add support for Page Part templates.
 * Show parent hierarchy in page parts admin.
+
+__Changed__
+* Improved documentation accessible via the plugins admin page.
+* Use wp_update_post() when updating `menu_order` via AJAX.
+
+__Fixed__
+* If page part has no title, show “(no title)” in admin edit list table.
 
 = 0.9 =
 

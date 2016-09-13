@@ -1,0 +1,29 @@
+
+#page_parts_template select {
+	margin: 0 0 8px 0;
+	width: 100%;
+}
+
+#page_parts_template .page-part-image-container {
+	margin-left: -3px;
+	margin-right: -8px;
+	overflow: hidden;
+}
+
+	#page_parts_template .page-part-image {
+		border: 1px solid #E6E6E6;
+		cursor: pointer;
+		float: left;
+		margin: 0 4px 4px 0;
+		padding: 1px;
+		width: 80px;
+		height: 50px;
+	}
+
+	#page_parts_template .page-part-image:hover {
+		border-color: #999;
+	}
+
+	#page_parts_template .page-part-image.selected {
+		border-color: #000;
+	}

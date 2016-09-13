@@ -33,11 +33,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p>Templates are like WordPress page templates for page parts.</p>
 		<p>They are defined in a similar way to WordPress page templates by adding a template namename to the header of the template file (see below).</p>
 		<p>Templates are loaded using the <code>Page_Parts::get_page_part_template()</code> function. If no template is set or the template cannot be found then it will try to load a template called <code>page-part.php</code> in the root of your theme. If that does not exist if will default to using some very basic HTML to output the title and content of the page part.</p>
+		<p>Page part posts with templates will have the CSS classes <code>page-part-template</code> and <code>page-part-template-{template}</code> applied.</p>
 	</div>
 
 	<div id="define_a_custom_template">
 		<h3>Define a Custom Template</h3>
 		<p>Define your template name by adding a <code>Page Part Name:</code> docblock to the top of your template file. Your template can exist in a sub-folder of your theme, it does not have to be in the root.</p>
+		<p>Optionally, you can specify a template image by including the <code>Page Part Image:</code> docblock. This will activate and display the image-based template select admin interface which helps to give a clearer indication to the user of the template layout. The image path should be relative to the theme folder.</p>
 		<p><?php include( dirname( __FILE__ ) . '/code-samples/custom-template-header.php' ); ?></p>
 	</div>
 

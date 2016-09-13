@@ -8,13 +8,14 @@ class Page_Parts_Admin {
 	public function Page_Parts_Admin() {
 		add_action( 'wp', array( $this, 'add_post_type_part_column' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'save_post', array( $this, 'save_page_parts' ) );
 		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 5, 2 );
 		add_action( 'contextual_help', array( $this, 'contextual_help' ), 10, 3 );
 		add_filter( 'manage_edit-page-part_columns', array( $this, 'manage_edit_page_part_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
 		add_action( 'wp_ajax_page_parts_dragndrop_order', array( $this, 'dragndrop_order_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_location', array( $this, 'location_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_template', array( $this, 'template_ajax_callback' ) );
@@ -169,21 +170,24 @@ class Page_Parts_Admin {
 
 	/**
 	 * Add Meta Boxes
+	 *
+	 * @param  string   $post_type  Post type.
+	 * @param  WP_Post  $post       Post object.
 	 */
-	public function add_meta_boxes() {
+	public function add_meta_boxes( $post_type, $post ) {
 
 		global $Page_Parts;
 
 		$post_types = $Page_Parts->supported_post_types();
 
-		foreach ( $post_types as $post_type ) {
-			if ( post_type_exists( $post_type ) ) {
+		foreach ( $post_types as $type ) {
+			if ( post_type_exists( $type ) ) {
 
 				add_meta_box(
 					'page_parts',
 					__( 'Page Parts', 'page-parts' ),
 					array( $this, 'page_parts_meta_box' ),
-					$post_type,
+					$type,
 					'advanced'
 				);
 
@@ -199,14 +203,24 @@ class Page_Parts_Admin {
 			'core'
 		);
 
-		add_meta_box(
-			'page_parts_template',
-			__( 'Page Part Template', 'page-parts' ), 
-			array( $this, 'template_meta_box' ),
-			'page-part',
-			'side',
-			'core'
-		);
+		/**
+		 * Template Meta Box
+		 */
+
+		$templates = $Page_Parts->templates->get_page_part_templates( $post );
+
+		if ( ! empty( $templates ) ) {
+
+			add_meta_box(
+				'page_parts_template',
+				__( 'Page Part Template', 'page-parts' ), 
+				array( $this, 'template_meta_box' ),
+				'page-part',
+				'side',
+				'core'
+			);
+
+		}
 
 	}
 
@@ -262,6 +276,9 @@ class Page_Parts_Admin {
 
 	/**
 	 * Template Meta Box
+	 *
+	 * @since     1.0
+	 * @internal
 	 */
 	public function template_meta_box() {
 
@@ -270,12 +287,37 @@ class Page_Parts_Admin {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'page_parts_template_noncename' );
 
-		$template = Page_Parts::get_page_part_template_slug( $post->ID );
+		$current_template = Page_Parts::get_page_part_template_slug( $post->ID );
 
 		$options = '<option value="">' . esc_html__( 'Default Template', 'page-parts' ) . '</option>';
-		$options .= $Page_Parts->templates->page_part_template_dropdown( $template );
+		$options .= $Page_Parts->templates->page_part_template_dropdown( $current_template );
 
 		echo '<select name="template" id="template">' . $options . '</select>';
+
+		// Images
+
+		$templates = $Page_Parts->templates->get_page_part_templates( $post->ID );
+		$images = $Page_Parts->templates->get_page_part_template_images( $post );
+		$image_grid = '';
+
+		foreach ( $templates as $name => $template ) {
+
+			if ( ! isset( $images[ $template ] ) ) {
+				continue;
+			}
+
+			$class = $template == $current_template ? 'page-part-image selected' : 'page-part-image';
+			$image_grid .= sprintf( '<img src="%s" width="80" height="50" alt="%s" title="%s" rel="%s" class="%s" />', esc_attr( $images[ $template ] ), esc_attr( $name ), esc_attr( $name ), esc_attr( $template ), $class );
+
+		}
+
+		// If there are options...
+		if ( ! empty( $image_grid ) ) {
+			$class = empty( $current_template ) ? 'page-part-image selected' : 'page-part-image';
+			$image_grid = '<div class="page-part-image-container"><img src="' . plugins_url( 'images/templates/default.png', dirname( __FILE__ ) ) . '" width="80" height="50" alt="Remove Template..." title="Remove Template..." class="' . $class . '">' . $image_grid . '</div>';
+			echo $image_grid;
+		}
+
 
 	}
 
@@ -495,10 +537,20 @@ class Page_Parts_Admin {
 	}
 
 	/**
+	 * Admin Enqueue Styles
+	 */
+	public function admin_enqueue_styles() {
+
+		wp_enqueue_style( 'page-parts-admin', plugins_url( 'admin/css/admin.css', dirname( __FILE__ ) ) );
+
+	}
+
+	/**
 	 * Admin Enqueue Scripts
 	 */
 	public function admin_enqueue_scripts() {
 		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
+		wp_enqueue_script( 'page-parts-admin', plugins_url( 'admin/js/admin-post.js', dirname( __FILE__ ) ), 'jquery' );
 	}
 
 	/**
@@ -563,6 +615,9 @@ class Page_Parts_Admin {
 
 	/**
 	 * Location AJAX Callback
+	 *
+	 * @since     1.0
+	 * @internal
 	 */
 	public function location_ajax_callback() {
 
