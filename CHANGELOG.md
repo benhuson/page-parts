@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0] - 2016-09-13
+
 ### Added
 - Add support for Page Part templates.
 - Show parent hierarchy in page parts admin.
@@ -83,7 +85,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/0.9...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.0...HEAD
+[1.0]: https://github.com/benhuson/page-parts/compare/0.9...1.0
 [0.9]: https://github.com/benhuson/page-parts/compare/0.8...0.9
 [0.8]: https://github.com/benhuson/page-parts/compare/0.7...0.8
 [0.7]: https://github.com/benhuson/page-parts/compare/0.6...0.7
