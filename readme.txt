@@ -3,7 +3,7 @@ Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.7
 Tested up to: 4.6.1
-Stable tag: 0.9
+Stable tag: 1.0
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,8 @@ Either enter numbers in the order fields or drag them into the order you want.
 == Changelog ==
 
 = Unreleased =
+
+= 1.0 =
 
 __Added__
 * Add support for Page Part templates.
