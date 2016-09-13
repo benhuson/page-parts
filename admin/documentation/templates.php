@@ -33,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p>Templates are like WordPress page templates for page parts.</p>
 		<p>They are defined in a similar way to WordPress page templates by adding a template namename to the header of the template file (see below).</p>
 		<p>Templates are loaded using the <code>Page_Parts::get_page_part_template()</code> function. If no template is set or the template cannot be found then it will try to load a template called <code>page-part.php</code> in the root of your theme. If that does not exist if will default to using some very basic HTML to output the title and content of the page part.</p>
+		<p>Page part posts with templates will have the CSS classes <code>page-part-template</code> and <code>page-part-template-{template}</code> applied.</p>
 	</div>
 
 	<div id="define_a_custom_template">
