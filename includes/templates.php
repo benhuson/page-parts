@@ -263,4 +263,17 @@ class Page_Parts_Templates {
 
 	}
 
+	/**
+	 * Get Default Template Name
+	 *
+	 * @since  1.x
+	 *
+	 * @return  string  Template name for admin menu display.
+	 */
+	public function get_default_template_name() {
+
+		return __( 'Default Template', 'page-parts' );
+
+	}
+
 }
