@@ -272,7 +272,7 @@ class Page_Parts_Templates {
 	 */
 	public function get_default_template_name() {
 
-		return __( 'Default Template', 'page-parts' );
+		return apply_filters( 'page_parts_default_template_name', __( 'Default Template', 'page-parts' ) );
 
 	}
 
