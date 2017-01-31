@@ -4,6 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1] - 2017-01-31
+
+### Added
+- Add `page-attributes` meta box to Page Parts (includes "order" field).
+- Add `page_parts_default_template_name` filter so that the Default Template name can be changed in admin menus.
+- Add `page-part-default` class to page parts with no template assigned.
+
 ## [1.0] - 2016-09-13
 
 ### Added
@@ -85,7 +92,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.0...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.1...HEAD
+[1.1]: https://github.com/benhuson/page-parts/compare/1.0...1.1
 [1.0]: https://github.com/benhuson/page-parts/compare/0.9...1.0
 [0.9]: https://github.com/benhuson/page-parts/compare/0.8...0.9
 [0.8]: https://github.com/benhuson/page-parts/compare/0.7...0.8

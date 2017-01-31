@@ -190,7 +190,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 
 		$template = Page_Parts::get_page_part_template_slug( $item->ID );
 
-		$options = '<option value="">' . esc_html__( 'Default Template', 'page-parts' ) . '</option>';
+		$options = '<option value="">' . esc_html( $Page_Parts->templates->get_default_template_name() ) . '</option>';
 		$options .= $Page_Parts->templates->page_part_template_dropdown( $template );
 
 		return '<select name="page_parts_template[' . $item->ID . ']" id="page_parts_template[' . $item->ID . ']">' . $options . '</select>';

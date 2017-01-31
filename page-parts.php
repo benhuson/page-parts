@@ -4,13 +4,13 @@
 Plugin Name: Page Parts
 Plugin URI: https://github.com/benhuson/page-parts
 Description: Manage subsections of a page.
-Version: 1.0
+Version: 1.1
 Author: Ben Huson
 Author URI: https://github.com/benhuson
 License: GPL2
 */
 
-define( 'PAGE_PARTS_VERSION', '1.0' );
+define( 'PAGE_PARTS_VERSION', '1.1' );
 define( 'PAGE_PARTS_FILE', __FILE__ );
 
 class Page_Parts {
@@ -72,7 +72,7 @@ class Page_Parts {
 			'has_archive'         => false, 
 			'hierarchical'        => false,
 			'menu_position'       => 20,
-			'supports'            => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'revisions' )
+			'supports'            => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'revisions', 'page-attributes' )
 		);
 		$args = apply_filters( 'register_page_part_args', $args );
 		register_post_type( 'page-part', $args );
@@ -161,6 +161,8 @@ class Page_Parts {
 		if ( ! empty( $template ) ) {
 			$classes[] = 'page-part-template';
 			$classes[] = 'page-part-template-' . sanitize_html_class( basename( $template, '.php' ) );
+		} else {
+			$classes[] = 'page-part-default';
 		}
 
 		return $classes;
