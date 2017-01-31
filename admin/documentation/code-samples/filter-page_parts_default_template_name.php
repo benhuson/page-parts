@@ -4,7 +4,7 @@
  * @package     Page Parts
  * @subpackage  Documentation: Code Sample: Filter page_parts_default_template_name
  *
- * @since  1.0
+ * @since  1.1
  */
 
 // Don't allow direct load
