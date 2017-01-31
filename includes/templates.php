@@ -266,7 +266,7 @@ class Page_Parts_Templates {
 	/**
 	 * Get Default Template Name
 	 *
-	 * @since  1.x
+	 * @since  1.1
 	 *
 	 * @return  string  Template name for admin menu display.
 	 */

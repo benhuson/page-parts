@@ -2,8 +2,8 @@
 Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.7
-Tested up to: 4.6.1
-Stable tag: 1.0
+Tested up to: 4.7.2
+Stable tag: 1.1
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,13 @@ Either enter numbers in the order fields or drag them into the order you want.
 == Changelog ==
 
 = Unreleased =
+
+= 1.1 =
+
+__Added__
+* Add `page-attributes` meta box to Page Parts (includes "order" field).
+* Add `page_parts_default_template_name` filter so that the Default Template name can be changed in admin menus.
+* Add `page-part-default` class to page parts with no template assigned.
 
 = 1.0 =
 
