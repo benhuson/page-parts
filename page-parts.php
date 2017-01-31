@@ -161,6 +161,8 @@ class Page_Parts {
 		if ( ! empty( $template ) ) {
 			$classes[] = 'page-part-template';
 			$classes[] = 'page-part-template-' . sanitize_html_class( basename( $template, '.php' ) );
+		} else {
+			$classes[] = 'page-part-default';
 		}
 
 		return $classes;
