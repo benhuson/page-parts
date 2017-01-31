@@ -72,7 +72,7 @@ class Page_Parts {
 			'has_archive'         => false, 
 			'hierarchical'        => false,
 			'menu_position'       => 20,
-			'supports'            => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'revisions' )
+			'supports'            => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'revisions', 'page-attributes' )
 		);
 		$args = apply_filters( 'register_page_part_args', $args );
 		register_post_type( 'page-part', $args );
