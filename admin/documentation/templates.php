@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<li><a href="#define_a_custom_template">Define a Custom Template</a></li>
 			<li><a href="#default_page_part_template">Default Page Part Template</a></li>
 			<li><a href="#getting_a_page_part_template">Getting a Page Part Template</a></li>
+			<li><a href="#page_parts_default_template_name">Changing the Default Template Name</a></li>
 		</ul>
 	</div>
 </div>
@@ -54,6 +55,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<h3>Getting a Page Part Template</h3>
 		<p>While looping through a WP_Query for page parts, use <code>Page_Parts::get_page_part_template()</code> to include the page part template for the current page part in the loop.</p>
 		<p><?php include( dirname( __FILE__ ) . '/code-samples/page-part-template-loop.php' ); ?></p>
+	</div>
+
+	<div id="page_parts_default_template_name">
+		<h3>Changing the Default Template Name</h3>
+		<p>Use the <code>page_parts_default_template_name</code> filter to change the "Default Template" name.</p>
+		<p><?php include( dirname( __FILE__ ) . '/code-samples/filter-page_parts_default_template_name.php' ); ?></p>
 	</div>
 
 </div>

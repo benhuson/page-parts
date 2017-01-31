@@ -289,7 +289,7 @@ class Page_Parts_Admin {
 
 		$current_template = Page_Parts::get_page_part_template_slug( $post->ID );
 
-		$options = '<option value="">' . esc_html__( 'Default Template', 'page-parts' ) . '</option>';
+		$options = '<option value="">' . esc_html( $Page_Parts->templates->get_default_template_name() ) . '</option>';
 		$options .= $Page_Parts->templates->page_part_template_dropdown( $current_template );
 
 		echo '<select name="template" id="template">' . $options . '</select>';

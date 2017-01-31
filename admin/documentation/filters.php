@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<li><code><a href="#page_parts_admin_columns">page_parts_admin_columns</a></code></li>
 			<li><code><a href="#page_parts_admin_column_column_name">page_parts_admin_column_{$column_name}</a></code></li>
 			<li><code><a href="#page_parts_locations">page_parts_locations</a></code></li>
+			<li><code><a href="#page_parts_default_template_name">page_parts_default_template_name</a></code></li>
 		</ul>
 	</div>
 </div>
@@ -93,6 +94,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<li><code>$post_type</code> <em>(string)</em> Post type.</li>
 		</ul>
 		<p><?php include( dirname( __FILE__ ) . '/code-samples/filter-page_parts_locations.php' ); ?></p>
+	</div>
+
+	<div id="page_parts_default_template_name">
+		<h3>page_parts_default_template_name</h3>
+		<p>Use the <code>page_parts_default_template_name</code> filter to change the "Default Template" name.</p>
+		<h4>Parameters</h4>
+		<ul>
+			<li><code>$name</code> <em>(string)</em> Default Template name.</li>
+		</ul>
+		<p><?php include( dirname( __FILE__ ) . '/code-samples/filter-page_parts_default_template_name.php' ); ?></p>
 	</div>
 
 </div>
