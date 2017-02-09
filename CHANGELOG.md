@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Add `page_part_show_default_template` filter.
+
 ## [1.1] - 2017-01-31
 
 ### Added
