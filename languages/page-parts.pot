@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Page Parts\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-13 09:45+0100\n"
+"POT-Creation-Date: 2017-02-14 07:48+0000\n"
 "PO-Revision-Date: 2015-03-20 16:50-0000\n"
 "Last-Translator: Ben Huson <ben@thewhiteroom.net>\n"
 "Language-Team: Ben Huson <ben@thewhiteroom.net>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: gettext;gettext_noop;__;_x;_e;_ex\n"
 "X-Poedit-Basepath: ..\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.11\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -49,15 +49,15 @@ msgstr ""
 msgid "Edit parent"
 msgstr ""
 
-#: admin/admin.php:272 admin/admin.php:803
+#: admin/admin.php:272 admin/admin.php:809
 msgid "Add new page part"
 msgstr ""
 
-#: admin/admin.php:340
+#: admin/admin.php:346
 msgid "By default you can only associate a new page part with a page."
 msgstr ""
 
-#: admin/admin.php:341
+#: admin/admin.php:347
 msgid ""
 "If additional post types are supported you must create the new page part by "
 "editing the post. Once a page part is associated with a page (or post type) "
@@ -67,96 +67,96 @@ msgid ""
 "types."
 msgstr ""
 
-#: admin/admin.php:346
+#: admin/admin.php:352
 msgid "Page parts allow you to add extra content relating to a page."
 msgstr ""
 
-#: admin/admin.php:347
+#: admin/admin.php:353
 msgid ""
 "Click on a page part parent to edit the associated page and view that page's "
 "other page parts."
 msgstr ""
 
-#: admin/admin.php:606
+#: admin/admin.php:612
 msgid "Unable to save the page part sort order. Please try again."
 msgstr ""
 
-#: admin/admin.php:649
+#: admin/admin.php:655
 msgid "Unable to update the page part location."
 msgstr ""
 
-#: admin/admin.php:687
+#: admin/admin.php:693
 msgid "Unable to update the page part template."
 msgstr ""
 
-#: admin/admin.php:804
+#: admin/admin.php:810
 msgid "Save page parts"
 msgstr ""
 
-#: admin/admin.php:840
+#: admin/admin.php:846
 #, php-format
 msgid ""
 "Page part updated. <a href=\"%s\">View page part</a> / <a href=\"%s\">Edit "
 "parent</a>"
 msgstr ""
 
-#: admin/admin.php:841
+#: admin/admin.php:847
 msgid "Custom field updated."
 msgstr ""
 
-#: admin/admin.php:842
+#: admin/admin.php:848
 msgid "Custom field deleted."
 msgstr ""
 
-#: admin/admin.php:843
+#: admin/admin.php:849
 msgid "Page part updated."
 msgstr ""
 
-#: admin/admin.php:845
+#: admin/admin.php:851
 #, php-format
 msgid "Page part restored to revision from %s"
 msgstr ""
 
-#: admin/admin.php:846
+#: admin/admin.php:852
 #, php-format
 msgid ""
 "Page part published. <a href=\"%s\">View page part</a> / <a href=\"%s\">Edit "
 "parent</a>"
 msgstr ""
 
-#: admin/admin.php:847
+#: admin/admin.php:853
 msgid "Page part saved."
 msgstr ""
 
-#: admin/admin.php:848
+#: admin/admin.php:854
 #, php-format
 msgid ""
 "Page part submitted. <a target=\"_blank\" href=\"%s\">Preview page part</a>"
 msgstr ""
 
-#: admin/admin.php:849
+#: admin/admin.php:855
 #, php-format
 msgid ""
 "Page part scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href="
 "\"%2$s\">Preview page part</a>"
 msgstr ""
 
-#: admin/admin.php:851
+#: admin/admin.php:857
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: admin/admin.php:852
+#: admin/admin.php:858
 #, php-format
 msgid ""
 "Page part draft updated. <a target=\"_blank\" href=\"%s\">Preview page part</"
 "a>"
 msgstr ""
 
-#: admin/admin.php:871
+#: admin/admin.php:877
 msgid "Documentation"
 msgstr ""
 
-#: admin/admin.php:885
+#: admin/admin.php:891
 msgid "Page Parts Documentation"
 msgstr ""
 
@@ -204,29 +204,33 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: admin/page-parts-list-table.php:239
+#: admin/page-parts-list-table.php:245
 msgid "Privately Published"
 msgstr ""
 
-#: admin/page-parts-list-table.php:242
+#: admin/page-parts-list-table.php:248
 msgid "Published"
 msgstr ""
 
-#: admin/page-parts-list-table.php:245
+#: admin/page-parts-list-table.php:251
 msgid "Scheduled"
 msgstr ""
 
-#: admin/page-parts-list-table.php:248
+#: admin/page-parts-list-table.php:254
 msgid "Pending Review"
 msgstr ""
 
-#: admin/page-parts-list-table.php:252
+#: admin/page-parts-list-table.php:258
 msgid "Draft"
 msgstr ""
 
-#: admin/page-parts-list-table.php:285
+#: admin/page-parts-list-table.php:291
 #, php-format
 msgid "No page parts found. <a %s>Add one?</a>"
+msgstr ""
+
+#: includes/templates.php:275
+msgid "Default Template"
 msgstr ""
 
 #: page-parts.php:50
