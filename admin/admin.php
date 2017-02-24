@@ -5,7 +5,7 @@ class Page_Parts_Admin {
 	/**
 	 * Constructor
 	 */
-	public function Page_Parts_Admin() {
+	public function __construct() {
 		add_action( 'wp', array( $this, 'add_post_type_part_column' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );

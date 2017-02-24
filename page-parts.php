@@ -21,7 +21,7 @@ class Page_Parts {
 	/**
 	 * Constructor
 	 */
-	public function Page_Parts() {
+	public function __construct() {
 
 		// Language
 		load_plugin_textdomain( 'page-parts', false, dirname( plugin_basename( PAGE_PARTS_FILE ) ) . '/languages' );
