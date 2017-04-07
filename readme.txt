@@ -2,8 +2,8 @@
 Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.7
-Tested up to: 4.7.2
-Stable tag: 1.1
+Tested up to: 4.7.3
+Stable tag: 1.2
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,15 @@ Either enter numbers in the order fields or drag them into the order you want.
 == Changelog ==
 
 = Unreleased =
+
+= 1.2 =
+
+__Added__
+* Add `page_part_show_default_template` filter.
+* Pass `$page-part` object to `page_part_theme_templates` filter.
+
+__Changed__
+* Use __construct() for class constructor methods.
 
 = 1.1 =
 

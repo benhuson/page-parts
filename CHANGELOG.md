@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.2] - 2017-04-07
+
+### Added
+- Add `page_part_show_default_template` filter.
+- Pass `$page-part` object to `page_part_theme_templates` filter.
+
+### Changed
+- Use __construct() for class constructor methods.
+
 ## [1.1] - 2017-01-31
 
 ### Added
@@ -92,7 +101,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.1...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.2...HEAD
+[1.2]: https://github.com/benhuson/page-parts/compare/1.1...1.2
 [1.1]: https://github.com/benhuson/page-parts/compare/1.0...1.1
 [1.0]: https://github.com/benhuson/page-parts/compare/0.9...1.0
 [0.9]: https://github.com/benhuson/page-parts/compare/0.8...0.9
