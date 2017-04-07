@@ -197,7 +197,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 			$options = '';
 		}
 
-		$options .= $Page_Parts->templates->page_part_template_dropdown( $template );
+		$options .= $Page_Parts->templates->page_part_template_dropdown( $template, $item );
 
 		return '<select name="page_parts_template[' . $item->ID . ']" id="page_parts_template[' . $item->ID . ']">' . $options . '</select>';
 
