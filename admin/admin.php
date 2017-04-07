@@ -296,7 +296,7 @@ class Page_Parts_Admin {
 			$options = '';
 		}
 
-		$options .= $Page_Parts->templates->page_part_template_dropdown( $current_template );
+		$options .= $Page_Parts->templates->page_part_template_dropdown( $current_template, $post );
 
 		echo '<select name="template" id="template">' . $options . '</select>';
 
