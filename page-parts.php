@@ -10,7 +10,7 @@ Author URI: https://github.com/benhuson
 License: GPL2
 */
 
-define( 'PAGE_PARTS_VERSION', '1.2.dev' );
+define( 'PAGE_PARTS_VERSION', '1.2' );
 define( 'PAGE_PARTS_FILE', __FILE__ );
 
 class Page_Parts {
