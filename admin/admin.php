@@ -5,7 +5,7 @@ class Page_Parts_Admin {
 	/**
 	 * Constructor
 	 */
-	public function Page_Parts_Admin() {
+	public function __construct() {
 		add_action( 'wp', array( $this, 'add_post_type_part_column' ) );
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
@@ -289,8 +289,14 @@ class Page_Parts_Admin {
 
 		$current_template = Page_Parts::get_page_part_template_slug( $post->ID );
 
-		$options = '<option value="">' . esc_html( $Page_Parts->templates->get_default_template_name() ) . '</option>';
-		$options .= $Page_Parts->templates->page_part_template_dropdown( $current_template );
+		// Default Template
+		if ( apply_filters( 'page_part_show_default_template', true, $post ) ) {
+			$options = '<option value="">' . esc_html( $Page_Parts->templates->get_default_template_name() ) . '</option>';
+		} else {
+			$options = '';
+		}
+
+		$options .= $Page_Parts->templates->page_part_template_dropdown( $current_template, $post );
 
 		echo '<select name="template" id="template">' . $options . '</select>';
 
