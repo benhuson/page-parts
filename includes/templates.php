@@ -108,10 +108,11 @@ class Page_Parts_Templates {
 	 *
 	 * @since  1.0
 	 *
-	 * @param   int|WP_Post  $post  Post ID or object.
-	 * @return  array               Templates.
+	 * @param   int|WP_Post  $post       Post ID or object.
+	 * @param   int|WP_Post  $page_part  Page Part ID or object.
+	 * @return  array                    Templates.
 	 */
-	public function get_page_part_templates( $post = null ) {
+	public function get_page_part_templates( $post = null, $page_part = null ) {
 
 		$theme = wp_get_theme();
 
@@ -155,7 +156,7 @@ class Page_Parts_Templates {
 		}
 		*/
 
-		$return = apply_filters( 'page_part_theme_templates', $page_templates, $theme, $post );
+		$return = apply_filters( 'page_part_theme_templates', $page_templates, $theme, $post, $page_part );
 
 		return array_flip( array_intersect_assoc( $return, $page_templates ) );
 
@@ -247,11 +248,11 @@ class Page_Parts_Templates {
 	 * @param   string  $default  Selected template.
 	 * @return  string            HTML <option> list for dropdrop.
 	 */
-	public function page_part_template_dropdown( $default = '' ) {
+	public function page_part_template_dropdown( $default = '', $page_part = null ) {
 
 		$dropdown = '';
 
-		$templates = $this->get_page_part_templates( get_post() );
+		$templates = $this->get_page_part_templates( get_post(), $page_part );
 		ksort( $templates );
 
 		foreach ( array_keys( $templates ) as $template ) {
