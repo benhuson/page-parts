@@ -320,7 +320,8 @@ class Page_Parts_Admin {
 		// If there are options...
 		if ( ! empty( $image_grid ) ) {
 			$class = empty( $current_template ) ? 'page-part-image selected' : 'page-part-image';
-			$image_grid = '<div class="page-part-image-container"><img src="' . plugins_url( 'images/templates/default.png', dirname( __FILE__ ) ) . '" width="80" height="50" alt="Remove Template..." title="Remove Template..." class="' . $class . '">' . $image_grid . '</div>';
+			$image_src = apply_filters( 'page_part_theme_default_template_image', plugins_url( 'images/templates/default.png', dirname( __FILE__ ) ) );
+			$image_grid = '<div class="page-part-image-container"><img src="' . $image_src . '" width="80" height="50" alt="Remove Template..." title="Remove Template..." class="' . $class . '">' . $image_grid . '</div>';
 			echo $image_grid;
 		}
 
