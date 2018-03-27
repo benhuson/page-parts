@@ -708,6 +708,11 @@ class Page_Parts_Admin {
 	public function save_page_parts( $post_id ) {
 		global $wpdb;
 
+		// Don't save changes to revisions
+		if ( wp_is_post_revision( $post_id ) ) {
+			return $post_id;
+		}
+
 		// Verify if this is an auto save routine. If it is our form has not been submitted,
 		// so we dont want to do anything
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
