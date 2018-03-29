@@ -236,6 +236,7 @@ class Page_Parts {
 			}
 		}
 
+		$template_names = apply_filters( 'page_part_locate_templates', $template_names );
 		$template_names[] = 'page-part.php';
 
 		$located = locate_template( $template_names, true, false );
