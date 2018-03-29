@@ -126,7 +126,7 @@ class Page_Parts_Templates {
 		if ( ! is_array( $page_templates ) ) {
 			$page_templates = array();
 
-			$files = (array) $theme->get_files( 'php', 1 );
+			$files = (array) $theme->get_files( 'php', 2 );
 
 			foreach ( $files as $file => $full_path ) {
 				if ( ! preg_match( '|Page Part Name:(.*)$|mi', file_get_contents( $full_path ), $header ) ) {
