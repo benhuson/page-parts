@@ -38,6 +38,17 @@ Either enter numbers in the order fields or drag them into the order you want.
 
 = Unreleased =
 
+__Added__
+- Add default template image filter `page_part_theme_default_template_image`.
+- Allow found templates to be filtered before locating using the `page_part_locate_templates` filter.
+- Added `page_part_theme_templates` filter to change the maximum folder depth where page part templates can be found in the theme.
+
+__Changed__
+- Search 2 levels deep for Page Part templates in theme folder.
+
+__Fixed__
+- Fix revisions not saving.
+
 = 1.2 =
 
 __Added__
