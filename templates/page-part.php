@@ -9,6 +9,12 @@
  * If no valid template is found in the theme then this template
  * will be used as a fallback.
  *
+ * To create a custom page part template, make a copy of this file in
+ * your theme folder and add in a header in a similar way to how you would
+ * create a WordPress page template:
+ *
+ * e.g. "Page Part Name: { My Template Name }"
+ *
  * @package     Page Parts
  * @subpackage  Page Part Default Template
  *

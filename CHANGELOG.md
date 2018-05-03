@@ -4,6 +4,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.3] - 2018-05-03
+
+### Added
+- Add default template image filter `page_part_theme_default_template_image`.
+- Allow found templates to be filtered before locating using the `page_part_locate_templates` filter.
+- Added `page_part_theme_templates` filter to change the maximum folder depth where page part templates can be found in the theme.
+- Add Template column to page parts admin table.
+
+### Changed
+- Search 2 levels deep for Page Part templates in theme folder.
+
+### Fixed
+- Fix revisions not saving.
+
 ## [1.2] - 2017-04-07
 
 ### Added
@@ -11,7 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Pass `$page-part` object to `page_part_theme_templates` filter.
 
 ### Changed
-- Use __construct() for class constructor methods.
+- Use `__construct()` for class constructor methods.
 
 ## [1.1] - 2017-01-31
 
@@ -101,7 +115,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.2...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.3...HEAD
+[1.3]: https://github.com/benhuson/page-parts/compare/1.2...1.3
 [1.2]: https://github.com/benhuson/page-parts/compare/1.1...1.2
 [1.1]: https://github.com/benhuson/page-parts/compare/1.0...1.1
 [1.0]: https://github.com/benhuson/page-parts/compare/0.9...1.0

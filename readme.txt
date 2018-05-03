@@ -1,9 +1,9 @@
 === Page Parts ===
 Contributors: husobj
 Tags: pages, cms
-Requires at least: 3.7
-Tested up to: 4.7.3
-Stable tag: 1.2
+Requires at least: 3.9
+Tested up to: 4.9.5
+Stable tag: 1.3
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,20 @@ Either enter numbers in the order fields or drag them into the order you want.
 == Changelog ==
 
 = Unreleased =
+
+= 1.3 =
+
+__Added__
+- Add default template image filter `page_part_theme_default_template_image`.
+- Allow found templates to be filtered before locating using the `page_part_locate_templates` filter.
+- Added `page_part_theme_templates` filter to change the maximum folder depth where page part templates can be found in the theme.
+- Add Template column to page parts admin table.
+
+__Changed__
+- Search 2 levels deep for Page Part templates in theme folder.
+
+__Fixed__
+- Fix revisions not saving.
 
 = 1.2 =
 

@@ -133,6 +133,7 @@ class Page_Parts_Admin {
 			$new_columns[ $column ] = $value;
 			if ( $column == 'title' ) {
 				$new_columns['page-part-parent'] = __( 'Parent', 'page-parts' );
+				$new_columns['page-part-template'] = __( 'Template', 'page-parts' );
 			}
 		}
 		return $new_columns;
@@ -153,6 +154,7 @@ class Page_Parts_Admin {
 			$ancestors = array_reverse( get_ancestors( $post_id, get_post_type( $post_id ) ) );
 
 			switch ( $name ) {
+
 				case 'page-part-parent' :
 					$i = 0;
 					foreach ( $ancestors as $ancestor ) {
@@ -162,6 +164,21 @@ class Page_Parts_Admin {
 						edit_post_link( get_the_title( $ancestor ), null, null, $ancestor );
 						$i++;
 					}
+					break;
+
+				case 'page-part-template' :
+
+					$page_part_template = new Page_Part_Template( $post_id );
+					$name = $page_part_template->get_name();
+
+					if ( $page_part_template->is_supported() ) {
+						echo $name;
+					} else {
+						printf( '<del>%s</del>', esc_html( $name ) );
+					}
+
+					break;
+
 			}
 
 		}
@@ -320,7 +337,8 @@ class Page_Parts_Admin {
 		// If there are options...
 		if ( ! empty( $image_grid ) ) {
 			$class = empty( $current_template ) ? 'page-part-image selected' : 'page-part-image';
-			$image_grid = '<div class="page-part-image-container"><img src="' . plugins_url( 'images/templates/default.png', dirname( __FILE__ ) ) . '" width="80" height="50" alt="Remove Template..." title="Remove Template..." class="' . $class . '">' . $image_grid . '</div>';
+			$image_src = apply_filters( 'page_part_theme_default_template_image', plugins_url( 'images/templates/default.png', dirname( __FILE__ ) ) );
+			$image_grid = '<div class="page-part-image-container"><img src="' . $image_src . '" width="80" height="50" alt="Remove Template..." title="Remove Template..." class="' . $class . '">' . $image_grid . '</div>';
 			echo $image_grid;
 		}
 
@@ -707,6 +725,11 @@ class Page_Parts_Admin {
 	 */
 	public function save_page_parts( $post_id ) {
 		global $wpdb;
+
+		// Don't save changes to revisions
+		if ( wp_is_post_revision( $post_id ) ) {
+			return $post_id;
+		}
 
 		// Verify if this is an auto save routine. If it is our form has not been submitted,
 		// so we dont want to do anything
