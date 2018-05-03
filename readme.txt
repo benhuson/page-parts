@@ -42,6 +42,7 @@ __Added__
 - Add default template image filter `page_part_theme_default_template_image`.
 - Allow found templates to be filtered before locating using the `page_part_locate_templates` filter.
 - Added `page_part_theme_templates` filter to change the maximum folder depth where page part templates can be found in the theme.
+- Add Template column to page parts admin table.
 
 __Changed__
 - Search 2 levels deep for Page Part templates in theme folder.
