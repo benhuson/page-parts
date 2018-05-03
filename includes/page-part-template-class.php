@@ -4,7 +4,7 @@
  * @package     Page Parts
  * @subpackage  Page Part Templates Class
  *
- * @since  dev
+ * @since  1.3
  */
 
 class Page_Part_Template {
@@ -12,7 +12,7 @@ class Page_Part_Template {
 	/**
 	 * Post ID
 	 *
-	 * @since  dev
+	 * @since  1.3
 	 *
 	 * @var  integer
 	 */
@@ -21,7 +21,7 @@ class Page_Part_Template {
 	/**
 	 * Constructor
 	 *
-	 * @since  dev
+	 * @since  1.3
 	 *
 	 * @param  integer  $post_id  Post ID.
 	 */
@@ -34,7 +34,7 @@ class Page_Part_Template {
 	/**
 	 * Get Template Slug
 	 *
-	 * @since  dev
+	 * @since  1.3
 	 *
 	 * @return  string  Template slug.
 	 */
@@ -49,7 +49,7 @@ class Page_Part_Template {
 	 *
 	 * Returns slug if the template is defined and file exists.
 	 *
-	 * @since  dev
+	 * @since  1.3
 	 *
 	 * @return  string  Template slug.
 	 */
@@ -75,7 +75,7 @@ class Page_Part_Template {
 	/**
 	 * Get Template Name
 	 *
-	 * @since  dev
+	 * @since  1.3
 	 *
 	 * @return  string  Template name or slug if template no longer defined.
 	 */
@@ -104,7 +104,7 @@ class Page_Part_Template {
 	 *
 	 * Returns true if the template is defined and file exists for the theme.
 	 *
-	 * @since  dev
+	 * @since  1.3
 	 *
 	 * @return  boolean
 	 */
