@@ -133,6 +133,7 @@ class Page_Parts_Admin {
 			$new_columns[ $column ] = $value;
 			if ( $column == 'title' ) {
 				$new_columns['page-part-parent'] = __( 'Parent', 'page-parts' );
+				$new_columns['page-part-template'] = __( 'Template', 'page-parts' );
 			}
 		}
 		return $new_columns;
@@ -153,6 +154,7 @@ class Page_Parts_Admin {
 			$ancestors = array_reverse( get_ancestors( $post_id, get_post_type( $post_id ) ) );
 
 			switch ( $name ) {
+
 				case 'page-part-parent' :
 					$i = 0;
 					foreach ( $ancestors as $ancestor ) {
@@ -162,6 +164,30 @@ class Page_Parts_Admin {
 						edit_post_link( get_the_title( $ancestor ), null, null, $ancestor );
 						$i++;
 					}
+					break;
+
+				case 'page-part-template' :
+
+					$template = Page_Parts::get_page_part_template_slug( $post_id );
+
+					$templates = new Page_Parts_Templates();
+					$templates_data = $templates->get_page_part_templates();
+
+					if ( in_array( $template, array_values( $templates_data ) ) ) {
+
+						foreach ( $templates_data as $key => $value ) {
+							if ( $value == $template ) {
+								echo $key;
+								break;
+							}
+						}
+
+					} else {
+						printf( '<del>%s</del>', $template );
+					}
+
+					break;
+
 			}
 
 		}
