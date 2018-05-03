@@ -30,6 +30,9 @@ class Page_Parts {
 		add_filter( 'post_type_link', array( $this, 'post_part_link' ), 10, 4 );
 		add_filter( 'post_class', array( $this, 'post_class' ), 10, 3 );
 
+		// Includes
+		require_once( dirname( PAGE_PARTS_FILE ) . '/includes/page-part-template-class.php' );
+
 		// Template
 		require_once( dirname( PAGE_PARTS_FILE ) . '/includes/templates.php' );
 		$this->templates = new Page_Parts_Templates();
