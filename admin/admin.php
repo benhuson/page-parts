@@ -168,22 +168,13 @@ class Page_Parts_Admin {
 
 				case 'page-part-template' :
 
-					$template = Page_Parts::get_page_part_template_slug( $post_id );
+					$page_part_template = new Page_Part_Template( $post_id );
+					$name = $page_part_template->get_name();
 
-					$templates = new Page_Parts_Templates();
-					$templates_data = $templates->get_page_part_templates();
-
-					if ( in_array( $template, array_values( $templates_data ) ) ) {
-
-						foreach ( $templates_data as $key => $value ) {
-							if ( $value == $template ) {
-								echo $key;
-								break;
-							}
-						}
-
+					if ( $page_part_template->is_supported() ) {
+						echo $name;
 					} else {
-						printf( '<del>%s</del>', $template );
+						printf( '<del>%s</del>', esc_html( $name ) );
 					}
 
 					break;
