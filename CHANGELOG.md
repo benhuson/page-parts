@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.3] - 2018-05-03
+
 ### Added
 - Add default template image filter `page_part_theme_default_template_image`.
 - Allow found templates to be filtered before locating using the `page_part_locate_templates` filter.
@@ -113,7 +115,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.2...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.3...HEAD
+[1.3]: https://github.com/benhuson/page-parts/compare/1.2...1.3
 [1.2]: https://github.com/benhuson/page-parts/compare/1.1...1.2
 [1.1]: https://github.com/benhuson/page-parts/compare/1.0...1.1
 [1.0]: https://github.com/benhuson/page-parts/compare/0.9...1.0
