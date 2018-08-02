@@ -103,6 +103,7 @@ class Page_Parts {
 					foreach ( $ancestors as $ancestor ) {
 						if ( 'page-part' != get_post_type( $ancestor ) ) {
 							$post_link = $this->create_permalink( $ancestor, $post->post_name );
+							break;
 						}
 					}
 				} else {
