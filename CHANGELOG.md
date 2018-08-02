@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.3.1] - 2018-08-02
+
+### Fixed
+- Fix page part permalink when parent is a child of other pages.
+
 ## [1.3] - 2018-05-03
 
 ### Added
@@ -115,7 +120,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.3...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.3.1...HEAD
+[1.3]: https://github.com/benhuson/page-parts/compare/1.3...1.3.1
 [1.3]: https://github.com/benhuson/page-parts/compare/1.2...1.3
 [1.2]: https://github.com/benhuson/page-parts/compare/1.1...1.2
 [1.1]: https://github.com/benhuson/page-parts/compare/1.0...1.1
