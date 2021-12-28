@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.4] - 2021-12-28
+
+### Added
+- Apply `page_part_theme_templates_depth` filter when getting template images.
+- Tested up to WordPress 5.8.2
+
+### Fixed
+- Fix deprecated jQuery ready.
+
 ## [1.3.1] - 2018-08-02
 
 ### Fixed
@@ -120,7 +129,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.3.1...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4...HEAD
+[1.4]: https://github.com/benhuson/page-parts/compare/1.3.1...1.4
 [1.3]: https://github.com/benhuson/page-parts/compare/1.3...1.3.1
 [1.3]: https://github.com/benhuson/page-parts/compare/1.2...1.3
 [1.2]: https://github.com/benhuson/page-parts/compare/1.1...1.2
