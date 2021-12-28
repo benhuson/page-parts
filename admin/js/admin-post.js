@@ -7,7 +7,7 @@ var PagePartsAdminPost;
 
 		init : function() {
 
-			$( document ).on( 'ready', PagePartsAdminPost.onReady );
+			$( document ).ready( PagePartsAdminPost.onReady );
 
 		},
 
