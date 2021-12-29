@@ -12,7 +12,8 @@ class Page_Parts_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'save_post', array( $this, 'save_page_parts' ) );
 		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 5, 2 );
-		add_action( 'contextual_help', array( $this, 'contextual_help' ), 10, 3 );
+		add_action( 'load-post.php', array( $this, 'add_help_tabs' ) );
+		add_action( 'load-edit.php', array( $this, 'add_help_tabs' ) );
 		add_filter( 'manage_edit-page-part_columns', array( $this, 'manage_edit_page_part_columns' ) );
 		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
@@ -346,33 +347,35 @@ class Page_Parts_Admin {
 	}
 
 	/**
-	 * Contextual Help
+	 * Add Help Tabs
 	 *
-	 * @param   string  $contextual_help  Contextual help HTML.
-	 * @param   string  $screen_id        Screen ID.
-	 * @param   object  $screen           Screen object.
-	 * @return  string                    HTML output.
+	 * @internal  Private. Called via the `load-{page}` action.
 	 */
-	public function contextual_help( $contextual_help, $screen_id, $screen ) { 
+	public function add_help_tabs() { 
 
-		//$contextual_help .= var_dump( $screen ); // use this to help determine $screen->id
+		$screen = get_current_screen();
 
 		if ( 'page-part' == $screen->id ) {
 
 			// Edit Page Part
-			$contextual_help =
-				'<p>' . __( 'By default you can only associate a new page part with a page.', 'page-parts' ) . '</p>' .
-				'<p>' . __( 'If additional post types are supported you must create the new page part by editing the post. Once a page part is associated with a page (or post type) the "Parent Page" panel with allow you to change the parent via a dropdown menu for hierarchical post types. There is not yet the option to re-associate a page part with a different parent for non-hierarchical post types.', 'page-parts' ) . '</p>';
+			$screen->add_help_tab( array(
+				'id'      => 'page_parts_help_tab',
+				'title'   => __( 'Page Part', 'page-parts' ),
+				'content' => '<p>' . __( 'By default you can only associate a new page part with a page.', 'page-parts' ) . '</p>'
+					. '<p>' . __( 'If additional post types are supported you must create the new page part by editing the post. Once a page part is associated with a page (or post type) the "Parent Page" panel with allow you to change the parent via a dropdown menu for hierarchical post types. There is not yet the option to re-associate a page part with a different parent for non-hierarchical post types.', 'page-parts' ) . '</p>',
+			) );
 
 		} elseif ( 'edit-page-part' == $screen->id ) {
 
 			// Page Parts Admin Table
-			$contextual_help = '<p>' . __( 'Page parts allow you to add extra content relating to a page.', 'page-parts' ) . '</p>'
-				. '<p>' . __( 'Click on a page part parent to edit the associated page and view that page\'s other page parts.', 'page-parts' ) . '</p>';
+			$screen->add_help_tab( array(
+				'id'      => 'page_part_help_tab',
+				'title'   => __( 'Page Parts', 'page-parts' ),
+				'content' => '<p>' . __( 'Page parts allow you to add extra content relating to a page.', 'page-parts' ) . '</p>'
+					. '<p>' . __( 'Click on a page part parent to edit the associated page and view that page\'s other page parts.', 'page-parts' ) . '</p>',
+			) );
 
 		}
-
-		return $contextual_help;
 
 	}
 
