@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.1] - 2021-12-29
+
+### Fixed
+- Fix deprecated `contextual_help` implementation.
+
 ## [1.4] - 2021-12-28
 
 ### Added
@@ -129,7 +134,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4.1...HEAD
+[1.4.1]: https://github.com/benhuson/page-parts/compare/1.4...1.4.1
 [1.4]: https://github.com/benhuson/page-parts/compare/1.3.1...1.4
 [1.3]: https://github.com/benhuson/page-parts/compare/1.3...1.3.1
 [1.3]: https://github.com/benhuson/page-parts/compare/1.2...1.3
