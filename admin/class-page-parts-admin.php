@@ -824,7 +824,7 @@ class Page_Parts_Admin {
 		</style>
 
 		<?php
-		require_once( dirname( __FILE__ ) . '/page-parts-list-table.php' );
+		require_once dirname( __FILE__ ) . '/class-page-parts-list-table.php';
 
 		$wp_list_table = new Page_Parts_List_Table();
 		$wp_list_table->prepare_items();
