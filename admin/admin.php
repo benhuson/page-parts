@@ -744,11 +744,16 @@ class Page_Parts_Admin {
 		if ( isset( $_POST['page_parts_noncename'] ) && wp_verify_nonce( $_POST['page_parts_noncename'], plugin_basename( __FILE__ ) ) ) {
 			if ( isset( $_POST['parent_id'] ) && current_user_can( 'edit_page', $post_id ) ) {
 
-				$parent_id = absint( $_POST['parent_id'] );
-				$post_type_object = get_post_type_object( get_post_type( $parent_id ) );
+				// For WPML compatibility, check this is not a duplicate translation
+				if ( ! $this->is_post_a_wpml_duplicate( $post_id ) ) {
 
-				if ( 0 == $parent_id || ( $post_type_object && current_user_can( $post_type_object->cap->edit_post, $post_id ) ) ) {
-					$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
+					$parent_id = absint( $_POST['parent_id'] );
+					$post_type_object = get_post_type_object( get_post_type( $parent_id ) );
+
+					if ( 0 == $parent_id || ( $post_type_object && current_user_can( $post_type_object->cap->edit_post, $post_id ) ) ) {
+						$wpdb->update( $wpdb->posts, array( 'post_parent' => $parent_id ), array( 'ID' => $post_id ) );
+					}
+
 				}
 
 			}
@@ -840,6 +845,27 @@ class Page_Parts_Admin {
 		<?php wp_nonce_field( 'page_parts_location', '_ajax_nonce-page-parts-location' ); ?>
 
 		<?php
+	}
+
+	/**
+	 * Check if post is a WPML duplicate.
+	 * Used to prevent overriding post parent for duplicate translations.
+	 *
+	 * Note:
+	 * WPML_ELEMENT_IS_NOT_TRANSLATED  = 0
+	 * WPML_ELEMENT_IS_TRANSLATED      = 1
+	 * WPML_ELEMENT_IS_DUPLICATED      = 2
+	 * WPML_ELEMENT_IS_A_DUPLICATE     = 3
+	 * 
+	 * @param   integer  $post_id
+	 * @return  boolean
+	 */
+	protected function is_post_a_wpml_duplicate( $post_id ) {
+
+		$translation_type = apply_filters( 'wpml_element_translation_type', NULL, $post_id, get_post_type( $post_id ) );
+
+		return 3 === $translation_type;
+
 	}
 
 	/**
