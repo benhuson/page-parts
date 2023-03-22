@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.2] - 2023-03-22
+
+### Fixed
+- Fix compatibility with WPML plugin where page part translations are duplicated.
+
 ## [1.4.1] - 2021-12-29
 
 ### Fixed
@@ -134,7 +139,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4.1...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4.2...HEAD
+[1.4.2]: https://github.com/benhuson/page-parts/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/benhuson/page-parts/compare/1.4...1.4.1
 [1.4]: https://github.com/benhuson/page-parts/compare/1.3.1...1.4
 [1.3]: https://github.com/benhuson/page-parts/compare/1.3...1.3.1
