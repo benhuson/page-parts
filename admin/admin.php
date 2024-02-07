@@ -270,7 +270,7 @@ class Page_Parts_Admin {
 				'sort_order'        => 'ASC',
 				'sort_column'       => 'menu_order,post_title',
 				'post_type'         => get_post_type( $post->post_parent ),
-				'post_status'       => 'publish,draft'
+				'post_status'       => 'publish,draft,pending,private,future,trash'
 			);
 			echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
 
