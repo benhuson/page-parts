@@ -2,8 +2,8 @@
 Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.9
-Tested up to: 6.1.1
-Stable tag: 1.4.2
+Tested up to: 6.4.3
+Stable tag: 1.4.3
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,11 @@ Either enter numbers in the order fields or drag them into the order you want.
 == Changelog ==
 
 = Unreleased =
+
+= 1.4.3 =
+
+__Fixed__
+- Page parts now work with parent set to pending/private/future/trash status.
 
 = 1.4.2 =
 
