@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.4] - 2024-11-21
+
+### Security
+- Escape URLs and HTML output to prevent XSS.
+
 ## [1.4.3] - 2024-02-07
 
 ### Fixed
@@ -144,7 +149,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4.3...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4.4...HEAD
+[1.4.4]: https://github.com/benhuson/page-parts/compare/1.4.3...1.4.4
 [1.4.3]: https://github.com/benhuson/page-parts/compare/1.4.2...1.4.3
 [1.4.2]: https://github.com/benhuson/page-parts/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/benhuson/page-parts/compare/1.4...1.4.1
