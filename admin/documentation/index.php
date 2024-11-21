@@ -41,7 +41,7 @@ $tab = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $tabs ) ? saniti
 			$href = $tab_id == $first_tab ? remove_query_arg( 'tab' ) : add_query_arg( 'tab', $tab_id );
 
 			?>
-			<a href="<?php echo $href; ?>" class="nav-tab <?php if ( $tab_id == $tab ) echo 'nav-tab-active'; ?>"><?php echo esc_html( $tab_title ); ?></a>
+			<a href="<?php echo esc_url( $href ); ?>" class="nav-tab <?php if ( $tab_id == $tab ) echo 'nav-tab-active'; ?>"><?php echo esc_html( $tab_title ); ?></a>
 			<?php
 
 		}

@@ -160,7 +160,7 @@ class Page_Parts_Admin {
 					$i = 0;
 					foreach ( $ancestors as $ancestor ) {
 						if ( $i > 0 ) {
-							echo _x( ' &rarr; ', 'Admin hierarchy seperator', 'page-parts' );
+							echo esc_html_x( ' → ', 'Admin hierarchy seperator', 'page-parts' );
 						}
 						edit_post_link( get_the_title( $ancestor ), null, null, $ancestor );
 						$i++;
@@ -173,7 +173,7 @@ class Page_Parts_Admin {
 					$name = $page_part_template->get_name();
 
 					if ( $page_part_template->is_supported() ) {
-						echo $name;
+						echo esc_html( $name );
 					} else {
 						printf( '<del>%s</del>', esc_html( $name ) );
 					}
@@ -277,17 +277,17 @@ class Page_Parts_Admin {
 		} else {
 
 			echo '<p>';
-			_e( 'Parent ID:', 'page-parts' );
-			printf( ' <input type="text" name="parent_id" value="%s" class="small-text" />', $post->post_parent );
+			esc_html_e( 'Parent ID:', 'page-parts' );
+			printf( ' <input type="text" name="parent_id" value="%s" class="small-text" />', esc_attr( $post->post_parent ) );
 			echo '</p>';
 
 		}
 
 		echo '<p>';
 		if ( $post->post_parent > 0 ) {
-			printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), __( 'Edit parent', 'page-parts' ) );
+			printf( '<a class="post-edit-link button button-small" href="%s">%s</a> ', esc_url( get_edit_post_link( $post->post_parent ) ), esc_html__( 'Edit parent', 'page-parts' ) );
 		}
-		printf( '<a class="button button-small button-primary" href="post-new.php?post_type=page-part&parent_id=%s" class="button button-primary">%s</a>', $post->post_parent, __( 'Add new page part', 'page-parts' ) );
+		printf( '<a class="button button-small button-primary" href="post-new.php?post_type=page-part&parent_id=%s" class="button button-primary">%s</a>', esc_attr( $post->post_parent ), esc_html__( 'Add new page part', 'page-parts' ) );
 		echo '</p>';
 
 	}
@@ -339,8 +339,8 @@ class Page_Parts_Admin {
 		if ( ! empty( $image_grid ) ) {
 			$class = empty( $current_template ) ? 'page-part-image selected' : 'page-part-image';
 			$image_src = apply_filters( 'page_part_theme_default_template_image', plugins_url( 'images/templates/default.png', dirname( __FILE__ ) ) );
-			$image_grid = '<div class="page-part-image-container"><img src="' . $image_src . '" width="80" height="50" alt="Remove Template..." title="Remove Template..." class="' . $class . '">' . $image_grid . '</div>';
-			echo $image_grid;
+			$image_grid = '<div class="page-part-image-container"><img src="' . esc_url( $image_src ) . '" width="80" height="50" alt="Remove Template..." title="Remove Template..." class="' . esc_attr( $class ) . '">' . wp_kses( $image_grid, 'post' ) . '</div>';
+			echo wp_kses( $image_grid, 'post' );
 		}
 
 
@@ -490,7 +490,7 @@ class Page_Parts_Admin {
 					var data = {
 						action    : 'page_parts_dragndrop_order',
 						pageParts : $( '#page_parts table.wp-list-table tbody' ).sortable( 'toArray' ),
-						ajaxNonce : '<?php echo wp_create_nonce( "order_page_parts" ); ?>'
+						ajaxNonce : '<?php echo esc_js( wp_create_nonce( "order_page_parts" ) ); ?>'
 					};
 					$.post( ajaxurl, data, function( response ) {
 						setTimeout( function() {
@@ -516,7 +516,7 @@ class Page_Parts_Admin {
 					action    : 'page_parts_location',
 					post_id   : id,
 					location  : val,
-					ajaxNonce : '<?php echo wp_create_nonce( "page_parts_location" ); ?>'
+					ajaxNonce : '<?php echo esc_js( wp_create_nonce( "page_parts_location" ) ); ?>'
 				};
 				$.post( ajaxurl, data, function( response ) {
 					setTimeout( function() {
@@ -540,7 +540,7 @@ class Page_Parts_Admin {
 					action    : 'page_parts_template',
 					post_id   : id,
 					template  : val,
-					ajaxNonce : '<?php echo wp_create_nonce( "page_parts_template" ); ?>'
+					ajaxNonce : '<?php echo esc_js( wp_create_nonce( "page_parts_template" ) ); ?>'
 				};
 				$.post( ajaxurl, data, function( response ) {
 					setTimeout( function() {
@@ -837,8 +837,8 @@ class Page_Parts_Admin {
 		?>
 
 		<p>
-			<a href="post-new.php?post_type=page-part&parent_id=<?php echo $post->ID ?>" class="button button-primary"><?php _e( 'Add new page part', 'page-parts' ); ?></a>
-			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php _e( 'Save page parts', 'page-parts' ); ?>">
+			<a href="post-new.php?post_type=page-part&parent_id=<?php echo esc_attr( $post->ID ); ?>" class="button button-primary"><?php esc_html_e( 'Add new page part', 'page-parts' ); ?></a>
+			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php esc_attr_e( 'Save page parts', 'page-parts' ); ?>">
 		</p>
 
 		<?php wp_nonce_field( 'order_page_parts', '_ajax_nonce-order-page-parts' ); ?>
