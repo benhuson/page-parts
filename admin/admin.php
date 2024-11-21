@@ -265,11 +265,11 @@ class Page_Parts_Admin {
 				'selected'          => absint( $post->post_parent ),
 				'echo'              => 0,
 				'name'              => 'parent_id',
-				'show_option_none'  => sprintf( '–– %s ––', __( 'No Parent', 'page-parts' ) ),
+				'show_option_none'  => sprintf( '–– %s ––', esc_html__( 'No Parent', 'page-parts' ) ),
 				'option_none_value' => 0,
 				'sort_order'        => 'ASC',
 				'sort_column'       => 'menu_order,post_title',
-				'post_type'         => get_post_type( $post->post_parent ),
+				'post_type'         => esc_attr( get_post_type( $post->post_parent ) ),
 				'post_status'       => 'publish,draft,pending,private,future,trash'
 			);
 			echo '<p>' . wp_dropdown_pages( $args ) . '</p>';
