@@ -85,9 +85,9 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 */
 	public function single_row( $item ) {
 		static $row_class = '';
-		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
+		$row_class = $row_class == '' ? 'alternate' : '';
 
-		echo '<tr id="page-part-' . $item->ID . '" ' . $row_class . '>';
+		echo '<tr id="page-part-' . esc_attr( $item->ID ) . '" class="' . esc_attr( $row_class ) . '">';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
@@ -266,7 +266,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 */
 	public function display() {
 		?>
-		<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>">
+		<table class="wp-list-table <?php echo esc_attr( implode( ' ', $this->get_table_classes() ) ); ?>">
 			<thead>
 				<tr>
 					<?php $this->print_column_headers(); ?>
@@ -288,7 +288,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 
 		$add_url = admin_url( sprintf( 'post-new.php?post_type=page-part&parent_id=%s', $post->ID ) );
 
-		printf( __( 'No page parts found. <a %s>Add one?</a>', 'page-parts' ), 'href="' . $add_url . '"' );
+		printf( wp_kses( __( 'No page parts found. <a %s>Add one?</a>', 'page-parts' ) ), 'href="' . esc_attr( $add_url ) . '"' );
 
 	}
 
