@@ -288,7 +288,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 
 		$add_url = admin_url( sprintf( 'post-new.php?post_type=page-part&parent_id=%s', $post->ID ) );
 
-		printf( wp_kses( __( 'No page parts found. <a %s>Add one?</a>', 'page-parts' ) ), 'href="' . esc_attr( $add_url ) . '"' );
+		printf( wp_kses( __( 'No page parts found. <a %s>Add one?</a>', 'page-parts' ), 'post' ), 'href="' . esc_attr( $add_url ) . '"' );
 
 	}
 
