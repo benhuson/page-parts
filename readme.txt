@@ -3,7 +3,7 @@ Contributors: husobj
 Tags: pages, cms
 Requires at least: 3.9
 Tested up to: 6.7.1
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,12 @@ Either enter numbers in the order fields or drag them into the order you want.
 == Changelog ==
 
 = Unreleased =
+
+= 1.4.5 =
+
+__Fixed__
+- Fix error caused by incorrectly implemented wp_kses().
+
 
 = 1.4.4 =
 

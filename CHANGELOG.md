@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.5] - 2024-11-29
+
+### Fixed
+- Fix error caused by incorrectly implemented wp_kses().
+
 ## [1.4.4] - 2024-11-21
 
 ### Security
@@ -149,7 +154,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4.4...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4.5...HEAD
+[1.4.4]: https://github.com/benhuson/page-parts/compare/1.4.4...1.4.5
 [1.4.4]: https://github.com/benhuson/page-parts/compare/1.4.3...1.4.4
 [1.4.3]: https://github.com/benhuson/page-parts/compare/1.4.2...1.4.3
 [1.4.2]: https://github.com/benhuson/page-parts/compare/1.4.1...1.4.2
