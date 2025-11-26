@@ -121,12 +121,19 @@ class Page_Parts_Templates {
 			return array();
 		}
 
+		$parent = $theme->parent();
+
 		$page_templates = $this->cache_get( 'page_part_templates' );
 
 		if ( ! is_array( $page_templates ) ) {
 			$page_templates = array();
 
 			$files = (array) $theme->get_files( 'php', apply_filters( 'page_part_theme_templates_depth', 2 ) );
+
+			if ( $parent ) {
+				$parent_files = (array) $parent->get_files( 'php', apply_filters( 'page_part_theme_templates_depth', 2 ) );
+				$files = array_merge( $parent_files, $files );
+			}
 
 			foreach ( $files as $file => $full_path ) {
 				if ( ! preg_match( '|Page Part Name:(.*)$|mi', file_get_contents( $full_path ), $header ) ) {
