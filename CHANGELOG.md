@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.5] - 2025-11-26
+
+### Added
+- Page part templates now support in child themes.
+
 ## [1.4.5] - 2024-11-29
 
 ### Fixed
@@ -154,7 +159,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.4.5...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.5...HEAD
+[1.5]: https://github.com/benhuson/page-parts/compare/1.4.5...1.5
 [1.4.4]: https://github.com/benhuson/page-parts/compare/1.4.4...1.4.5
 [1.4.4]: https://github.com/benhuson/page-parts/compare/1.4.3...1.4.4
 [1.4.3]: https://github.com/benhuson/page-parts/compare/1.4.2...1.4.3
