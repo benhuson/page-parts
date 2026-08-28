@@ -20,6 +20,9 @@ class Page_Parts_Admin {
 		add_action( 'wp_ajax_page_parts_dragndrop_order', array( $this, 'dragndrop_order_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_location', array( $this, 'location_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_template', array( $this, 'template_ajax_callback' ) );
+		add_filter( 'page_row_actions', array( $this, 'page_row_actions' ), 10, 2 );
+		add_action( 'admin_post_page_parts_duplicate_page', array( $this, 'duplicate_page' ) );
+		add_action( 'admin_notices', array( $this, 'duplicate_page_notice' ) );
 		add_filter( 'post_updated_messages', array( $this, 'page_part_updated_messages' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
 		add_filter( 'admin_menu', array( $this, 'add_documentation_page' ) );
@@ -120,6 +123,371 @@ class Page_Parts_Admin {
 
 		}
 
+	}
+
+	/**
+	 * Add a duplicate action to the Pages list.
+	 *
+	 * @param   array    $actions  Row actions.
+	 * @param   WP_Post  $post     Post object.
+	 * @return  array              Updated row actions.
+	 */
+	public function page_row_actions( $actions, $post ) {
+
+		if ( ! $this->can_duplicate_page( $post ) ) {
+			return $actions;
+		}
+
+		$url = add_query_arg(
+			array(
+				'action' => 'page_parts_duplicate_page',
+				'post'   => $post->ID,
+			),
+			admin_url( 'admin-post.php' )
+		);
+
+		$actions['page_parts_duplicate'] = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( wp_nonce_url( $url, 'page_parts_duplicate_page_' . $post->ID ) ),
+			esc_html__( 'Duplicate', 'page-parts' )
+		);
+
+		return $actions;
+	}
+
+	/**
+	 * Duplicate a page and its complete page part hierarchy.
+	 */
+	public function duplicate_page() {
+
+		$source_id = isset( $_REQUEST['post'] ) ? absint( $_REQUEST['post'] ) : 0;
+		$source    = get_post( $source_id );
+
+		if ( ! $source || 'page' != $source->post_type ) {
+			wp_die( esc_html__( 'The page to duplicate could not be found.', 'page-parts' ) );
+		}
+
+		check_admin_referer( 'page_parts_duplicate_page_' . $source_id );
+
+		if ( ! $this->can_duplicate_page( $source ) || ! $this->can_copy_post_taxonomies( $source ) ) {
+			wp_die( esc_html__( 'You are not allowed to duplicate this page.', 'page-parts' ) );
+		}
+
+		$source_page_parts = array();
+		$this->get_page_part_descendants( $source->ID, $source_page_parts );
+
+		foreach ( $source_page_parts as $page_part ) {
+			if ( ! $this->can_duplicate_page_part( $page_part ) || ! $this->can_copy_post_taxonomies( $page_part ) ) {
+				wp_die( esc_html__( 'You are not allowed to duplicate one or more page parts on this page.', 'page-parts' ) );
+			}
+		}
+
+		$created_post_ids = array();
+		$source_to_copy   = array();
+		$new_page_id      = $this->copy_post( $source, $source->post_parent, 'draft', $source->post_title . ' (Copy)' );
+
+		if ( is_wp_error( $new_page_id ) ) {
+			$this->redirect_after_duplicate_failure( $source->ID );
+		}
+
+		$created_post_ids[] = $new_page_id;
+		$source_to_copy[ $source->ID ] = $new_page_id;
+
+		$error = $this->copy_page_part_descendants( $source->ID, $new_page_id, $created_post_ids, $source_to_copy );
+
+		if ( is_wp_error( $error ) ) {
+			$this->delete_copied_posts( $created_post_ids );
+			$this->redirect_after_duplicate_failure( $source->ID );
+		}
+
+		/**
+		 * Fires after a page and its page part hierarchy have been duplicated.
+		 *
+		 * @param int     $new_page_id     Duplicated page ID.
+		 * @param WP_Post $source           Original page.
+		 * @param array   $source_to_copy   Original post IDs mapped to duplicated IDs.
+		 */
+		do_action( 'page_parts_after_duplicate_page', $new_page_id, $source, $source_to_copy );
+
+		$redirect_url = add_query_arg( 'page_parts_duplicated', '1', get_edit_post_link( $new_page_id, 'raw' ) );
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
+	/**
+	 * Check whether the current user may duplicate the page itself.
+	 *
+	 * @param   WP_Post  $post  Page to duplicate.
+	 * @return  boolean
+	 */
+	protected function can_duplicate_page( $post ) {
+
+		$page_type = get_post_type_object( 'page' );
+
+		return $post && 'page' == $post->post_type && in_array( $post->post_status, array( 'publish', 'future', 'draft', 'pending', 'private' ) ) && $page_type && current_user_can( 'edit_post', $post->ID ) && current_user_can( $page_type->cap->edit_posts );
+	}
+
+	/**
+	 * Check whether the current user may create a copy with the page part's status.
+	 *
+	 * @param   WP_Post  $post  Page part to duplicate.
+	 * @return  boolean
+	 */
+	protected function can_duplicate_page_part( $post ) {
+
+		$page_part_type = get_post_type_object( 'page-part' );
+
+		if ( ! $post || 'page-part' != $post->post_type || ! $page_part_type || ! current_user_can( 'edit_post', $post->ID ) || ! current_user_can( $page_part_type->cap->edit_posts ) ) {
+			return false;
+		}
+
+		if ( in_array( $post->post_status, array( 'publish', 'future', 'private' ) ) && ! current_user_can( $page_part_type->cap->publish_posts ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether the current user can assign the post's existing terms.
+	 *
+	 * @param   WP_Post  $post  Post to duplicate.
+	 * @return  boolean
+	 */
+	protected function can_copy_post_taxonomies( $post ) {
+
+		foreach ( get_object_taxonomies( $post->post_type ) as $taxonomy ) {
+			$term_ids = wp_get_object_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
+			$taxonomy_object = get_taxonomy( $taxonomy );
+
+			if ( is_wp_error( $term_ids ) || ( ! empty( $term_ids ) && ( ! $taxonomy_object || ! current_user_can( $taxonomy_object->cap->assign_terms ) ) ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Collect non-trashed descendants in parent-before-child order.
+	 *
+	 * @param int   $parent_id    Source parent ID.
+	 * @param array $descendants  Collected page parts.
+	 */
+	protected function get_page_part_descendants( $parent_id, &$descendants ) {
+
+		$children = get_posts( array(
+			'post_type'        => 'page-part',
+			'post_parent'      => $parent_id,
+			'post_status'      => array( 'publish', 'future', 'draft', 'pending', 'private' ),
+			'posts_per_page'   => -1,
+			'orderby'          => 'menu_order ID',
+			'order'            => 'ASC',
+			'suppress_filters' => true,
+		) );
+
+		foreach ( $children as $child ) {
+			if ( isset( $descendants[ $child->ID ] ) ) {
+				continue;
+			}
+
+			$descendants[ $child->ID ] = $child;
+			$this->get_page_part_descendants( $child->ID, $descendants );
+		}
+	}
+
+	/**
+	 * Copy descendant page parts using the newly-created parent IDs.
+	 *
+	 * @param   int   $source_parent_id  Original parent ID.
+	 * @param   int   $new_parent_id     Duplicated parent ID.
+	 * @param   array $created_post_ids  IDs created during this operation.
+	 * @param   array $source_to_copy    Original IDs mapped to copied IDs.
+	 * @return  true|WP_Error
+	 */
+	protected function copy_page_part_descendants( $source_parent_id, $new_parent_id, &$created_post_ids, &$source_to_copy ) {
+
+		$children = get_posts( array(
+			'post_type'        => 'page-part',
+			'post_parent'      => $source_parent_id,
+			'post_status'      => array( 'publish', 'future', 'draft', 'pending', 'private' ),
+			'posts_per_page'   => -1,
+			'orderby'          => 'menu_order ID',
+			'order'            => 'ASC',
+			'suppress_filters' => true,
+		) );
+
+		foreach ( $children as $child ) {
+			if ( isset( $source_to_copy[ $child->ID ] ) ) {
+				continue;
+			}
+
+			$new_child_id = $this->copy_post( $child, $new_parent_id, $child->post_status, $child->post_title );
+
+			if ( is_wp_error( $new_child_id ) ) {
+				return $new_child_id;
+			}
+
+			$created_post_ids[] = $new_child_id;
+			$source_to_copy[ $child->ID ] = $new_child_id;
+
+			$error = $this->copy_page_part_descendants( $child->ID, $new_child_id, $created_post_ids, $source_to_copy );
+			if ( is_wp_error( $error ) ) {
+				return $error;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Copy a post, its taxonomy relationships, and allowed metadata.
+	 *
+	 * @param   WP_Post  $source       Original post.
+	 * @param   int      $parent_id    Parent ID for the copy.
+	 * @param   string   $status       Status for the copy.
+	 * @param   string   $title        Title for the copy.
+	 * @return  int|WP_Error
+	 */
+	protected function copy_post( $source, $parent_id, $status, $title ) {
+
+		$new_post_id = wp_insert_post( wp_slash( array(
+			'post_author'           => $source->post_author,
+			'post_content'          => $source->post_content,
+			'post_content_filtered' => $source->post_content_filtered,
+			'post_date'             => $source->post_date,
+			'post_date_gmt'         => $source->post_date_gmt,
+			'post_excerpt'          => $source->post_excerpt,
+			'post_mime_type'        => $source->post_mime_type,
+			'post_parent'           => $parent_id,
+			'post_password'         => $source->post_password,
+			'post_status'           => $status,
+			'post_title'            => $title,
+			'post_type'             => $source->post_type,
+			'menu_order'            => $source->menu_order,
+			'comment_status'        => $source->comment_status,
+			'ping_status'           => $source->ping_status,
+			'to_ping'               => $source->to_ping,
+			'pinged'                => $source->pinged,
+		) ), true );
+
+		if ( is_wp_error( $new_post_id ) ) {
+			return $new_post_id;
+		}
+
+		$error = $this->copy_post_taxonomies( $source->ID, $new_post_id, $source->post_type );
+		if ( is_wp_error( $error ) ) {
+			wp_delete_post( $new_post_id, true );
+			return $error;
+		}
+
+		$error = $this->copy_post_meta( $source, $new_post_id );
+		if ( is_wp_error( $error ) ) {
+			wp_delete_post( $new_post_id, true );
+			return $error;
+		}
+
+		return $new_post_id;
+	}
+
+	/**
+	 * Copy taxonomy term relationships.
+	 *
+	 * @param   int    $source_id    Original post ID.
+	 * @param   int    $new_post_id  Duplicated post ID.
+	 * @param   string $post_type    Post type.
+	 * @return  true|WP_Error
+	 */
+	protected function copy_post_taxonomies( $source_id, $new_post_id, $post_type ) {
+
+		$taxonomies = get_object_taxonomies( $post_type );
+
+		foreach ( $taxonomies as $taxonomy ) {
+			$term_ids = wp_get_object_terms( $source_id, $taxonomy, array( 'fields' => 'ids' ) );
+			if ( is_wp_error( $term_ids ) ) {
+				return $term_ids;
+			}
+
+			if ( empty( $term_ids ) ) {
+				continue;
+			}
+
+			$result = wp_set_object_terms( $new_post_id, $term_ids, $taxonomy, false );
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Copy metadata while omitting WordPress editing and trash state.
+	 *
+	 * @param   WP_Post  $source       Original post.
+	 * @param   int      $new_post_id  Duplicated post ID.
+	 * @return  true|WP_Error
+	 */
+	protected function copy_post_meta( $source, $new_post_id ) {
+
+		$excluded_meta_keys = apply_filters( 'page_parts_duplicate_excluded_meta_keys', array(
+			'_edit_last',
+			'_edit_lock',
+			'_wp_old_slug',
+			'_wp_desired_post_slug',
+		), $source );
+
+		foreach ( get_post_meta( $source->ID ) as $meta_key => $values ) {
+			if ( in_array( $meta_key, $excluded_meta_keys, true ) || 0 === strpos( $meta_key, '_wp_trash_meta_' ) ) {
+				continue;
+			}
+
+			foreach ( $values as $value ) {
+				if ( false === add_post_meta( $new_post_id, $meta_key, $value ) ) {
+					return new WP_Error( 'page_parts_duplicate_meta', __( 'Unable to copy page metadata.', 'page-parts' ) );
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Delete posts made during a failed duplication in child-before-parent order.
+	 *
+	 * @param array $post_ids  Created post IDs.
+	 */
+	protected function delete_copied_posts( $post_ids ) {
+
+		foreach ( array_reverse( $post_ids ) as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
+	}
+
+	/**
+	 * Redirect to the source page after cleaning up a failed copy.
+	 *
+	 * @param int $source_id  Original page ID.
+	 */
+	protected function redirect_after_duplicate_failure( $source_id ) {
+
+		$redirect_url = add_query_arg( 'page_parts_duplicate_error', '1', get_edit_post_link( $source_id, 'raw' ) );
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
+	/**
+	 * Display duplication results on the edit screen.
+	 */
+	public function duplicate_page_notice() {
+
+		if ( isset( $_GET['page_parts_duplicated'] ) ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Page and page parts duplicated.', 'page-parts' ) . '</p></div>';
+		}
+
+		if ( isset( $_GET['page_parts_duplicate_error'] ) ) {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'The page could not be duplicated. No copied page parts were kept.', 'page-parts' ) . '</p></div>';
+		}
 	}
 
 	/**
@@ -838,6 +1206,18 @@ class Page_Parts_Admin {
 
 		<p>
 			<a href="post-new.php?post_type=page-part&parent_id=<?php echo esc_attr( $post->ID ); ?>" class="button button-primary"><?php esc_html_e( 'Add new page part', 'page-parts' ); ?></a>
+			<?php if ( 'page' == $post->post_type && $this->can_duplicate_page( $post ) ) : ?>
+				<?php
+				$duplicate_url = add_query_arg(
+					array(
+						'action' => 'page_parts_duplicate_page',
+						'post'   => $post->ID,
+					),
+					admin_url( 'admin-post.php' )
+				);
+				?>
+				<a href="<?php echo esc_url( wp_nonce_url( $duplicate_url, 'page_parts_duplicate_page_' . $post->ID ) ); ?>" class="button"><?php esc_html_e( 'Duplicate page', 'page-parts' ); ?></a>
+			<?php endif; ?>
 			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php esc_attr_e( 'Save page parts', 'page-parts' ); ?>">
 		</p>
 
