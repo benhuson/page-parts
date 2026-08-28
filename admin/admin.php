@@ -115,7 +115,7 @@ class Page_Parts_Admin {
 
 				echo '<div class="post-type-page-part-column">';
 				printf( '<span class="dashicons-before dashicons-arrow-right page-parts-count">%s</span><br />', esc_html( $page_parts_count ) );
-				echo '<ul>';
+				echo '<ul class="page-parts-list">';
 				while ( $page_parts->have_posts() ) {
 					$page_parts->the_post();
 					printf( '<li><a href="%s">%s</a></li>', esc_url( get_edit_post_link( get_the_ID() ) ), esc_html( get_the_title( get_the_ID(), '', '', false ) ) );
@@ -1070,15 +1070,15 @@ class Page_Parts_Admin {
 			-ms-transform: rotate( 90deg );
 			transform: rotate( 90deg );
 		}
-		.post-type-page-part-column ul {
+		.post-type-page-part-column .page-parts-list {
 			display: none;
 			margin: 0px;
 			padding-left: 1.5em;
 		}
-		.post-type-page-part-column.show ul {
+		.post-type-page-part-column.show .page-parts-list {
 			display: block;
 		}
-		.post-type-page-part-column ul li {
+		.post-type-page-part-column .page-parts-list li {
 			margin: 0px;
 		}
 		#minor-publishing-actions #page-parts-duplicate-action {
@@ -1179,12 +1179,16 @@ class Page_Parts_Admin {
 
 			} );
 
-			$( document ).on( 'ready', function() {
-				$( '.post-type-page-part-column .page-parts-count' ).on( 'click', function( e ) {
-					$( this ).closest( '.post-type-page-part-column' ).toggleClass( 'show' );
-				} );
-			} );
+		} );
 
+		document.addEventListener( 'click', function( event ) {
+			var pagePartsCount = event.target.closest( '.post-type-page-part-column .page-parts-count' );
+
+			if ( ! pagePartsCount ) {
+				return;
+			}
+
+			pagePartsCount.closest( '.post-type-page-part-column' ).classList.toggle( 'show' );
 		} );
 		</script>
 
