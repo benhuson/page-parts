@@ -1,7 +1,7 @@
 === Page Parts ===
 Contributors: husobj
 Tags: pages, cms
-Requires at least: 3.9
+Requires at least: 5.5
 Tested up to: 6.8.3
 Stable tag: 1.5
 License: GPL2 or later
