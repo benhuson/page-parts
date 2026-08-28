@@ -4,6 +4,25 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.6] - 2026-08-28
+
+### Added
+- Add support for duplicating pages and their complete page part hierarchy.
+- Add support for duplicating a page part together with any nested page parts.
+- Add `page_parts_duplicable_post_types` filter to control which supported post types can use the duplication workflow.
+- Add `page_parts_duplicate_excluded_meta_keys` filter to control which meta keys are skipped when duplicating content.
+- Add `page_parts_after_duplicate_post` and `page_parts_after_duplicate_page_part` actions after successful duplication.
+
+### Changed
+- Add duplicate actions in the list table, Classic Editor publish box, and Block Editor status panel.
+- Raise the minimum supported WordPress version to 5.5.
+- Require PHP 7.4.
+
+### Fixed
+- Replace the page part count expander jQuery dependency with vanilla JavaScript.
+- Fix the page part count expander toggle script.
+- Escape title output in the page parts admin list table.
+
 ## [1.5] - 2025-11-26
 
 ### Added
@@ -159,7 +178,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.5...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.6...HEAD
+[1.6]: https://github.com/benhuson/page-parts/compare/1.5...1.6
 [1.5]: https://github.com/benhuson/page-parts/compare/1.4.5...1.5
 [1.4.4]: https://github.com/benhuson/page-parts/compare/1.4.4...1.4.5
 [1.4.4]: https://github.com/benhuson/page-parts/compare/1.4.3...1.4.4

@@ -141,6 +141,7 @@ class Page_Parts_List_Table extends WP_List_Table {
 	 * @return  string         Column content.
 	 */
 	public function admin_column_title( $item ) {
+		global $Page_Parts;
 
 		$post_title = get_the_title( $item );
 
@@ -148,12 +149,22 @@ class Page_Parts_List_Table extends WP_List_Table {
 			$post_title = __( '(no title)' );
 		}
 
-		$title = '<a href="' . get_edit_post_link( $item ) . '">' . $post_title . '</a>';
+		$title = '<a href="' . esc_url( get_edit_post_link( $item ) ) . '">' . esc_html( $post_title ) . '</a>';
 
 		if ( ! in_array( $item->post_status, array( 'publish', 'inherit' ) ) ) {
 			$title .= ' - <span class="post-state">' . $this->get_post_status_display( $item ) . '</span>';
 		}
-		return '<strong class="row-title">' . $title . '</strong>';
+
+		$actions = '';
+		if ( isset( $Page_Parts->admin ) && $Page_Parts->admin->can_duplicate_page_part_tree( $item ) ) {
+			$actions = sprintf(
+				'<div class="row-actions"><span class="duplicate"><a href="%s">%s</a></span></div>',
+				esc_url( $Page_Parts->admin->get_duplicate_page_part_url( $item->ID ) ),
+				esc_html__( 'Duplicate', 'page-parts' )
+			);
+		}
+
+		return '<strong class="row-title">' . $title . '</strong>' . $actions;
 	}
 
 	/**

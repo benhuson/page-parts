@@ -1,17 +1,17 @@
 === Page Parts ===
 Contributors: husobj
 Tags: pages, cms
-Requires at least: 3.9
-Tested up to: 6.8.3
+Requires at least: 5.5
+Tested up to: 7.1
 Stable tag: 1.5
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Manage subsections of a page. Create 'page parts' as children of a page to display in different areas of your templates. Requires WordPress 3.4.
+Manage subsections of a page. Create 'page parts' as children of a page to display in different areas of your templates. Includes duplication tools for pages and nested page parts.
 
 == Description ==
 
-Manage subsections of a page. Create 'page parts' as children of a page to display in different areas of your templates. Requires WordPress 3.4.
+Manage subsections of a page. Create 'page parts' as children of a page to display in different areas of your templates. Includes duplication tools for pages and nested page parts.
 
 For more information, view the documentation link on the admin plugins page after activating the plugin.
 
@@ -26,6 +26,10 @@ For more information, view the documentation link on the admin plugins page afte
 
 Either enter numbers in the order fields or drag them into the order you want.
 
+= What changed in version 1.6? =
+
+Version 1.6 adds duplication tools for supported post types and page parts. You can duplicate a page with its complete page part hierarchy, duplicate an individual page part with its nested children, and customize the duplication workflow with the `page_parts_duplicable_post_types`, `page_parts_duplicate_excluded_meta_keys`, `page_parts_after_duplicate_post`, and `page_parts_after_duplicate_page_part` hooks.
+
 == Screenshots ==
 
 1. Page Parts meta box.
@@ -37,6 +41,25 @@ Either enter numbers in the order fields or drag them into the order you want.
 == Changelog ==
 
 = Unreleased =
+
+= 1.6 =
+
+__Added__
+- Add support for duplicating pages and their complete page part hierarchy.
+- Add support for duplicating a page part together with any nested page parts.
+- Add `page_parts_duplicable_post_types` filter to control which supported post types can use the duplication workflow.
+- Add `page_parts_duplicate_excluded_meta_keys` filter to control which meta keys are skipped when duplicating content.
+- Add `page_parts_after_duplicate_post` and `page_parts_after_duplicate_page_part` actions after successful duplication.
+
+__Changed__
+- Add duplicate actions in the list table, Classic Editor publish box, and Block Editor status panel.
+- Raise the minimum supported WordPress version to 5.5.
+- Require PHP 7.4.
+
+__Fixed__
+- Replace the page part count expander jQuery dependency with vanilla JavaScript.
+- Fix the page part count expander toggle script.
+- Escape title output in the page parts admin list table.
 
 = 1.5 =
 
