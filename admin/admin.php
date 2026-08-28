@@ -24,6 +24,7 @@ class Page_Parts_Admin {
 		add_filter( 'page_row_actions', array( $this, 'page_row_actions' ), 10, 2 );
 		add_action( 'post_submitbox_minor_actions', array( $this, 'duplicate_page_submitbox_action' ) );
 		add_action( 'admin_post_page_parts_duplicate_page', array( $this, 'duplicate_page' ) );
+		add_action( 'admin_post_page_parts_duplicate_page_part', array( $this, 'duplicate_page_part' ) );
 		add_action( 'admin_notices', array( $this, 'duplicate_page_notice' ) );
 		add_filter( 'post_updated_messages', array( $this, 'page_part_updated_messages' ) );
 		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
@@ -187,6 +188,25 @@ class Page_Parts_Admin {
 	}
 
 	/**
+	 * Get a nonce-protected duplicate URL for a page part.
+	 *
+	 * @param   int     $post_id  Page part ID.
+	 * @return  string
+	 */
+	public function get_duplicate_page_part_url( $post_id ) {
+
+		$url = add_query_arg(
+			array(
+				'action' => 'page_parts_duplicate_page_part',
+				'post'   => $post_id,
+			),
+			admin_url( 'admin-post.php' )
+		);
+
+		return wp_nonce_url( $url, 'page_parts_duplicate_page_part_' . $post_id );
+	}
+
+	/**
 	 * Duplicate a page and its complete page part hierarchy.
 	 */
 	public function duplicate_page() {
@@ -246,6 +266,61 @@ class Page_Parts_Admin {
 	}
 
 	/**
+	 * Duplicate a page part and all of its descendants.
+	 */
+	public function duplicate_page_part() {
+
+		$source_id = isset( $_REQUEST['post'] ) ? absint( $_REQUEST['post'] ) : 0;
+		$source    = get_post( $source_id );
+
+		if ( ! $source || 'page-part' != $source->post_type ) {
+			wp_die( esc_html__( 'The page part to duplicate could not be found.', 'page-parts' ) );
+		}
+
+		check_admin_referer( 'page_parts_duplicate_page_part_' . $source_id );
+
+		if ( ! $this->can_duplicate_page_part_tree( $source ) ) {
+			wp_die( esc_html__( 'You are not allowed to duplicate this page part.', 'page-parts' ) );
+		}
+
+		$created_post_ids = array();
+		$source_to_copy   = array();
+		$new_page_part_id = $this->copy_post( $source, $source->post_parent, $source->post_status, $source->post_title . ' (Copy)' );
+
+		if ( is_wp_error( $new_page_part_id ) ) {
+			$this->redirect_after_duplicate_page_part_failure( $source->post_parent );
+		}
+
+		$created_post_ids[] = $new_page_part_id;
+		$source_to_copy[ $source->ID ] = $new_page_part_id;
+
+		$error = $this->copy_page_part_descendants( $source->ID, $new_page_part_id, $created_post_ids, $source_to_copy );
+		if ( is_wp_error( $error ) ) {
+			$this->delete_copied_posts( $created_post_ids );
+			$this->redirect_after_duplicate_page_part_failure( $source->post_parent );
+		}
+
+		$error = $this->position_duplicate_page_part( $source, $new_page_part_id );
+		if ( is_wp_error( $error ) ) {
+			$this->delete_copied_posts( $created_post_ids );
+			$this->redirect_after_duplicate_page_part_failure( $source->post_parent );
+		}
+
+		/**
+		 * Fires after a page part and its descendant hierarchy have been duplicated.
+		 *
+		 * @param int     $new_page_part_id  Duplicated page part ID.
+		 * @param WP_Post $source            Original page part.
+		 * @param array   $source_to_copy    Original post IDs mapped to duplicated IDs.
+		 */
+		do_action( 'page_parts_after_duplicate_page_part', $new_page_part_id, $source, $source_to_copy );
+
+		$redirect_url = $this->get_page_part_duplicate_redirect_url( $source->post_parent, 'page_parts_page_part_duplicated' );
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
+	/**
 	 * Check whether the current user may duplicate the page itself.
 	 *
 	 * @param   WP_Post  $post  Page to duplicate.
@@ -274,6 +349,30 @@ class Page_Parts_Admin {
 
 		if ( in_array( $post->post_status, array( 'publish', 'future', 'private' ) ) && ! current_user_can( $page_part_type->cap->publish_posts ) ) {
 			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether the current user can duplicate a page part and every descendant.
+	 *
+	 * @param   WP_Post  $source  Page part to duplicate.
+	 * @return  boolean
+	 */
+	public function can_duplicate_page_part_tree( $source ) {
+
+		if ( ! $this->can_duplicate_page_part( $source ) || ! $this->can_copy_post_taxonomies( $source ) ) {
+			return false;
+		}
+
+		$descendants = array();
+		$this->get_page_part_descendants( $source->ID, $descendants );
+
+		foreach ( $descendants as $page_part ) {
+			if ( ! $this->can_duplicate_page_part( $page_part ) || ! $this->can_copy_post_taxonomies( $page_part ) ) {
+				return false;
+			}
 		}
 
 		return true;
@@ -484,6 +583,54 @@ class Page_Parts_Admin {
 	}
 
 	/**
+	 * Place a copied page part immediately after its original sibling.
+	 *
+	 * @param   WP_Post  $source            Original page part.
+	 * @param   int      $new_page_part_id  Duplicated page part ID.
+	 * @return  true|WP_Error
+	 */
+	protected function position_duplicate_page_part( $source, $new_page_part_id ) {
+		global $wpdb;
+
+		$source_order = absint( $source->menu_order );
+		$shifted = $wpdb->query( $wpdb->prepare(
+			"UPDATE {$wpdb->posts} SET menu_order = menu_order + 1 WHERE post_parent = %d AND post_type = %s AND post_status != %s AND ID != %d AND menu_order > %d",
+			$source->post_parent,
+			'page-part',
+			'trash',
+			$new_page_part_id,
+			$source_order
+		) );
+
+		if ( false === $shifted ) {
+			return new WP_Error( 'page_parts_duplicate_order', __( 'Unable to position the copied page part.', 'page-parts' ) );
+		}
+
+		$updated = $wpdb->update(
+			$wpdb->posts,
+			array( 'menu_order' => $source_order + 1 ),
+			array( 'ID' => $new_page_part_id ),
+			array( '%d' ),
+			array( '%d' )
+		);
+
+		if ( false === $updated ) {
+			$wpdb->query( $wpdb->prepare(
+				"UPDATE {$wpdb->posts} SET menu_order = menu_order - 1 WHERE post_parent = %d AND post_type = %s AND post_status != %s AND ID != %d AND menu_order > %d",
+				$source->post_parent,
+				'page-part',
+				'trash',
+				$new_page_part_id,
+				$source_order + 1
+			) );
+
+			return new WP_Error( 'page_parts_duplicate_order', __( 'Unable to position the copied page part.', 'page-parts' ) );
+		}
+
+		return true;
+	}
+
+	/**
 	 * Delete posts made during a failed duplication in child-before-parent order.
 	 *
 	 * @param array $post_ids  Created post IDs.
@@ -508,6 +655,34 @@ class Page_Parts_Admin {
 	}
 
 	/**
+	 * Build a parent edit-screen URL for a page part duplication result.
+	 *
+	 * @param   int     $parent_id  Parent post ID.
+	 * @param   string  $query_arg  Result query argument.
+	 * @return  string
+	 */
+	protected function get_page_part_duplicate_redirect_url( $parent_id, $query_arg ) {
+
+		$redirect_url = get_edit_post_link( $parent_id, 'raw' );
+		if ( ! $redirect_url ) {
+			$redirect_url = admin_url( 'edit.php?post_type=page-part' );
+		}
+
+		return add_query_arg( $query_arg, '1', $redirect_url ) . '#page_parts';
+	}
+
+	/**
+	 * Redirect to the page part parent after cleaning up a failed copy.
+	 *
+	 * @param int $parent_id  Parent post ID.
+	 */
+	protected function redirect_after_duplicate_page_part_failure( $parent_id ) {
+
+		wp_safe_redirect( $this->get_page_part_duplicate_redirect_url( $parent_id, 'page_parts_duplicate_page_part_error' ) );
+		exit;
+	}
+
+	/**
 	 * Display duplication results on the edit screen.
 	 */
 	public function duplicate_page_notice() {
@@ -518,6 +693,14 @@ class Page_Parts_Admin {
 
 		if ( isset( $_GET['page_parts_duplicate_error'] ) ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'The page could not be duplicated. No copied page parts were kept.', 'page-parts' ) . '</p></div>';
+		}
+
+		if ( isset( $_GET['page_parts_page_part_duplicated'] ) ) {
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Page part and nested page parts duplicated.', 'page-parts' ) . '</p></div>';
+		}
+
+		if ( isset( $_GET['page_parts_duplicate_page_part_error'] ) ) {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'The page part could not be duplicated. No copied page parts were kept.', 'page-parts' ) . '</p></div>';
 		}
 	}
 
