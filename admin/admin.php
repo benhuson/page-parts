@@ -300,12 +300,6 @@ class Page_Parts_Admin {
 			$this->redirect_after_duplicate_page_part_failure( $source->post_parent );
 		}
 
-		$error = $this->position_duplicate_page_part( $source, $new_page_part_id );
-		if ( is_wp_error( $error ) ) {
-			$this->delete_copied_posts( $created_post_ids );
-			$this->redirect_after_duplicate_page_part_failure( $source->post_parent );
-		}
-
 		/**
 		 * Fires after a page part and its descendant hierarchy have been duplicated.
 		 *
@@ -577,54 +571,6 @@ class Page_Parts_Admin {
 					return new WP_Error( 'page_parts_duplicate_meta', __( 'Unable to copy page metadata.', 'page-parts' ) );
 				}
 			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Place a copied page part immediately after its original sibling.
-	 *
-	 * @param   WP_Post  $source            Original page part.
-	 * @param   int      $new_page_part_id  Duplicated page part ID.
-	 * @return  true|WP_Error
-	 */
-	protected function position_duplicate_page_part( $source, $new_page_part_id ) {
-		global $wpdb;
-
-		$source_order = absint( $source->menu_order );
-		$shifted = $wpdb->query( $wpdb->prepare(
-			"UPDATE {$wpdb->posts} SET menu_order = menu_order + 1 WHERE post_parent = %d AND post_type = %s AND post_status != %s AND ID != %d AND menu_order > %d",
-			$source->post_parent,
-			'page-part',
-			'trash',
-			$new_page_part_id,
-			$source_order
-		) );
-
-		if ( false === $shifted ) {
-			return new WP_Error( 'page_parts_duplicate_order', __( 'Unable to position the copied page part.', 'page-parts' ) );
-		}
-
-		$updated = $wpdb->update(
-			$wpdb->posts,
-			array( 'menu_order' => $source_order + 1 ),
-			array( 'ID' => $new_page_part_id ),
-			array( '%d' ),
-			array( '%d' )
-		);
-
-		if ( false === $updated ) {
-			$wpdb->query( $wpdb->prepare(
-				"UPDATE {$wpdb->posts} SET menu_order = menu_order - 1 WHERE post_parent = %d AND post_type = %s AND post_status != %s AND ID != %d AND menu_order > %d",
-				$source->post_parent,
-				'page-part',
-				'trash',
-				$new_page_part_id,
-				$source_order + 1
-			) );
-
-			return new WP_Error( 'page_parts_duplicate_order', __( 'Unable to position the copied page part.', 'page-parts' ) );
 		}
 
 		return true;
