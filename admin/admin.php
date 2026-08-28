@@ -10,6 +10,7 @@ class Page_Parts_Admin {
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_duplicate_page_block_editor_assets' ) );
 		add_action( 'save_post', array( $this, 'save_page_parts' ) );
 		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 5, 2 );
 		add_action( 'load-post.php', array( $this, 'add_help_tabs' ) );
@@ -21,6 +22,7 @@ class Page_Parts_Admin {
 		add_action( 'wp_ajax_page_parts_location', array( $this, 'location_ajax_callback' ) );
 		add_action( 'wp_ajax_page_parts_template', array( $this, 'template_ajax_callback' ) );
 		add_filter( 'page_row_actions', array( $this, 'page_row_actions' ), 10, 2 );
+		add_action( 'post_submitbox_minor_actions', array( $this, 'duplicate_page_submitbox_action' ) );
 		add_action( 'admin_post_page_parts_duplicate_page', array( $this, 'duplicate_page' ) );
 		add_action( 'admin_notices', array( $this, 'duplicate_page_notice' ) );
 		add_filter( 'post_updated_messages', array( $this, 'page_part_updated_messages' ) );
@@ -138,21 +140,50 @@ class Page_Parts_Admin {
 			return $actions;
 		}
 
-		$url = add_query_arg(
-			array(
-				'action' => 'page_parts_duplicate_page',
-				'post'   => $post->ID,
-			),
-			admin_url( 'admin-post.php' )
-		);
-
 		$actions['page_parts_duplicate'] = sprintf(
 			'<a href="%s">%s</a>',
-			esc_url( wp_nonce_url( $url, 'page_parts_duplicate_page_' . $post->ID ) ),
+			esc_url( $this->get_duplicate_page_url( $post->ID ) ),
 			esc_html__( 'Duplicate', 'page-parts' )
 		);
 
 		return $actions;
+	}
+
+	/**
+	 * Add the duplicate action to the Classic Editor minor publishing actions.
+	 *
+	 * @param WP_Post|null $post  Current post.
+	 */
+	public function duplicate_page_submitbox_action( $post ) {
+
+		if ( ! $this->can_duplicate_page( $post ) ) {
+			return;
+		}
+
+		printf(
+			'<div id="page-parts-duplicate-action"><a class="button button-secondary" href="%s">%s</a></div>',
+			esc_url( $this->get_duplicate_page_url( $post->ID ) ),
+			esc_html__( 'Duplicate page', 'page-parts' )
+		);
+	}
+
+	/**
+	 * Get a nonce-protected duplicate URL for a page.
+	 *
+	 * @param   int     $post_id  Page ID.
+	 * @return  string
+	 */
+	protected function get_duplicate_page_url( $post_id ) {
+
+		$url = add_query_arg(
+			array(
+				'action' => 'page_parts_duplicate_page',
+				'post'   => $post_id,
+			),
+			admin_url( 'admin-post.php' )
+		);
+
+		return wp_nonce_url( $url, 'page_parts_duplicate_page_' . $post_id );
 	}
 
 	/**
@@ -829,6 +860,14 @@ class Page_Parts_Admin {
 		.post-type-page-part-column ul li {
 			margin: 0px;
 		}
+		.post-type-page #minor-publishing-actions #page-parts-duplicate-action {
+			float: left;
+			margin-right: 8px;
+		}
+		.page-parts-duplicate-page a.components-button {
+			flex-grow: 1;
+			justify-content: center;
+		}
 		</style>
 
 		<script type="text/javascript">
@@ -946,6 +985,32 @@ class Page_Parts_Admin {
 	public function admin_enqueue_scripts() {
 		wp_enqueue_script( array( 'jquery', 'jquery-ui-core', 'interface', 'jquery-ui-sortable', 'wp-lists' ) );
 		wp_enqueue_script( 'page-parts-admin', plugins_url( 'admin/js/admin-post.js', dirname( __FILE__ ) ), 'jquery' );
+	}
+
+	/**
+	 * Add the duplicate control to the Block Editor document status area.
+	 */
+	public function enqueue_duplicate_page_block_editor_assets() {
+
+		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
+		$post    = get_post( $post_id );
+
+		if ( ! $this->can_duplicate_page( $post ) ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'page-parts-duplicate-page',
+			plugins_url( 'admin/js/duplicate-page.js', dirname( __FILE__ ) ),
+			array( 'wp-components', 'wp-editor', 'wp-element', 'wp-plugins' ),
+			PAGE_PARTS_VERSION,
+			true
+		);
+
+		wp_localize_script( 'page-parts-duplicate-page', 'pagePartsDuplicatePage', array(
+			'url'   => $this->get_duplicate_page_url( $post->ID ),
+			'label' => __( 'Duplicate page', 'page-parts' ),
+		) );
 	}
 
 	/**
@@ -1206,18 +1271,6 @@ class Page_Parts_Admin {
 
 		<p>
 			<a href="post-new.php?post_type=page-part&parent_id=<?php echo esc_attr( $post->ID ); ?>" class="button button-primary"><?php esc_html_e( 'Add new page part', 'page-parts' ); ?></a>
-			<?php if ( 'page' == $post->post_type && $this->can_duplicate_page( $post ) ) : ?>
-				<?php
-				$duplicate_url = add_query_arg(
-					array(
-						'action' => 'page_parts_duplicate_page',
-						'post'   => $post->ID,
-					),
-					admin_url( 'admin-post.php' )
-				);
-				?>
-				<a href="<?php echo esc_url( wp_nonce_url( $duplicate_url, 'page_parts_duplicate_page_' . $post->ID ) ); ?>" class="button"><?php esc_html_e( 'Duplicate page', 'page-parts' ); ?></a>
-			<?php endif; ?>
 			<input type="submit" name="orderpageparts" id="orderpagepartssub" class="button" value="<?php esc_attr_e( 'Save page parts', 'page-parts' ); ?>">
 		</p>
 
