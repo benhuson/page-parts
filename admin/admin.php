@@ -551,10 +551,9 @@ class Page_Parts_Admin {
 
 			} );
 
-			$( document ).on( 'ready', function() {
-				$( '.post-type-page-part-column .page-parts-count' ).on( 'click', function( e ) {
-					$( this ).closest( '.post-type-page-part-column' ).toggleClass( 'show' );
-				} );
+			$( document ).on( 'click', '.post-type-page-part-column .page-parts-count', function( e ) {
+				e.preventDefault();
+				$( this ).closest( '.post-type-page-part-column' ).toggleClass( 'show' );
 			} );
 
 		} );
