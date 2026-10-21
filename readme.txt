@@ -7,7 +7,7 @@ Stable tag: 1.6
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Manage subsections of a page. Create 'page parts' as children of a page to display in different areas of your templates. Includes duplication tools for pages and nested page parts.
+Manage page sections with nested page parts, display content across template areas, and easily duplicate pages and their child page parts.
 
 == Description ==
 
