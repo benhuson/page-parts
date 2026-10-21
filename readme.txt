@@ -2,8 +2,8 @@
 Contributors: husobj
 Tags: pages, cms
 Requires at least: 5.5
-Tested up to: 7.1
-Stable tag: 1.6
+Tested up to: 7.1.3
+Stable tag: 1.6.1
 License: GPL2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,11 @@ Version 1.6 adds duplication tools for supported post types and page parts. You 
 == Changelog ==
 
 = Unreleased =
+
+= 1.6.1 =
+
+__Changed__
+- Remove plugin updates http_request_args filter.
 
 = 1.6 =
 

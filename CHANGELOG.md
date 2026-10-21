@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-10-21
+
+### Changed
+- Remove plugin updates http_request_args filter.
+
 ## [1.6] - 2026-08-28
 
 ### Added
@@ -178,7 +183,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - First public release.
 
-[Unreleased]: https://github.com/benhuson/page-parts/compare/1.6...HEAD
+[Unreleased]: https://github.com/benhuson/page-parts/compare/1.6.1...HEAD
+[1.6.1]: https://github.com/benhuson/page-parts/compare/1.6...1.6.1
 [1.6]: https://github.com/benhuson/page-parts/compare/1.5...1.6
 [1.5]: https://github.com/benhuson/page-parts/compare/1.4.5...1.5
 [1.4.4]: https://github.com/benhuson/page-parts/compare/1.4.4...1.4.5
