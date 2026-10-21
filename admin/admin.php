@@ -12,7 +12,6 @@ class Page_Parts_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_duplicate_page_block_editor_assets' ) );
 		add_action( 'save_post', array( $this, 'save_page_parts' ) );
-		add_filter( 'http_request_args', array( $this, 'http_request_args' ), 5, 2 );
 		add_action( 'load-post.php', array( $this, 'add_help_tabs' ) );
 		add_action( 'load-edit.php', array( $this, 'add_help_tabs' ) );
 		add_filter( 'manage_edit-page-part_columns', array( $this, 'manage_edit_page_part_columns' ) );
@@ -1524,21 +1523,6 @@ class Page_Parts_Admin {
 
 		return 3 === $translation_type;
 
-	}
-
-	/**
-	 * Don't do plugin update notifications
-	 * props. Mark Jaquith
-	 */
-	public function http_request_args( $r, $url ) {
-		if ( 0 !== strpos( $url, 'http://api.wordpress.org/plugins/update-check' ) ) {
-			return $r; // Not a plugin update request. Bail immediately.
-		}
-		$plugins = unserialize( $r['body']['plugins'] );
-		unset( $plugins->plugins[ plugin_basename( __FILE__ ) ] );
-		unset( $plugins->active[ array_search( plugin_basename( __FILE__ ), $plugins->active ) ] );
-		$r['body']['plugins'] = serialize( $plugins );
-		return $r;
 	}
 
 	/**
